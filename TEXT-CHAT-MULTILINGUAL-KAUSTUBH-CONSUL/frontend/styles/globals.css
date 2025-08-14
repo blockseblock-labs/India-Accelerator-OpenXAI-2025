@@ -1,0 +1,89 @@
+/* body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+button {
+  padding: 12px 18px;
+  background: #21262d;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #30363d;
+}
+
+input, select {
+  padding: 10px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  color: #e6edf3;
+}
+
+h1, h2, h3 {
+  font-weight: 500;
+} */
+
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: #000; /* Full black background */
+  color: #fff; /* Default white text */
+}
+
+button {
+  padding: 12px 18px;
+  background: #000;
+  color: #00ff7f; /* Green accent for all clickable buttons */
+  border: 1px solid #00ff7f;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #00ff7f;
+  color: #000; /* Invert on hover */
+}
+
+input, select {
+  padding: 10px;
+  background: #111; /* Deep black input background */
+  border: 1px solid #222;
+  border-radius: 4px;
+  color: #fff;
+}
+
+h1, h2, h3 {
+  font-weight: 500;
+  color: #fff; /* Always white for headings */
+}
+
+.translated-text {
+  color: #00ff7f; /* Bright green for translated text */
+}
+
+.original-text {
+  color: #fff; /* Original text remains white */
+}
+
+.error-text {
+  color: red;
+}
+
+.chat-box {
+  background: #111;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
