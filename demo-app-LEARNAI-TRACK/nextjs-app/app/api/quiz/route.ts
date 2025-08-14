@@ -33,7 +33,7 @@ Text: ${text}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'gemma:2b',
         prompt: prompt,
         stream: false,
       }),
