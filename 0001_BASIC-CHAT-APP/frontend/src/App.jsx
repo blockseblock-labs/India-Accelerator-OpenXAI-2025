@@ -6,7 +6,16 @@ function App() {
 
   return (
     <div className={`${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100'} min-h-screen flex flex-col items-center justify-center relative overflow-hidden`}>
-      
+      {/* Background image with very low opacity */}
+      <div
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        style={{
+          backgroundImage: "url('https://wallpapers.com/images/featured/dark-galaxy-wturp0ytecb3kpqq.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.4,
+        }}
+      />
       {/* Header */}
       <h1 className={`text-3xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
         Chatbot using Ollama Model

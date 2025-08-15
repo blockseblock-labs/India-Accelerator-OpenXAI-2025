@@ -44,7 +44,7 @@ const ChatBox = ({ darkMode }) => {
       className={`
         w-full max-w-3xl flex flex-col p-5 rounded-2xl shadow-xl transition-colors duration-500
         relative
-        ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}
+        ${darkMode ? 'bg-gray-900/70 text-white' : 'bg-white/70 text-gray-900'}
         before:absolute before:inset-0 before:bg-gradient-to-r before:from-purple-300 before:via-pink-200 before:to-yellow-200 before:opacity-10 before:rounded-2xl before:pointer-events-none
         hover:before:opacity-20
       `}
@@ -52,7 +52,8 @@ const ChatBox = ({ darkMode }) => {
       {/* Chat messages container */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden mb-4 px-2 py-1 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300"
+        className="flex-1 max-h-[500px] min-h-[200px] overflow-y-auto overflow-x-hidden mb-4 px-2 py-1 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300"
+        style={{ overscrollBehavior: 'contain' }}
       >
         {messages.map((msg, idx) => (
           <Message
