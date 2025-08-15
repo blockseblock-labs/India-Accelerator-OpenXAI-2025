@@ -25,50 +25,55 @@ Focus on key concepts, definitions, and important facts. Make questions clear an
 
 Notes: ${notes}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('http://127.0.0.1:11434/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'llama3:latest', // works because we confirmed this exists
         prompt: prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      throw new Error(`Failed to get response from Ollama: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
-    
+    console.log("Ollama raw output:", data) // <-- Debug output
+
+    let flashcardsData
+
     try {
-      // Try to parse JSON from the response
-      const flashcardsMatch = data.response.match(/\{[\s\S]*\}/)
+      // Match the first {...} block in the AI's output
+      const flashcardsMatch = data.response?.match(/\{[\s\S]*\}/)
       if (flashcardsMatch) {
-        const flashcardsData = JSON.parse(flashcardsMatch[0])
-        return NextResponse.json(flashcardsData)
+        flashcardsData = JSON.parse(flashcardsMatch[0])
       }
     } catch (parseError) {
-      // If JSON parsing fails, return a structured response
-      console.log('Could not parse JSON, returning formatted response')
+      console.error("JSON parse failed:", parseError)
     }
 
-    // Fallback: create a simple structure from the response
+    if (flashcardsData) {
+      return NextResponse.json(flashcardsData)
+    }
+
+    // Fallback if parsing failed
     return NextResponse.json({
       flashcards: [
         {
           front: "Generated from your notes",
-          back: data.response || 'No response from model'
+          back: data.response || 'No structured JSON found in model output'
         }
       ]
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Flashcards API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate flashcards' },
+      { error: 'Failed to generate flashcards', details: error.message },
       { status: 500 }
     )
   }
-} 
+}
