@@ -93,9 +93,9 @@ export default function Home() {
     setIsProcessing(true)
     setAiThinkingLog([])
     setCurrentAnalysis('')
-    
+
     const startTime = Date.now()
-    
+
     // Simulate AI thinking process
     for (let i = 0; i < thinkingSteps.length; i++) {
       await new Promise(resolve => setTimeout(resolve, 200))
@@ -217,16 +217,16 @@ export default function Home() {
   return (
     <div className="globe-container">
       {/* 3D Globe */}
-      <Globe 
-        pollutionLevel={pollutionLevel} 
-        metrics={metrics} 
+      <Globe
+        pollutionLevel={pollutionLevel}
+        metrics={metrics}
         specialEvent={specialEvent}
       />
-      
+
       {/* Pollution Overlay */}
       <div className="pollution-overlay">
         {pollutionLevel > 0 && (
-          <div 
+          <div
             className="absolute inset-0 bg-red-500 opacity-20"
             style={{ opacity: Math.min(pollutionLevel / 100 * 0.4, 0.4) }}
           />
@@ -235,9 +235,10 @@ export default function Home() {
 
       {/* Control Panel */}
       <div className="absolute top-4 left-4 z-20">
-        <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
+        <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto 
+                bg-gray-900/70 border border-cyan-400/50 shadow-[0_0_15px_rgba(0,255,255,0.5)]">
           <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
-          
+
           {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
             <button
@@ -357,21 +358,29 @@ export default function Home() {
 
       {/* Model Selection */}
       <div className="absolute bottom-4 left-4 z-20">
-        <div className="metrics-panel rounded-lg p-4">
-          <h3 className="text-sm font-semibold mb-2 text-gray-300">AI Model:</h3>
+        <div className="rounded-lg p-4 border border-cyan-400/50 bg-gray-900/70 shadow-[0_0_15px_rgba(0,255,255,0.5)]">
+          <h3 className="text-sm font-semibold mb-3 text-cyan-300 flex items-center gap-2">
+            AI Model:
+          </h3>
           <select
             value={selectedModel}
-            onChange={(e) => setSelectedModel('llama3.2:1b')}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white text-sm disabled:bg-gray-700"
+            onChange={(e) => setSelectedModel(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800/80 border border-cyan-400/40 rounded text-cyan-100 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 shadow-[0_0_10px_rgba(0,255,255,0.3)] hover:shadow-[0_0_15px_rgba(0,255,255,0.5)] transition"
           >
             {availableModels.map((model) => (
-              <option key={model.id} value={model.id} disabled={model.disabled}>
+              <option
+                key={model.id}
+                value={model.id}
+                disabled={model.disabled}
+                className="bg-gray-900 text-cyan-200"
+              >
                 {model.name} - {model.description}
               </option>
             ))}
           </select>
         </div>
       </div>
+
     </div>
   )
 } 
