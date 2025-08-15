@@ -136,7 +136,7 @@ export default function Home() {
         analysis: data.analysis,
         timestamp: new Date(),
         responseTime,
-        model: 'llama3.2:1b' // Always use llama3.2:1b
+        model: 'gemma:2b ' // Always use llama3.2:1b
       }
       setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)]) // Keep last 10
 

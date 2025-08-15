@@ -472,8 +472,7 @@ ${
         currentMetrics.humanPopulation,
         "→",
         validatedMetrics.humanPopulation
-      );
-    }
+      );    }
 
     const validatedPollutionLevel = Math.max(
       0,

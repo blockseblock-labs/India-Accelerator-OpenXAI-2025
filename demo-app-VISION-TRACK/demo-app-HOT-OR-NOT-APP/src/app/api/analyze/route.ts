@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Use Ollama to analyze the image
     const response = await ollama.chat({
-      model: "llava:latest", // Using LLaVA for image analysis
+      model: "llama3.2:1b", // Using LLaVA for image analysis
       messages: [
         {
           role: "user",
