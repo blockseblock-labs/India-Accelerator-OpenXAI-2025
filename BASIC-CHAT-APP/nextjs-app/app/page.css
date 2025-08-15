@@ -1,0 +1,32 @@
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.page-header {
+  padding: 1rem;
+  font-size: 1.8rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.page-footer {
+  text-align: center;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
