@@ -33,7 +33,7 @@ Text: ${text}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'tinyllama:1.1b',
         prompt: prompt,
         stream: false,
       }),
