@@ -2,21 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme variables */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --foreground-rgb: 17, 24, 39; /* Neutral gray for text */
+  --background-start-rgb: 243, 244, 246;
   --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
+    --background-start-rgb: 17, 24, 39;
     --background-end-rgb: 0, 0, 0;
   }
 }
 
 body {
+  font-family: 'Inter', sans-serif;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,13 +26,15 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  line-height: 1.6;
 }
 
 /* Custom educational theme */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
 
+/* Flashcards */
 .flashcard {
   perspective: 1000px;
 }
@@ -38,9 +42,9 @@ body {
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 220px;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.6s ease-in-out;
   transform-style: preserve-3d;
 }
 
@@ -48,45 +52,61 @@ body {
   transform: rotateY(180deg);
 }
 
-.flashcard-front, .flashcard-back {
+.flashcard-front,
+.flashcard-back {
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease;
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  color: #fff;
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  color: #fff;
   transform: rotateY(180deg);
 }
 
+.flashcard:hover .flashcard-front,
+.flashcard:hover .flashcard-back {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* Quiz Options */
 .quiz-option {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  color: #111827;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  color: #fff;
 }
 
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+  background: linear-gradient(135deg, #f43f5e 0%, #facc15 100%);
+  color: #fff;
+}
