@@ -8,9 +8,8 @@ export default function AudioRecorder() {
   const [modelResponse, setModelResponse] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const mediaRecorderRef = useRef(null);
+  const mediaRef = useRef(null);
   const timerRef = useRef(null);
-  const chunksRef = useRef([]);
   const audioContextRef = useRef(null);
 
   useEffect(() => {
@@ -21,37 +20,27 @@ export default function AudioRecorder() {
     setTimer(0);
     timerRef.current = setInterval(() => setTimer((t) => t + 1), 1000);
   };
-
   const stopTimer = () => clearInterval(timerRef.current);
 
-  // Helper: Convert Float32Array to WAV Blob
+  // PCM -> WAV encoder
   const encodeWAV = (samples, sampleRate = 44100) => {
     const buffer = new ArrayBuffer(44 + samples.length * 2);
     const view = new DataView(buffer);
 
-    const writeString = (view, offset, string) => {
-      for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-      }
-    };
+    const writeString = (v, o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
 
-    /* RIFF header */
-    writeString(view, 0, 'RIFF');
+    writeString(view, 0, "RIFF");
     view.setUint32(4, 36 + samples.length * 2, true);
-    writeString(view, 8, 'WAVE');
-
-    /* fmt chunk */
-    writeString(view, 12, 'fmt ');
+    writeString(view, 8, "WAVE");
+    writeString(view, 12, "fmt ");
     view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // PCM
-    view.setUint16(22, 1, true); // mono
+    view.setUint16(20, 1, true);        // PCM
+    view.setUint16(22, 1, true);        // mono
     view.setUint32(24, sampleRate, true);
     view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-
-    /* data chunk */
-    writeString(view, 36, 'data');
+    view.setUint16(32, 2, true);        // block align
+    view.setUint16(34, 16, true);       // bits per sample
+    writeString(view, 36, "data");
     view.setUint32(40, samples.length * 2, true);
 
     let offset = 44;
@@ -60,66 +49,75 @@ export default function AudioRecorder() {
       view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
     }
 
-    return new Blob([view], { type: 'audio/wav' });
+    return new Blob([view], { type: "audio/wav" });
   };
 
+  // Start (WebAudio capture for guaranteed WAV)
   const startRecording = async () => {
     setAudioUrl(null);
-    chunksRef.current = [];
     setTranscription("");
     setModelResponse("");
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioContextRef.current = new AudioContext();
-      const source = audioContextRef.current.createMediaStreamSource(stream);
-      const processor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      audioContextRef.current = ctx;
 
-      const audioData = [];
+      const source = ctx.createMediaStreamSource(stream);
+      const processor = ctx.createScriptProcessor(4096, 1, 1);
+
+      const frames = [];
       processor.onaudioprocess = (e) => {
-        audioData.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+        frames.push(new Float32Array(e.inputBuffer.getChannelData(0)));
       };
 
       source.connect(processor);
-      processor.connect(audioContextRef.current.destination);
+      processor.connect(ctx.destination);
 
-      mediaRecorderRef.current = { stream, processor, source, audioData };
+      mediaRef.current = { stream, source, processor, frames };
       setRecording(true);
       startTimer();
-      console.log("Recording started");
     } catch (err) {
-      console.error("Error starting recording:", err);
+      console.error("Mic error:", err);
       alert("Microphone access required.");
     }
   };
 
+  // Stop + build WAV
   const stopRecording = () => {
-    if (!mediaRecorderRef.current) return;
+    if (!mediaRef.current) return;
 
     stopTimer();
     setRecording(false);
 
-    const { stream, processor, source, audioData } = mediaRecorderRef.current;
+    const { stream, source, processor, frames } = mediaRef.current;
 
-    processor.disconnect();
-    source.disconnect();
-    stream.getTracks().forEach((track) => track.stop());
-
-    // Flatten Float32Arrays
-    const length = audioData.reduce((sum, arr) => sum + arr.length, 0);
-    const flat = new Float32Array(length);
-    let offset = 0;
-    for (const arr of audioData) {
-      flat.set(arr, offset);
-      offset += arr.length;
+    try {
+      processor.disconnect();
+      source.disconnect();
+    } catch {
+        // Ignore disconnect errors}
+    }
+    try {
+      stream.getTracks().forEach((t) => t.stop());
+    } catch {
+        // Ignore stop errors
     }
 
-    const wavBlob = encodeWAV(flat, audioContextRef.current.sampleRate);
-    const url = URL.createObjectURL(wavBlob);
+    // flatten
+    const total = frames.reduce((sum, f) => sum + f.length, 0);
+    const flat = new Float32Array(total);
+    let off = 0;
+    for (const f of frames) {
+      flat.set(f, off);
+      off += f.length;
+    }
+
+    const wav = encodeWAV(flat, audioContextRef.current.sampleRate || 44100);
+    const url = URL.createObjectURL(wav);
     setAudioUrl(url);
 
-    console.log("WAV Blob type:", wavBlob.type);
-    console.log("WAV Blob size:", wavBlob.size);
+    console.log("WAV Blob:", wav.type, wav.size);
   };
 
   const formattedTime = (s) => {
@@ -128,9 +126,9 @@ export default function AudioRecorder() {
     return `${mm}:${ss}`;
   };
 
+  // Send to backend -> returns { transcription, modelResponse }
   const sendToBackend = async () => {
     if (!audioUrl) return;
-
     setUploading(true);
     setTranscription("");
     setModelResponse("");
@@ -141,12 +139,10 @@ export default function AudioRecorder() {
       fd.append("audio", blob, `recording-${Date.now()}.wav`);
 
       const res = await fetch("http://localhost:5000/api/upload", { method: "POST", body: fd });
-
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || "Upload failed");
       }
-
       const data = await res.json();
       setTranscription(data.transcription || "");
       setModelResponse(data.modelResponse || "");
@@ -159,47 +155,99 @@ export default function AudioRecorder() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-6 min-h-screen bg-gray-900">
-      <h1 className="text-white text-2xl font-bold">Audio Recorder</h1>
+    <div className="relative">
+      {/* Glass card */}
+      <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-2xl p-6 md:p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
+            Audio Wave
+          </h1>
 
-      <button
-        onClick={recording ? stopRecording : startRecording}
-        className={`px-4 py-2 rounded font-semibold ${
-          recording ? "bg-red-500 hover:bg-red-600" : "bg-green-400 hover:bg-green-500"
-        }`}
-      >
-        {recording ? "Stop Recording" : "Start Recording"}
-      </button>
-
-      <div className="text-white mt-2">{formattedTime(timer)}</div>
-
-      {audioUrl && (
-        <div className="mt-4 w-full max-w-md flex flex-col gap-2">
-          <audio src={audioUrl} controls className="w-full" />
-          <button
-            onClick={sendToBackend}
-            disabled={uploading}
-            className="px-4 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white font-semibold"
-          >
-            {uploading ? "Sending..." : "Send to Backend"}
-          </button>
-          <p className="text-white mt-2 text-center">Recorded Audio</p>
+          {/* Recording indicator */}
+          <div className="flex items-center gap-3">
+            <span
+              className={`inline-flex h-3 w-3 rounded-full ${
+                recording ? "bg-red-400 animate-ping-once" : "bg-white/40"
+              }`}
+              aria-hidden
+            />
+            <div className="text-sm text-white/80">
+              {recording ? "Recording…" : "Idle"}
+            </div>
+          </div>
         </div>
-      )}
 
-      <div className="mt-4 w-full max-w-md p-4 bg-white/10 backdrop-blur-md rounded-lg border border-white/20">
-        <h2 className="text-white font-semibold">Transcription</h2>
-        <p className="text-white/70 mt-2 min-h-[3rem]">
-          {transcription || "Transcription will appear here..."}
-        </p>
+        {/* Controls */}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <button
+            onClick={recording ? stopRecording : startRecording}
+            className={`group relative overflow-hidden rounded-full px-5 py-3 font-semibold text-white transition 
+              ${recording ? "bg-red-500 hover:bg-red-600" : "bg-emerald-500 hover:bg-emerald-600"}
+              focus:outline-none focus:ring-2 focus:ring-white/40`}
+          >
+            <span className="relative z-10">
+              {recording ? "Stop Recording" : "Start Recording"}
+            </span>
+            <span className="pointer-events-none absolute inset-0 -z-0 opacity-30 blur-xl"
+                  aria-hidden />
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="text-white/90 text-lg tabular-nums">{formattedTime(timer)}</div>
+
+            {/* equalizer during recording */}
+            <div className="flex h-6 items-end gap-[3px]">
+              {[...Array(5)].map((_, i) => (
+                <span
+                  key={i}
+                  className={`w-1 rounded-sm bg-white/80 ${
+                    recording ? `eq-bar eq-bar-${i + 1}` : "h-1"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Player + send */}
+        {audioUrl && (
+          <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+            <audio src={audioUrl} controls className="w-full" />
+            <div className="mt-3 flex items-center justify-between">
+              <p className="text-white/80 text-sm">Recorded Audio (WAV)</p>
+              <button
+                onClick={sendToBackend}
+                disabled={uploading}
+                className="rounded-full bg-blue-500 px-4 py-2 text-white font-medium hover:bg-blue-600 disabled:opacity-60"
+              >
+                {uploading ? "Sending…" : "Send"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Transcription */}
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+          <h2 className="text-white font-semibold">Transcription</h2>
+          <p className="mt-2 min-h-[3rem] text-white/80 whitespace-pre-wrap">
+            {transcription || "—"}
+          </p>
+        </div>
+
+        {/* LLM */}
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+          <h2 className="text-white font-semibold">LLM Response</h2>
+          <p className="mt-2 min-h-[3rem] text-white/80 whitespace-pre-wrap">
+            {modelResponse || "—"}
+          </p>
+        </div>
       </div>
 
-      <div className="mt-4 w-full max-w-md p-4 bg-white/10 backdrop-blur-md rounded-lg border border-white/20">
-        <h2 className="text-white font-semibold">LLM Response</h2>
-        <p className="text-white/70 mt-2 min-h-[3rem]">
-          {modelResponse || "Ollama response will appear here..."}
-        </p>
-      </div>
+      {/* ambient glow */}
+      <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-40 blur-3xl"
+           style={{ background: "radial-gradient(1200px 400px at 10% 10%, rgba(255,255,255,.25), transparent)" }}
+      />
     </div>
   );
 }
