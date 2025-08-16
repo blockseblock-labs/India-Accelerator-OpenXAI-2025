@@ -15,4 +15,16 @@
 
 # The Output of the project will be stored in assets foler via image
 
+## FEATURES
+
+# get input through voice 
+# converts it into txt
+# sent back to the local ollama model llama3:latest
+# Replay from model in TEXT format and VOICE format
+# A good looking UI in the frontend
+
+
 ## Thank U
+
+
+

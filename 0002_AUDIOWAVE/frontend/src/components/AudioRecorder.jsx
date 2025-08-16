@@ -6,6 +6,7 @@ export default function AudioRecorder() {
   const [timer, setTimer] = useState(0);
   const [transcription, setTranscription] = useState("");
   const [modelResponse, setModelResponse] = useState("");
+  const [modelResponseAudioUrl, setModelResponseAudioUrl] = useState(null); // ✅ new state
   const [uploading, setUploading] = useState(false);
 
   const mediaRef = useRef(null);
@@ -27,7 +28,9 @@ export default function AudioRecorder() {
     const buffer = new ArrayBuffer(44 + samples.length * 2);
     const view = new DataView(buffer);
 
-    const writeString = (v, o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    const writeString = (v, o, s) => {
+      for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i));
+    };
 
     writeString(view, 0, "RIFF");
     view.setUint32(4, 36 + samples.length * 2, true);
@@ -57,6 +60,7 @@ export default function AudioRecorder() {
     setAudioUrl(null);
     setTranscription("");
     setModelResponse("");
+    setModelResponseAudioUrl(null); // reset
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -96,7 +100,7 @@ export default function AudioRecorder() {
       processor.disconnect();
       source.disconnect();
     } catch {
-        // Ignore disconnect errors}
+        // Ignore disconnect errors
     }
     try {
       stream.getTracks().forEach((t) => t.stop());
@@ -126,19 +130,23 @@ export default function AudioRecorder() {
     return `${mm}:${ss}`;
   };
 
-  // Send to backend -> returns { transcription, modelResponse }
+  // Send to backend -> returns { transcription, modelResponse, modelResponseAudio }
   const sendToBackend = async () => {
     if (!audioUrl) return;
     setUploading(true);
     setTranscription("");
     setModelResponse("");
+    setModelResponseAudioUrl(null);
 
     try {
       const blob = await fetch(audioUrl).then((r) => r.blob());
       const fd = new FormData();
       fd.append("audio", blob, `recording-${Date.now()}.wav`);
 
-      const res = await fetch("http://localhost:5000/api/upload", { method: "POST", body: fd });
+      const res = await fetch("http://localhost:5000/api/upload", {
+        method: "POST",
+        body: fd,
+      });
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || "Upload failed");
@@ -146,6 +154,15 @@ export default function AudioRecorder() {
       const data = await res.json();
       setTranscription(data.transcription || "");
       setModelResponse(data.modelResponse || "");
+
+      // ✅ Build audio URL for response
+      if (data.modelResponseAudio) {
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.modelResponseAudio), (c) => c.charCodeAt(0))],
+          { type: "audio/mpeg" }
+        );
+        setModelResponseAudioUrl(URL.createObjectURL(audioBlob));
+      }
     } catch (err) {
       console.error(err);
       alert("Failed to send audio to backend. See console.");
@@ -189,8 +206,10 @@ export default function AudioRecorder() {
             <span className="relative z-10">
               {recording ? "Stop Recording" : "Start Recording"}
             </span>
-            <span className="pointer-events-none absolute inset-0 -z-0 opacity-30 blur-xl"
-                  aria-hidden />
+            <span
+              className="pointer-events-none absolute inset-0 -z-0 opacity-30 blur-xl"
+              aria-hidden
+            />
           </button>
 
           <div className="flex items-center gap-3">
@@ -215,7 +234,7 @@ export default function AudioRecorder() {
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
             <audio src={audioUrl} controls className="w-full" />
             <div className="mt-3 flex items-center justify-between">
-              <p className="text-white/80 text-sm">Recorded Audio (WAV)</p>
+              <p className="text-white/80 text-sm">🎙 Your Recorded Audio (WAV)</p>
               <button
                 onClick={sendToBackend}
                 disabled={uploading}
@@ -241,12 +260,24 @@ export default function AudioRecorder() {
           <p className="mt-2 min-h-[3rem] text-white/80 whitespace-pre-wrap">
             {modelResponse || "—"}
           </p>
+
+          {/* ✅ Play the LLM response as audio */}
+          {modelResponseAudioUrl && (
+            <div className="mt-4">
+              <audio src={modelResponseAudioUrl} controls className="w-full" />
+              <p className="text-white/70 text-sm mt-1">🤖 LLM Response (TTS)</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* ambient glow */}
-      <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-40 blur-3xl"
-           style={{ background: "radial-gradient(1200px 400px at 10% 10%, rgba(255,255,255,.25), transparent)" }}
+      <div
+        className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] opacity-40 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(1200px 400px at 10% 10%, rgba(255,255,255,.25), transparent)",
+        }}
       />
     </div>
   );
