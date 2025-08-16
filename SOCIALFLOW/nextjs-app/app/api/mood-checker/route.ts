@@ -11,11 +11,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `Analyze the mood and sentiment of the following text: "${text}"
+    const prompt = `Analyze the sentiment of the following text: "${text}"
 
-Classify the mood as one of these options: happy, sad, angry, excited, neutral, anxious, love, frustrated
+Classify the sentiment as one of these options: positive, negative, neutral.
 
-Respond with ONLY the mood word, nothing else. Pick the best single word that describes the overall sentiment.`
+Respond with ONLY the sentiment word.`
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -23,7 +23,7 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3',
+        model: 'llama3.2:1b',
         prompt: prompt,
         stream: false,
       }),
@@ -35,36 +35,27 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
 
     const data = await response.json()
     
-    // Clean up the response to get just the mood
-    let mood = data.response?.toLowerCase().trim() || 'neutral'
+    let sentiment = data.response?.toLowerCase().trim() || 'neutral'
+    sentiment = sentiment.split(' ')[0] // ensure only first word
     
-    // Extract just the first word if there are multiple words
-    mood = mood.split(' ')[0]
-    
-    // Map to emoji
-    const moodEmojis: { [key: string]: string } = {
-      'happy': '😊',
-      'sad': '😢',
-      'angry': '😠',
-      'excited': '🤩',
-      'neutral': '😐',
-      'anxious': '😰',
-      'love': '😍',
-      'frustrated': '😤'
+    const sentimentEmojis: { [key: string]: string } = {
+      'positive': '👍',
+      'negative': '👎',
+      'neutral': '😐'
     }
     
-    const emoji = moodEmojis[mood] || '😐'
+    const emoji = sentimentEmojis[sentiment] || '😐'
     
     return NextResponse.json({ 
-      mood: mood,
-      emoji: emoji,
+      sentiment,
+      emoji,
       confidence: 'high'
     })
   } catch (error) {
-    console.error('Mood Checker API error:', error)
+    console.error('Sentiment Checker API error:', error)
     return NextResponse.json(
-      { error: 'Failed to analyze mood' },
+      { error: 'Failed to analyze sentiment' },
       { status: 500 }
     )
   }
-} 
+}

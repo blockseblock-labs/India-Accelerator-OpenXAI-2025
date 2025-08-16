@@ -3,9 +3,9 @@
 import { useState } from 'react'
 
 interface MoodResult {
-  mood: string
-  emoji: string
-  confidence: string
+  positive: number
+  neutral: number
+  negative: number
 }
 
 export default function SocialNetwork() {
@@ -17,7 +17,7 @@ export default function SocialNetwork() {
   const [generatedCaption, setGeneratedCaption] = useState('')
   const [captionCopied, setCaptionCopied] = useState(false)
   
-  // Mood Checker states
+  // Mood Checker (now Audience Sentiment Simulator)
   const [textToAnalyze, setTextToAnalyze] = useState('')
   const [moodResult, setMoodResult] = useState<MoodResult | null>(null)
   
@@ -47,6 +47,7 @@ export default function SocialNetwork() {
     setLoading(false)
   }
 
+  // Audience Sentiment Simulator
   const checkMood = async () => {
     if (!textToAnalyze.trim()) return
     
@@ -59,11 +60,11 @@ export default function SocialNetwork() {
       })
       
       const data = await response.json()
-      if (data.mood) {
+      if (data.positive !== undefined) {
         setMoodResult(data)
       }
     } catch (error) {
-      console.error('Error checking mood:', error)
+      console.error('Error checking sentiment:', error)
     }
     setLoading(false)
   }
@@ -118,7 +119,7 @@ export default function SocialNetwork() {
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
               { id: 'caption', label: '📸 Caption', desc: 'Generate Captions', gradient: 'instagram-gradient' },
-              { id: 'mood', label: '😊 Mood', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
+              { id: 'mood', label: '😊 Sentiment', desc: 'Audience Sentiment', gradient: 'twitter-gradient' },
               { id: 'hashtags', label: '#️⃣ Hashtags', desc: 'Suggest Tags', gradient: 'social-gradient' }
             ].map(tab => (
               <button
@@ -181,18 +182,18 @@ export default function SocialNetwork() {
             </div>
           )}
 
-          {/* Mood Checker Tab */}
+          {/* Audience Sentiment Simulator Tab */}
           {activeTab === 'mood' && (
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">😊 Mood Checker</h2>
-                <p className="text-white/80 mb-6">Paste any text to analyze its emotional sentiment!</p>
+                <h2 className="text-2xl font-bold text-white mb-4">😊 Audience Sentiment Simulator</h2>
+                <p className="text-white/80 mb-6">Paste your post and see how your audience might react!</p>
                 
                 <div className="space-y-4">
                   <textarea
                     value={textToAnalyze}
                     onChange={(e) => setTextToAnalyze(e.target.value)}
-                    placeholder="Paste a tweet, comment, or any text here..."
+                    placeholder="Paste your caption, tweet, or post text here..."
                     className="w-full h-32 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 resize-none"
                   />
                   
@@ -201,15 +202,25 @@ export default function SocialNetwork() {
                     disabled={loading || !textToAnalyze.trim()}
                     className="w-full px-6 py-3 twitter-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Analyzing Mood...' : 'Check Mood 🔍'}
+                    {loading ? 'Simulating Reactions...' : 'Simulate Audience 🔍'}
                   </button>
 
                   {moodResult && (
-                    <div className="bg-white/20 rounded-lg p-6 text-center space-y-4">
-                      <div className="mood-indicator text-6xl">{moodResult.emoji}</div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-white capitalize">{moodResult.mood}</h3>
-                        <p className="text-white/80">Detected sentiment with {moodResult.confidence} confidence</p>
+                    <div className="bg-white/20 rounded-lg p-6 space-y-4">
+                      <h3 className="font-semibold text-white mb-4">Predicted Audience Sentiment:</h3>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <p className="text-3xl">😊</p>
+                          <p className="text-lg text-green-300">{moodResult.positive}% Positive</p>
+                        </div>
+                        <div>
+                          <p className="text-3xl">😐</p>
+                          <p className="text-lg text-yellow-300">{moodResult.neutral}% Neutral</p>
+                        </div>
+                        <div>
+                          <p className="text-3xl">😡</p>
+                          <p className="text-lg text-red-300">{moodResult.negative}% Negative</p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -278,4 +289,4 @@ export default function SocialNetwork() {
       </div>
     </div>
   )
-} 
+}
