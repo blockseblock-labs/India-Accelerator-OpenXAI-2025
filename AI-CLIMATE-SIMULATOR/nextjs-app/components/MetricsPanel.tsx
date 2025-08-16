@@ -1,6 +1,14 @@
 'use client'
 
 import { Users, Thermometer, AlertTriangle, Droplets, Snowflake, Leaf, Zap } from 'lucide-react'
+import { ReactNode } from 'react'
+
+interface MetricProps {
+  icon: ReactNode
+  label: string
+  value: string | number
+  color?: string
+}
 
 interface EarthMetrics {
   co2Level: number
@@ -18,130 +26,110 @@ interface MetricsPanelProps {
   pollutionLevel: number
 }
 
+const Metric = ({ icon, label, value, color = 'text-gray-300' }: MetricProps) => (
+  <div className="flex items-center justify-between p-3 bg-slate-800/50 backdrop-blur-sm rounded-lg hover:bg-slate-800/70 transition-all duration-200">
+    <div className="flex items-center gap-2">
+      <div className="text-cyan-400">
+        {icon}
+      </div>
+      <span className="text-sm text-gray-300">{label}</span>
+    </div>
+    <span className={`text-sm font-semibold ${color}`}>
+      {value}
+    </span>
+  </div>
+)
+
 export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelProps) {
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number): string => {
     if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B'
     if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M'
     if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K'
     return num.toFixed(0)
   }
 
-  const getHealthColor = (value: number, max: number, reverse = false) => {
+  const getHealthColor = (value: number, max: number, reverse = false): string => {
     const percentage = value / max
-    const adjustedPercentage = reverse ? 1 - percentage : percentage
-    
-    if (adjustedPercentage < 0.3) return 'text-green-400'
-    if (adjustedPercentage < 0.7) return 'text-yellow-400'
-    return 'text-red-400'
+    if (reverse) {
+      if (percentage < 0.3) return 'text-red-400'
+      if (percentage < 0.6) return 'text-yellow-400'
+      return 'text-emerald-400'
+    }
+    if (percentage > 0.7) return 'text-red-400'
+    if (percentage > 0.4) return 'text-yellow-400'
+    return 'text-emerald-400'
   }
 
   return (
-    <div className="metrics-panel rounded-lg p-4 max-w-sm">
-      <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+    <div className="metrics-panel rounded-xl p-6 max-w-sm bg-slate-900/80 backdrop-blur-md border border-slate-700/50">
+      <h2 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-100">
         <AlertTriangle size={20} className="text-red-400" />
         Earth Metrics
       </h2>
-      
+
       <div className="space-y-3">
-        {/* CO2 Levels */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap size={16} className="text-yellow-400" />
-            <span className="text-sm text-gray-300">CO₂ Level:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.co2Level, 2000, true)}`}>
-            {metrics.co2Level.toFixed(0)} ppm
-          </span>
-        </div>
+        <Metric
+          icon={<Zap size={16} />}
+          label="CO₂ Level"
+          value={`${metrics.co2Level.toFixed(0)} ppm`}
+          color={getHealthColor(metrics.co2Level, 2000, true)}
+        />
 
-        {/* Air Toxicity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Air Toxicity:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel, 100)}`}>
-            {metrics.toxicityLevel.toFixed(1)}%
-          </span>
-        </div>
+        <Metric
+          icon={<AlertTriangle size={16} />}
+          label="Air Toxicity"
+          value={`${metrics.toxicityLevel.toFixed(1)}%`}
+          color={getHealthColor(metrics.toxicityLevel, 100)}
+        />
 
-        {/* Temperature */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Thermometer size={16} className="text-orange-400" />
-            <span className="text-sm text-gray-300">Temperature:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.temperature, 50)}`}>
-            {metrics.temperature.toFixed(1)}°C
-          </span>
-        </div>
+        <Metric
+          icon={<Thermometer size={16} />}
+          label="Temperature"
+          value={`${metrics.temperature.toFixed(1)}°C`}
+          color={getHealthColor(metrics.temperature, 50)}
+        />
 
-        {/* Human Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Humans:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.humanPopulation)}
-          </span>
-        </div>
+        <Metric
+          icon={<Users size={16} />}
+          label="Humans"
+          value={formatNumber(metrics.humanPopulation)}
+        />
 
-        {/* Animal Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-green-400" />
-            <span className="text-sm text-gray-300">Animals:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.animalPopulation)}
-          </span>
-        </div>
+        <Metric
+          icon={<Leaf size={16} />}
+          label="Animals"
+          value={formatNumber(metrics.animalPopulation)}
+        />
 
-        {/* Plant Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-emerald-400" />
-            <span className="text-sm text-gray-300">Plants:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.plantPopulation)}
-          </span>
-        </div>
+        <Metric
+          icon={<Leaf size={16} />}
+          label="Plants"
+          value={formatNumber(metrics.plantPopulation)}
+        />
 
-        {/* Ocean Acidity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Droplets size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Ocean pH:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity, 9.0, true)}`}>
-            {metrics.oceanAcidity.toFixed(2)}
-          </span>
-        </div>
+        <Metric
+          icon={<Droplets size={16} />}
+          label="Ocean pH"
+          value={metrics.oceanAcidity.toFixed(2)}
+          color={getHealthColor(metrics.oceanAcidity, 9.0, true)}
+        />
 
-        {/* Ice Cap Melting */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Snowflake size={16} className="text-cyan-400" />
-            <span className="text-sm text-gray-300">Ice Melting:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.iceCapMelting, 100)}`}>
-            {metrics.iceCapMelting.toFixed(1)}%
-          </span>
-        </div>
+        <Metric
+          icon={<Snowflake size={16} />}
+          label="Ice Melting"
+          value={`${metrics.iceCapMelting.toFixed(1)}%`}
+          color={getHealthColor(metrics.iceCapMelting, 100)}
+        />
 
-        {/* Overall Pollution */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-600">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Pollution:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
-            {pollutionLevel.toFixed(1)}%
-          </span>
+        <div className="border-t border-slate-700 mt-4 pt-4">
+          <Metric
+            icon={<AlertTriangle size={16} />}
+            label="Overall Pollution"
+            value={`${pollutionLevel.toFixed(1)}%`}
+            color={getHealthColor(pollutionLevel, 100)}
+          />
         </div>
       </div>
     </div>
   )
-} 
+}

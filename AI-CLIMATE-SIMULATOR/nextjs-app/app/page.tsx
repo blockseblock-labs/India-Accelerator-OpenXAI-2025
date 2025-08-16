@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { Send, RotateCcw, Play, Pause, Brain, Users, Thermometer, AlertTriangle, Loader2 } from 'lucide-react'
 
-// Dynamically import the 3D components to avoid SSR issues
+// Dynamically import components
 const Globe = dynamic(() => import('../components/Globe'), { ssr: false })
 const MetricsPanel = dynamic(() => import('../components/MetricsPanel'), { ssr: false })
+const Header = dynamic(() => import('../components/Header'), { ssr: false })
+const Footer = dynamic(() => import('../components/Footer'), { ssr: false })
 
 interface EarthMetrics {
   co2Level: number

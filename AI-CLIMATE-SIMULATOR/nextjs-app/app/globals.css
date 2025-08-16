@@ -2,28 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Root theme variables */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground: #e2e8f0;        /* light gray text */
+  --background-start: #0a0a0a;  /* deep black */
+  --background-end: #111827;    /* dark slate */
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground: #111827;       /* dark text */
+    --background-start: #f9fafb; /* light gray */
+    --background-end: #ffffff;   /* white */
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: var(--foreground);
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    to bottom,
+    var(--background-start),
+    var(--background-end)
+  );
+  font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
@@ -33,16 +34,18 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #1e293b; /* dark slate */
   border-radius: 4px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06b6d4, #0ea5e9); /* teal → blue */
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(180deg, #0891b2, #1d4ed8); /* darker teal → deep blue */
 }
 
 /* Globe container */
@@ -50,56 +53,77 @@ body {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: radial-gradient(ellipse at center, #0c1445 0%, #000000 100%);
+  background: radial-gradient(circle at center, #0f172a 0%, #000000 100%);
   overflow: hidden;
 }
 
-/* Pollution overlay */
+/* Pollution overlay (dark glowing aura) */
 .pollution-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
   z-index: 10;
+  background: radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
 }
 
-/* Metrics panel */
+/* Metrics panel (glassmorphism - dark mode) */
 .metrics-panel {
-  backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  background: rgba(17, 24, 39, 0.7); /* dark slate translucent */
   border: 1px solid rgba(255, 255, 255, 0.1);
-  max-width: 400px;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  max-width: 420px;
   max-height: 80vh;
   overflow-y: auto;
+  padding: 22px;
+  color: #f9fafb; /* near white */
+  transition: all 0.3s ease;
 }
 
-/* Animated background */
+.metrics-panel:hover {
+  background: rgba(17, 24, 39, 0.85);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75);
+}
+
+/* Animated background (dark with neon accents) */
 .animated-bg {
-  background: linear-gradient(-45deg, #0c1445, #1e3a8a, #1e40af, #3b82f6);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background: linear-gradient(-45deg, #0f172a, #1e293b, #2563eb, #0891b2, #0ea5e9);
+  background-size: 500% 500%;
+  animation: gradientShift 22s ease infinite;
 }
 
 @keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-} 
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-/* Ensure globe is always visible */
+/* Ensure globe stays visible */
 .globe-container > div:first-child {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 1;
-} 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .metrics-panel {
+    max-width: 320px;
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-panel {
+    max-width: calc(100vw - 20px);
+    bottom: 20px;
+    right: 10px;
+    left: 10px;
+    top: auto;
+    position: fixed;
+  }
+}
