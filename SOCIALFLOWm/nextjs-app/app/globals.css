@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root Colors */
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 20, 20, 40;
+  --background-end-rgb: 5, 5, 15;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 5, 5, 15;
+    --background-end-rgb: 20, 20, 40;
+  }
+}
+
+/* Animated gradient background */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Social media cards */
+.social-card {
+  position: relative;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+
+.social-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Neon gradients */
+.social-gradient {
+  background: linear-gradient(135deg, #6525d2 0%, #410181 100%);
+}
+
+.instagram-gradient {
+  background: linear-gradient(135deg, #e524e8, #e70c67);
+}
+
+.twitter-gradient {
+  background: linear-gradient(135deg, #0d5ee9 , #1a02b4);
+}
+
+/* Hashtags */
+.hashtag-tag {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #8b4cf8, #6b3e98);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(229, 46, 113, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hashtag-tag:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px #230145;
+}
+
+/* Copy Button */
+.copy-button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+}
+
+.caption-copy-button {
+  background: linear-gradient(135deg, #ad49ae, #b94274);
+}
+
+.hashtag-copy-button{
+  background: linear-gradient(135deg, #415acc, #7e26d7);
+}
+
+.copy-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(118, 75, 162, 0.7);
+}
+
+.copy-button.copied {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+  transform: scale(0.95);
+}
+
+/* Tab content animation */
+.tab-content {
+  animation: fadeInUp 0.5s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mood indicator */
+.mood-indicator {
+  font-size: 2.5rem;
+  display: inline-block;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
