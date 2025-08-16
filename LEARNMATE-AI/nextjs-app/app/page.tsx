@@ -141,12 +141,12 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-4">📚 MasterAI</h1>
+          <p className="text-white/80 text-lg">Prompt,Generate & Master</p>
         </div>
 
         {/* Tabs */}
@@ -178,7 +178,14 @@ export default function LearnAI() {
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+              <div className="flex items-center mb-6">
+                <img 
+                  src="/optimus.gif" 
+                  alt="Optimus AI Learning" 
+                  className="w-16 h-16 mr-3"
+                />
+                <h2 className="text-2xl font-bold text-white">🃏 Flashcard Maker</h2>
+              </div>
               
               {flashcards.length === 0 ? (
                 <div>
@@ -246,7 +253,14 @@ export default function LearnAI() {
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+              <div className="flex items-center mb-6">
+                <img 
+                  src="/optimus.gif" 
+                  alt="Optimus AI Learning" 
+                  className="w-16 h-16 mr-3"
+                />
+                <h2 className="text-2xl font-bold text-white">📝 Quiz Maker</h2>
+              </div>
               
               {quiz.length === 0 && !showResults ? (
                 <div>
@@ -330,7 +344,14 @@ export default function LearnAI() {
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+              <div className="flex items-center mb-6">
+                <img 
+                  src="/optimus.gif" 
+                  alt="Optimus AI Learning" 
+                  className="w-16 h-16 mr-3"
+                />
+                <h2 className="text-2xl font-bold text-white">🤖 Ask-Me Study Buddy</h2>
+              </div>
               
               <div className="mb-6">
                 <div className="flex space-x-2">
