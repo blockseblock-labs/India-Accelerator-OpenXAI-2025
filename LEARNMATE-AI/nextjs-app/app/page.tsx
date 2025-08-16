@@ -145,8 +145,8 @@ export default function LearnAI() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-4">📚 Claudia’s AI Playground</h1>
+          <p className="text-white/80 text-lg">AI-Powered Tool</p>
         </div>
 
         {/* Tabs */}
