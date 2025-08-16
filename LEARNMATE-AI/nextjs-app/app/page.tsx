@@ -16,6 +16,21 @@ interface QuizQuestion {
 
 export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
+
+  // Notes section states
+  const [myNotes, setMyNotes] = useState('')
+  // Export notes as txt file
+  const exportNotes = () => {
+    const blob = new Blob([myNotes], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'my_notes.txt'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
   const [loading, setLoading] = useState(false)
   
   // Flashcard states
@@ -141,33 +156,26 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center font-sans">
+      <div className="w-full max-w-5xl mx-auto px-4 py-10">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+        <div className="text-center mb-10">
+          <h1 className="text-5xl font-extrabold text-white drop-shadow-lg mb-3 tracking-tight">📚 LearnMate AI</h1>
+          <p className="text-white/80 text-xl font-light">Your AI-powered study companion</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
-            {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
-            ].map(tab => (
+        <div className="flex justify-center mb-10">
+          <div className="bg-white/30 backdrop-blur-xl shadow-lg rounded-full p-2 flex space-x-2">
+            {[{ id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' }, { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' }, { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }, { id: 'notes', label: '🗒️ Notes', desc: 'Write & Export Notes' }].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
+                className={`px-8 py-4 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-purple-400 font-semibold text-base ${activeTab === tab.id ? 'bg-white text-purple-700 shadow-xl scale-105' : 'text-white hover:bg-white/20 hover:text-purple-200'}`}
+                tabIndex={0}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                <div>{tab.label}</div>
+                <div className="text-xs opacity-70 font-normal">{tab.desc}</div>
               </button>
             ))}
           </div>
@@ -177,97 +185,88 @@ export default function LearnAI() {
         <div className="max-w-4xl mx-auto">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
-              
+            <div className="bg-white/30 backdrop-blur-xl shadow-2xl rounded-2xl p-8 transition-all">
+              <h2 className="text-3xl font-bold text-purple-900 mb-6">🃏 Flashcard Maker</h2>
               {flashcards.length === 0 ? (
                 <div>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-xl border-0 bg-white/40 text-purple-900 placeholder-purple-400 focus:ring-2 focus:ring-purple-300 shadow-md"
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-6 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-purple-900 font-medium">
                     Card {currentCard + 1} of {flashcards.length}
                   </div>
-                  
-                  <div 
-                    className={`flashcard ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
+                  <div
+                    className={`mb-8 cursor-pointer group perspective-1000`}
                     onClick={() => setFlipped(!flipped)}
                   >
-                    <div className="flashcard-inner">
-                      <div className="flashcard-front">
-                        <p className="text-lg font-medium">{flashcards[currentCard]?.front}</p>
+                    <div className={`relative w-full h-40 transition-transform duration-500 ${flipped ? 'rotate-y-180' : ''}`}
+                      style={{ transformStyle: 'preserve-3d' }}>
+                      <div className="absolute w-full h-full bg-white/80 rounded-xl shadow-lg flex items-center justify-center text-xl font-semibold text-purple-900 backface-hidden p-6" style={{ backfaceVisibility: 'hidden' }}>
+                        {flashcards[currentCard]?.front}
                       </div>
-                      <div className="flashcard-back">
-                        <p className="text-lg">{flashcards[currentCard]?.back}</p>
+                      <div className="absolute w-full h-full bg-purple-100 rounded-xl shadow-lg flex items-center justify-center text-xl font-semibold text-purple-900 rotate-y-180 backface-hidden p-6" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                        {flashcards[currentCard]?.back}
                       </div>
                     </div>
+                    <div className="text-center text-purple-400 mt-2 text-sm">Click card to flip</div>
                   </div>
-
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-4">
                     <button
                       onClick={prevCard}
                       disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
+                      className="px-6 py-3 bg-white/40 text-purple-700 rounded-xl font-semibold shadow disabled:opacity-50"
+                    >Previous</button>
                     <button
                       onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                    >
-                      New Flashcards
-                    </button>
+                      className="px-6 py-3 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-xl font-bold shadow-lg"
+                    >New Flashcards</button>
                     <button
                       onClick={nextCard}
                       disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
-                    >
-                      Next
-                    </button>
+                      className="px-6 py-3 bg-white/40 text-purple-700 rounded-xl font-semibold shadow disabled:opacity-50"
+                    >Next</button>
                   </div>
                 </div>
               )}
             </div>
           )}
-
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
-              
+            <div className="bg-white/30 backdrop-blur-xl shadow-2xl rounded-2xl p-8 transition-all">
+              <h2 className="text-3xl font-bold text-purple-900 mb-6">📝 Quiz Maker</h2>
               {quiz.length === 0 && !showResults ? (
                 <div>
                   <textarea
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
                     placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-xl border-0 bg-white/40 text-purple-900 placeholder-purple-400 focus:ring-2 focus:ring-purple-300 shadow-md"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-6 px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
+                  <h3 className="text-4xl font-extrabold text-purple-900 mb-4">Quiz Complete!</h3>
+                  <p className="text-2xl text-purple-700 mb-6">
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
                   <button
@@ -276,49 +275,34 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
-                  >
-                    Take Another Quiz
-                  </button>
+                    className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold shadow-lg"
+                  >Take Another Quiz</button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-purple-900 font-medium">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
-                  
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
+                  <div className="mb-8">
+                    <h3 className="text-2xl font-bold text-purple-900 mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
-                    
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {quiz[currentQuestion]?.options.map((option, index) => (
                         <button
                           key={index}
                           onClick={() => selectAnswer(index)}
                           disabled={selectedAnswer !== null}
-                          className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
-                            selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
-                              : selectedAnswer === index
-                              ? index === quiz[currentQuestion].correct
-                                ? 'correct'
-                                : 'incorrect'
-                              : index === quiz[currentQuestion].correct
-                              ? 'correct'
-                              : 'bg-white/10 text-white/60'
-                          }`}
+                          className={`w-full p-4 text-left rounded-xl font-semibold transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 ${selectedAnswer === null ? 'bg-white/40 text-purple-900 hover:bg-purple-100' : selectedAnswer === index ? index === quiz[currentQuestion].correct ? 'bg-green-400 text-white' : 'bg-red-400 text-white' : index === quiz[currentQuestion].correct ? 'bg-green-400 text-white' : 'bg-white/20 text-purple-400'}`}
                         >
                           {option}
                         </button>
                       ))}
                     </div>
-                    
                     {selectedAnswer !== null && (
-                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                      <div className="mt-6 p-4 bg-purple-100 rounded-xl shadow">
+                        <p className="text-purple-900 font-bold mb-2">Explanation:</p>
+                        <p className="text-purple-700 text-base">{quiz[currentQuestion]?.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -326,51 +310,66 @@ export default function LearnAI() {
               )}
             </div>
           )}
-
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
-              
-              <div className="mb-6">
-                <div className="flex space-x-2">
+            <div className="bg-white/30 backdrop-blur-xl shadow-2xl rounded-2xl p-8 transition-all">
+              <h2 className="text-3xl font-bold text-purple-900 mb-6">🤖 Ask-Me Study Buddy</h2>
+              <div className="mb-8">
+                <div className="flex space-x-4">
                   <input
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="flex-1 p-4 rounded-xl border-0 bg-white/40 text-purple-900 placeholder-purple-400 focus:ring-2 focus:ring-purple-300 shadow-md"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
                 </div>
               </div>
-
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+              <div className="space-y-6 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                    <div className="bg-blue-400/20 p-4 rounded-xl shadow">
+                      <p className="text-purple-900 font-bold">You:</p>
+                      <p className="text-purple-700 text-base">{chat.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                    <div className="bg-green-400/20 p-4 rounded-xl shadow">
+                      <p className="text-purple-900 font-bold">Study Buddy:</p>
+                      <p className="text-purple-700 text-base">{chat.answer}</p>
                     </div>
                   </div>
                 ))}
-                
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
+                  <div className="text-center text-purple-400 py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+          {/* Notes Tab */}
+          {activeTab === 'notes' && (
+            <div className="bg-white/30 backdrop-blur-xl shadow-2xl rounded-2xl p-8 transition-all">
+              <h2 className="text-3xl font-bold text-purple-900 mb-6">�️ My Notes</h2>
+              <textarea
+                value={myNotes}
+                onChange={e => setMyNotes(e.target.value)}
+                placeholder="Write your study notes here..."
+                className="w-full h-64 p-4 rounded-xl border-0 bg-white/40 text-purple-900 placeholder-purple-400 focus:ring-2 focus:ring-purple-300 shadow-md mb-6"
+              />
+              <div className="flex justify-end">
+                <button
+                  onClick={exportNotes}
+                  disabled={!myNotes.trim()}
+                  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >Export as .txt</button>
               </div>
             </div>
           )}

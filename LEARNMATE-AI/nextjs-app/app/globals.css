@@ -3,90 +3,131 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 34, 34, 34;
+  --background-start-rgb: 230, 230, 250;
+  --background-end-rgb: 255, 245, 250;
+  --glass-blur: 16px;
+  --glass-bg: rgba(255,255,255,0.35);
+  --glass-border: rgba(200,200,255,0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 240, 240, 255;
+    --background-start-rgb: 30, 0, 60;
+    --background-end-rgb: 60, 0, 90;
+    --glass-bg: rgba(40,30,60,0.45);
+    --glass-border: rgba(120,80,180,0.18);
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(120deg, rgb(var(--background-start-rgb)) 0%, rgb(var(--background-end-rgb)) 100%);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
 }
 
-/* Custom educational theme */
+/* Glassmorphism card style */
+.glass-card {
+  background: var(--glass-bg);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  transition: box-shadow 0.3s, border 0.3s;
+}
+.glass-card:focus-within, .glass-card:hover {
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.28);
+  border-color: #a78bfa;
+}
+
+/* Modern header gradient */
 .learn-gradient {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+/* Flashcard styles */
 .flashcard {
   perspective: 1000px;
 }
-
 .flashcard-inner {
   position: relative;
   width: 100%;
   height: 200px;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.6s cubic-bezier(.4,2,.3,1);
   transform-style: preserve-3d;
 }
-
 .flashcard.flipped .flashcard-inner {
   transform: rotateY(180deg);
 }
-
 .flashcard-front, .flashcard-back {
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  font-size: 1.25rem;
+  font-weight: 500;
 }
-
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  color: #4b2e83;
 }
-
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+  color: #4b2e83;
   transform: rotateY(180deg);
 }
 
+/* Quiz option styles */
 .quiz-option {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(.4,2,.3,1);
+  border-radius: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  border: none;
 }
-
-.quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.quiz-option:hover, .quiz-option:focus {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 1px solid #a78bfa;
 }
-
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
 }
-
 .quiz-option.incorrect {
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+  color: #fff;
+}
+
+/* Custom scroll for chat */
+.chat-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #a78bfa #f3f3fa;
+}
+.chat-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: #a78bfa;
+  border-radius: 8px;
+}
+.chat-scroll::-webkit-scrollbar-track {
+  background: #f3f3fa;
+}
+
+/* Focus ring for accessibility */
+.focus-ring:focus {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
