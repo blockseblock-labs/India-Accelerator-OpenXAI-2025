@@ -14,6 +14,19 @@ interface QuizQuestion {
   explanation: string
 }
 
+interface Summary {
+  title: string
+  keyPoints: string[]
+  mainConcepts: string[]
+  summary: string
+}
+
+interface PracticeTest {
+  questions: QuizQuestion[]
+  timeLimit: number
+  difficulty: string
+}
+
 export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
   const [loading, setLoading] = useState(false)
@@ -36,6 +49,21 @@ export default function LearnAI() {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [chatHistory, setChatHistory] = useState<{question: string, answer: string}[]>([])
+
+  // Notes Summarizer states
+  const [summaryText, setSummaryText] = useState('')
+  const [summary, setSummary] = useState<Summary | null>(null)
+
+  // Practice Tests states
+  const [testContent, setTestContent] = useState('')
+  const [practiceTest, setPracticeTest] = useState<PracticeTest | null>(null)
+  const [testInProgress, setTestInProgress] = useState(false)
+  const [testCurrentQuestion, setTestCurrentQuestion] = useState(0)
+  const [testSelectedAnswer, setTestSelectedAnswer] = useState<number | null>(null)
+  const [testShowResults, setTestShowResults] = useState(false)
+  const [testScore, setTestScore] = useState(0)
+  const [timeRemaining, setTimeRemaining] = useState(0)
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
 
   const generateFlashcards = async () => {
     if (!notes.trim()) return
@@ -109,6 +137,110 @@ export default function LearnAI() {
     setLoading(false)
   }
 
+  const generateSummary = async () => {
+    if (!summaryText.trim()) return
+    
+    setLoading(true)
+    try {
+      const response = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: summaryText }) // Changed from summaryText to text
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(`Error from API: ${JSON.stringify(data)}`)
+      }
+      
+      if (data.summary) {
+        setSummary(data.summary)
+      }
+    } catch (error) {
+      console.error('Error generating summary:', error)
+    }
+    setLoading(false)
+  }
+
+  const generatePracticeTest = async () => {
+    if (!testContent.trim()) return
+    
+    setLoading(true)
+    try {
+      const response = await fetch('/api/practice-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: testContent }) // Changed from testContent to text
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(`Error from API: ${JSON.stringify(data)}`)
+      }
+      
+      if (data.test) {
+        setPracticeTest(data.test)
+      }
+    } catch (error) {
+      console.error('Error generating practice test:', error)
+    }
+    setLoading(false)
+  }
+
+  const startPracticeTest = () => {
+    if (!practiceTest) return
+    
+    setTestInProgress(true)
+    setTestCurrentQuestion(0)
+    setTestSelectedAnswer(null)
+    setTestShowResults(false)
+    setTestScore(0)
+    setTimeRemaining(practiceTest.timeLimit * 60) // Convert minutes to seconds
+    
+    const interval = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          setTestShowResults(true)
+          setTestInProgress(false)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    
+    setTimerInterval(interval)
+  }
+
+  const selectTestAnswer = (answerIndex: number) => {
+    if (!practiceTest) return
+    
+    setTestSelectedAnswer(answerIndex)
+    
+    if (answerIndex === practiceTest.questions[testCurrentQuestion].correct) {
+      setTestScore(testScore + 1)
+    }
+    
+    setTimeout(() => {
+      if (testCurrentQuestion < practiceTest.questions.length - 1) {
+        setTestCurrentQuestion(testCurrentQuestion + 1)
+        setTestSelectedAnswer(null)
+      } else {
+        if (timerInterval) clearInterval(timerInterval)
+        setTestShowResults(true)
+        setTestInProgress(false)
+      }
+    }, 1500)
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
   const nextCard = () => {
     if (currentCard < flashcards.length - 1) {
       setCurrentCard(currentCard + 1)
@@ -151,16 +283,18 @@ export default function LearnAI() {
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex flex-wrap justify-center gap-2">
             {[
               { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
               { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' },
+              { id: 'summarizer', label: '📄 Summarizer', desc: 'Summarize Notes' },
+              { id: 'practice-test', label: '🎯 Practice Test', desc: 'Full Exams' }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
+                className={`px-4 py-3 rounded-lg transition-all ${
                   activeTab === tab.id
                     ? 'bg-white text-purple-600 shadow-lg'
                     : 'text-white hover:bg-white/10'
@@ -374,8 +508,233 @@ export default function LearnAI() {
               </div>
             </div>
           )}
+
+          {/* Notes Summarizer Tab */}
+          {activeTab === 'summarizer' && (
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-white mb-4">📄 Notes Summarizer</h2>
+              
+              {!summary ? (
+                <div>
+                  <textarea
+                    value={summaryText}
+                    onChange={(e) => setSummaryText(e.target.value)}
+                    placeholder="Paste your lengthy notes, PDFs content, or study materials here and I'll create a concise summary with key points..."
+                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  />
+                  <button
+                    onClick={generateSummary}
+                    disabled={loading || !summaryText.trim()}
+                    className="mt-4 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Summarizing...' : 'Generate Summary'}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="bg-white/20 rounded-lg p-6">
+                    <h3 className="text-xl font-bold text-white mb-4">📋 {summary.title}</h3>
+                    <p className="text-white/90 leading-relaxed">{summary.summary}</p>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white/20 rounded-lg p-6">
+                      <h4 className="text-lg font-bold text-white mb-3">🔑 Key Points</h4>
+                      <ul className="space-y-2">
+                        {summary.keyPoints.map((point, index) => (
+                          <li key={index} className="text-white/90 flex items-start">
+                            <span className="text-yellow-300 mr-2">•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-white/20 rounded-lg p-6">
+                      <h4 className="text-lg font-bold text-white mb-3">💡 Main Concepts</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {summary.mainConcepts.map((concept, index) => (
+                          <span key={index} className="bg-blue-500/30 text-white px-3 py-1 rounded-full text-sm">
+                            {concept}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={() => setSummary(null)}
+                      className="px-6 py-3 bg-red-500 text-white rounded-lg"
+                    >
+                      New Summary
+                    </button>
+                    <button
+                      onClick={() => {
+                        setNotes(summaryText)
+                        setActiveTab('flashcards')
+                      }}
+                      className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    >
+                      Create Flashcards
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Practice Test Tab */}
+          {activeTab === 'practice-test' && (
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-white mb-4">🎯 Practice Test Generator</h2>
+              
+              {!practiceTest && !testInProgress && !testShowResults ? (
+                <div>
+                  <textarea
+                    value={testContent}
+                    onChange={(e) => setTestContent(e.target.value)}
+                    placeholder="Paste your study materials here and I'll create a comprehensive practice test with multiple question types..."
+                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  />
+                  <button
+                    onClick={generatePracticeTest}
+                    disabled={loading || !testContent.trim()}
+                    className="mt-4 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Creating Test...' : 'Generate Practice Test'}
+                  </button>
+                </div>
+              ) : practiceTest && !testInProgress && !testShowResults ? (
+                <div className="text-center space-y-6">
+                  <div className="bg-white/20 rounded-lg p-6">
+                    <h3 className="text-2xl font-bold text-white mb-4">Practice Test Ready!</h3>
+                    <div className="grid md:grid-cols-3 gap-4 text-white">
+                      <div className="bg-blue-500/30 rounded-lg p-4">
+                        <div className="text-2xl font-bold">{practiceTest.questions.length}</div>
+                        <div className="text-sm opacity-75">Questions</div>
+                      </div>
+                      <div className="bg-green-500/30 rounded-lg p-4">
+                        <div className="text-2xl font-bold">{practiceTest.timeLimit}</div>
+                        <div className="text-sm opacity-75">Minutes</div>
+                      </div>
+                      <div className="bg-purple-500/30 rounded-lg p-4">
+                        <div className="text-2xl font-bold">{practiceTest.difficulty}</div>
+                        <div className="text-sm opacity-75">Difficulty</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={() => setPracticeTest(null)}
+                      className="px-6 py-3 bg-red-500 text-white rounded-lg"
+                    >
+                      Create New Test
+                    </button>
+                    <button
+                      onClick={startPracticeTest}
+                      className="px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold"
+                    >
+                      Start Test
+                    </button>
+                  </div>
+                </div>
+              ) : testInProgress ? (
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="text-white">
+                      Question {testCurrentQuestion + 1} of {practiceTest?.questions.length}
+                    </div>
+                    <div className="bg-red-500/30 text-white px-4 py-2 rounded-lg font-bold">
+                      ⏰ {formatTime(timeRemaining)}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      {practiceTest?.questions[testCurrentQuestion]?.question}
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {practiceTest?.questions[testCurrentQuestion]?.options.map((option, index) => (
+                        <button
+                          key={index}
+                          onClick={() => selectTestAnswer(index)}
+                          disabled={testSelectedAnswer !== null}
+                          className={`w-full p-4 text-left rounded-lg transition-all ${
+                            testSelectedAnswer === null
+                              ? 'bg-white/20 text-white hover:bg-white/30'
+                              : testSelectedAnswer === index
+                              ? index === practiceTest?.questions[testCurrentQuestion].correct
+                                ? 'bg-green-500/50 text-white'
+                                : 'bg-red-500/50 text-white'
+                              : index === practiceTest?.questions[testCurrentQuestion].correct
+                              ? 'bg-green-500/50 text-white'
+                              : 'bg-white/10 text-white/60'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {testSelectedAnswer !== null && (
+                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
+                        <p className="text-white font-medium">Explanation:</p>
+                        <p className="text-white/90">{practiceTest?.questions[testCurrentQuestion]?.explanation}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : testShowResults ? (
+                <div className="text-center space-y-6">
+                  <h3 className="text-3xl font-bold text-white mb-4">Test Complete!</h3>
+                  <div className="bg-white/20 rounded-lg p-6">
+                    <div className="grid md:grid-cols-2 gap-6 text-white">
+                      <div>
+                        <div className="text-4xl font-bold text-green-400">{testScore}/{practiceTest?.questions.length}</div>
+                        <div className="text-lg">Final Score</div>
+                      </div>
+                      <div>
+                        <div className="text-4xl font-bold text-blue-400">
+                          {Math.round((testScore / (practiceTest?.questions.length || 1)) * 100)}%
+                        </div>
+                        <div className="text-lg">Percentage</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={() => {
+                        setPracticeTest(null)
+                        setTestShowResults(false)
+                        setTestScore(0)
+                      }}
+                      className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    >
+                      Create New Test
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTestInProgress(false)
+                        setTestShowResults(false)
+                        setTestCurrentQuestion(0)
+                        setTestSelectedAnswer(null)
+                        setTestScore(0)
+                      }}
+                      className="px-6 py-3 bg-green-500 text-white rounded-lg"
+                    >
+                      Retake Test
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
-} 
+}
