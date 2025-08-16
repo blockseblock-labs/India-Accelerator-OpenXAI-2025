@@ -31,7 +31,7 @@ Notes: ${notes}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'llama3.1:8b',
         prompt: prompt,
         stream: false,
       }),
