@@ -234,16 +234,20 @@ export default function Home() {
       </div>
 
       {/* Control Panel */}
-      <div className="absolute top-4 left-4 z-20">
+
+
+      <div className="bg-slate-600 absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
+          <h2 className="text-xl font-bold mb-2">Earth Controller AI</h2>
           
           {/* Simulation Controls */}
+
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setIsSimulationRunning(!isSimulationRunning)}
               disabled={isProcessing}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded"
+              className="flex items-center gap-2 px-3 py-2
+               bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded"
             >
               {isSimulationRunning ? <Pause size={16} /> : <Play size={16} />}
               {isSimulationRunning ? 'Pause' : 'Start'} Auto-Simulation
@@ -254,6 +258,7 @@ export default function Home() {
             >
               <RotateCcw size={16} />
               Reset Earth
+
             </button>
           </div>
 
@@ -281,6 +286,7 @@ export default function Home() {
           </form>
 
           {/* Example Commands */}
+
           <div className="mb-4">
             <h3 className="text-sm font-semibold mb-2 text-gray-300">Example Commands:</h3>
             <div className="max-h-32 overflow-y-auto space-y-1">
@@ -298,11 +304,13 @@ export default function Home() {
           </div>
 
           {/* AI Thinking Log */}
+
           {aiThinkingLog.length > 0 && (
             <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+              <h3 className="text-sm font-semibold mb-2
+               text-gray-300 flex items-center gap-2">
                 <Brain size={14} />
-                AI Analysis:
+                AI Analysis::
               </h3>
               <div className="space-y-1">
                 {aiThinkingLog.map((step, index) => (
@@ -316,6 +324,7 @@ export default function Home() {
           )}
 
           {/* Current Analysis */}
+
           {currentAnalysis && (
             <div className="mb-4">
               <h3 className="text-sm font-semibold mb-2 text-gray-300">Impact Analysis:</h3>
@@ -330,7 +339,8 @@ export default function Home() {
       </div>
 
       {/* Metrics Panel */}
-      <div className="absolute top-4 right-4 z-20">
+
+      <div className="absolute top-4 right-4 z-30">
         <MetricsPanel metrics={metrics} pollutionLevel={pollutionLevel} />
       </div>
 
@@ -339,13 +349,17 @@ export default function Home() {
         <div className="metrics-panel rounded-lg p-4 max-w-md">
           <h3 className="text-sm font-semibold mb-2 text-gray-300">Recent AI Requests:</h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
+
             {commandHistory.map((cmd, index) => (
               <div key={index} className="text-xs border-l-2 border-blue-500 pl-2">
+
                 <div className="text-gray-400 mb-1">
                   <span className="font-semibold">{cmd.model}</span> • {cmd.responseTime.toFixed(1)}s
                 </div>
+
                 <div className="text-gray-300 mb-1">{cmd.command}</div>
                 <div className="text-gray-500 text-xs">{cmd.timestamp.toLocaleTimeString()}</div>
+
               </div>
             ))}
             {commandHistory.length === 0 && (
@@ -362,13 +376,16 @@ export default function Home() {
           <select
             value={selectedModel}
             onChange={(e) => setSelectedModel('llama3.2:1b')}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white text-sm disabled:bg-gray-700"
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded
+             text-white text-sm disabled:bg-gray-700"
           >
             {availableModels.map((model) => (
+
               <option key={model.id} value={model.id} disabled={model.disabled}>
                 {model.name} - {model.description}
               </option>
             ))}
+            
           </select>
         </div>
       </div>
