@@ -4,26 +4,21 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 255; /* Blue */
+  --background-end-rgb: 0, 0, 255;   /* Blue */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-start-rgb: 0, 0, 139; /* Darker Blue for dark mode */
+    --background-end-rgb: 0, 0, 139;   /* Darker Blue for dark mode */
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: blue !important; /* Force blue background */
+  color: white; /* Adjust text color for contrast */
 }
 
 /* Custom educational theme */
@@ -58,16 +53,16 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #0000ff 0%, #1e90ff 100%); /* Updated to blue shades */
   color: white;
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg, #0000ff 0%, #1e90ff 100%); /* Updated to blue shades */
   color: white;
   transform: rotateY(180deg);
 }
@@ -89,4 +84,10 @@ body {
 .quiz-option.incorrect {
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   color: white;
-} 
+}
+
+/* New gradient background class */
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #3b82f6, #60a5fa, #2563eb);
+  min-height: 100vh;
+}
