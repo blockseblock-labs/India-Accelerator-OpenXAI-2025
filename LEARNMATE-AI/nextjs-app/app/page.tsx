@@ -13,6 +13,26 @@ interface QuizQuestion {
   correct: number
   explanation: string
 }
+async function generateFlashcards(text: string) {
+  try {
+    const response = await fetch("/api/flashcards", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Flashcards:", data);
+    return data;
+  } catch (error) {
+    console.error("Error generating flashcards:", error);
+  }
+}
+
 
 export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
