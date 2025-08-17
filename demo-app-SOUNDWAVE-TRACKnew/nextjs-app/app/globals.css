@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root color variables */
+:root {
+  --foreground-rgb: 17, 24, 39; /* dark slate */
+  --background-start-rgb: 236, 72, 153; /* pink */
+  --background-end-rgb: 14, 165, 233;   /* blue */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 30, 41, 59;  /* slate dark */
+    --background-end-rgb: 17, 24, 39;
+  }
+}
+
+/* Body with gradient background */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      135deg,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Glass effect container */
+.container {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* Audio visualization styles */
+.audio-visualizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  height: 60px;
+}
+
+.audio-bar {
+  width: 5px;
+  background: linear-gradient(to top, #8b5cf6, #06b6d4);
+  border-radius: 4px;
+  animation: audioWave 1s ease-in-out infinite;
+}
+
+/* Animate bars at slightly different speeds for realism */
+.audio-bar:nth-child(1) { animation-delay: 0s; }
+.audio-bar:nth-child(2) { animation-delay: 0.2s; }
+.audio-bar:nth-child(3) { animation-delay: 0.4s; }
+.audio-bar:nth-child(4) { animation-delay: 0.6s; }
+.audio-bar:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes audioWave {
+  0% { height: 10px; }
+  50% { height: 50px; }
+  100% { height: 15px; }
+}
