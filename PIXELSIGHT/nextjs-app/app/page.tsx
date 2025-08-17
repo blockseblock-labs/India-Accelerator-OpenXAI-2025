@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Camera, Upload, Eye, Zap } from 'lucide-react'
+import { Camera, Upload, Eye, Zap, Download } from 'lucide-react'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -40,6 +42,76 @@ export default function Home() {
       setAnalysis('❌ Error analyzing image. Please try again.')
     } finally {
       setIsAnalyzing(false)
+    }
+  }
+
+  const downloadPDF = async () => {
+    if (!selectedImage || !analysis) return
+
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      
+      // Add title
+      pdf.setFontSize(24)
+      pdf.setFont('helvetica', 'bold')
+      pdf.text('🎮 PIXEL SIGHT - AI Analysis Report', pageWidth / 2, 20, { align: 'center' })
+      
+      // Add date
+      pdf.setFontSize(12)
+      pdf.setFont('helvetica', 'normal')
+      const date = new Date().toLocaleDateString()
+      pdf.text(`Generated on: ${date}`, pageWidth / 2, 30, { align: 'center' })
+      
+      let yPosition = 50
+      
+      // Add image if available
+      if (selectedImage) {
+        try {
+          // Convert base64 to image and add to PDF
+          const imgData = selectedImage
+          const imgWidth = 120
+          const imgHeight = 80
+          const xPosition = (pageWidth - imgWidth) / 2
+          
+          pdf.addImage(imgData, 'JPEG', xPosition, yPosition, imgWidth, imgHeight)
+          yPosition += imgHeight + 20
+        } catch (imgError) {
+          console.error('Error adding image to PDF:', imgError)
+        }
+      }
+      
+      // Add analysis section
+      pdf.setFontSize(16)
+      pdf.setFont('helvetica', 'bold')
+      pdf.text('🤖 AI Analysis:', 20, yPosition)
+      yPosition += 15
+      
+      // Add analysis text with word wrapping
+      pdf.setFontSize(11)
+      pdf.setFont('helvetica', 'normal')
+      const splitAnalysis = pdf.splitTextToSize(analysis, pageWidth - 40)
+      
+      for (let i = 0; i < splitAnalysis.length; i++) {
+        if (yPosition > pageHeight - 20) {
+          pdf.addPage()
+          yPosition = 20
+        }
+        pdf.text(splitAnalysis[i], 20, yPosition)
+        yPosition += 6
+      }
+      
+      // Add footer
+      pdf.setFontSize(10)
+      pdf.setFont('helvetica', 'italic')
+      pdf.text('Made with ❤️ by Samarth Ghante', pageWidth / 2, pageHeight - 10, { align: 'center' })
+      
+      // Save the PDF
+      pdf.save('pixel-sight-analysis.pdf')
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('Error generating PDF. Please try again.')
     }
   }
 
@@ -147,10 +219,18 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-center">
+                <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <div className="bg-green-500 text-white px-4 md:px-6 py-2 rounded-full border-4 border-green-700 font-bold text-sm md:text-base">
                     ⭐ ANALYSIS COMPLETE! ⭐
                   </div>
+                  <button
+                    onClick={downloadPDF}
+                    className="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-4 md:px-6 py-2 md:py-3 rounded-full border-4 border-purple-900 font-bold text-sm md:text-base transition-all transform hover:scale-105 shadow-lg"
+                    style={{fontFamily: 'Impact, Arial Black, sans-serif'}}
+                  >
+                    <Download size={18} />
+                    <span>📄 DOWNLOAD PDF</span>
+                  </button>
                 </div>
               </div>
             ) : (
