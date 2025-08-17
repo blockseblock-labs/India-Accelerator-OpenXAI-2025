@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { TypeAnimation } from 'react-type-animation';
+import FloatingCard from "./FloatingCard";
+
 
 interface Flashcard {
   front: string
@@ -15,6 +18,30 @@ interface QuizQuestion {
 }
 
 export default function LearnAI() {
+
+const ExampleComponent = () => {
+  return (
+    <TypeAnimation
+      sequence={[
+        // Same substring at the start will only be typed out once, initially
+        'AI-Powered Educational Tools',
+        1000, // wait 1s before replacing "Mice" with "Hamsters"
+        'AI-Powered Educational Technology',
+        1000,
+        'AI-Powered Educational Way',
+        1000,
+        'AI-Powered Educational Solutions',
+        1000
+      ]}
+      wrapper="span"
+      speed={50}
+      repeat={Infinity}
+    />
+  );
+};
+
+
+
   const [activeTab, setActiveTab] = useState('flashcards')
   const [loading, setLoading] = useState(false)
   
@@ -146,7 +173,12 @@ export default function LearnAI() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <p className="text-black/80 text-lg">
+                    <ExampleComponent />
+                    <FloatingCard />
+</p>
+            
+
         </div>
 
         {/* Tabs */}
