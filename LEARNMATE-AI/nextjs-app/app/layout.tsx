@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'LearnAI - Educational AI Tools',
+  title: 'Studious - Educational AI Tools',
   description: 'AI-powered learning tools: Flashcard Maker, Quiz Generator, and Study Buddy',
 }
 

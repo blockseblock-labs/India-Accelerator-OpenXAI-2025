@@ -141,11 +141,11 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-yellow-500 to-green-500">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
+          <h1 className="text-5xl font-bold text-black mb-4">📚 Studious</h1>
           <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
         </div>
 
@@ -153,8 +153,8 @@ export default function LearnAI() {
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
+              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Create Flashcards' },
+              { id: 'quiz', label: '📝 Quiz', desc: 'Generate Quiz' },
               { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
             ].map(tab => (
               <button
@@ -162,7 +162,7 @@ export default function LearnAI() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg transition-all ${
                   activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
+                    ? 'bg-white text-blue-600 shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
               >
@@ -191,7 +191,7 @@ export default function LearnAI() {
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-brown-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
@@ -259,7 +259,7 @@ export default function LearnAI() {
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-brown-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
@@ -345,7 +345,7 @@ export default function LearnAI() {
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-brown-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
