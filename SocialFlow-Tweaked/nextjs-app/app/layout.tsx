@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Social Network AI - Social Media Tools',
+  title: 'SOCIAL NETWORK AI 🤖 - Social Media Tools',
   description: 'AI-powered social media tools: Caption Generator, Mood Checker, and Hashtag Suggestor',
 }
 

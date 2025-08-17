@@ -32,7 +32,7 @@ Example format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3:latest',
+        model: 'llama3',
         prompt: prompt,
         stream: false,
       }),

@@ -42,7 +42,7 @@ export default function SocialNetwork() {
         setGeneratedCaption(data.caption)
       }
     } catch (error) {
-      console.error('Error generating caption:', error)
+      console.error('This caption is MIA—just like my motivation on Mondays.', error)
     }
     setLoading(false)
   }
@@ -63,7 +63,7 @@ export default function SocialNetwork() {
         setMoodResult(data)
       }
     } catch (error) {
-      console.error('Error checking mood:', error)
+      console.error('GAH-! Your mood gave me ERROR 💀', error)
     }
     setLoading(false)
   }
@@ -84,7 +84,7 @@ export default function SocialNetwork() {
         setHashtags(data.hashtags)
       }
     } catch (error) {
-      console.error('Error suggesting hashtags:', error)
+      console.error('Oops. Even robots have bad days. Try again?', error)
     }
     setLoading(false)
   }
@@ -117,9 +117,9 @@ export default function SocialNetwork() {
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
-              { id: 'caption', label: '📸 Caption', desc: 'Generate Captions', gradient: 'instagram-gradient' },
-              { id: 'mood', label: '😊 Mood', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
-              { id: 'hashtags', label: '#️⃣ Hashtags', desc: 'Suggest Tags', gradient: 'social-gradient' }
+              { id: 'caption', label: '📸 Caption', desc: 'Spice Up Your Post🔥', gradient: 'instagram-gradient' },
+              { id: 'mood', label: '🕶 Vibe Check', desc: 'Slay your post', gradient: 'twitter-gradient' },
+              { id: 'hashtags', label: '#️⃣ Hashtag Sorcery', desc: 'Turning basic tags into viral gold.', gradient: 'social-gradient' }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -143,14 +143,14 @@ export default function SocialNetwork() {
           {activeTab === 'caption' && (
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">📸 Caption Generator</h2>
-                <p className="text-white/80 mb-6">Describe your image and get an Instagram-ready caption!</p>
+                <h2 className="text-2xl font-bold text-white mb-4">📸 Caption Generator *chop-chop*</h2>
+                <p className="text-white/80 mb-6">Describe your image and get an Instagram-ready caption to flex, Muahaha!</p>
                 
                 <div className="space-y-4">
                   <textarea
                     value={imageDescription}
                     onChange={(e) => setImageDescription(e.target.value)}
-                    placeholder="Describe your image... (e.g., 'Sunset at the beach with friends')"
+                    placeholder="Describe your pic… or let me guess: Another basic sunset? 🌅"
                     className="w-full h-32 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 resize-none"
                   />
                   
@@ -159,7 +159,7 @@ export default function SocialNetwork() {
                     disabled={loading || !imageDescription.trim()}
                     className="w-full px-6 py-3 instagram-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Generating Caption...' : 'Generate Caption ✨'}
+                    {loading ? '🕶 Generating Caption...meanwhile drink water' : 'Generate Caption? 👀✨'}
                   </button>
 
                   {generatedCaption && (
@@ -172,7 +172,7 @@ export default function SocialNetwork() {
                           captionCopied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
                         }`}
                       >
-                        {captionCopied ? 'Copied! ✓' : 'Copy Caption 📋'}
+                        {captionCopied ? 'Mission succesful 🕶 ✓' : 'Copy Caption before it disappear 🐢'}
                       </button>
                     </div>
                   )}
@@ -185,8 +185,8 @@ export default function SocialNetwork() {
           {activeTab === 'mood' && (
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">😊 Mood Checker</h2>
-                <p className="text-white/80 mb-6">Paste any text to analyze its emotional sentiment!</p>
+                <h2 className="text-2xl font-bold text-white mb-4">💅 Mood Checker</h2>
+                <p className="text-white/80 mb-6">Is your post giving main character or mid? Find out here! 🕶💥</p>
                 
                 <div className="space-y-4">
                   <textarea
@@ -201,7 +201,7 @@ export default function SocialNetwork() {
                     disabled={loading || !textToAnalyze.trim()}
                     className="w-full px-6 py-3 twitter-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Analyzing Mood...' : 'Check Mood 🔍'}
+                    {loading ? 'Analyzing Mood...' : 'Check Mood 🕵️‍♂️🔍'}
                   </button>
 
                   {moodResult && (
@@ -223,7 +223,7 @@ export default function SocialNetwork() {
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
                 <h2 className="text-2xl font-bold text-white mb-4">#️⃣ Hashtag Suggestor</h2>
-                <p className="text-white/80 mb-6">Enter keywords and get trending hashtags for your post!</p>
+                <p className="text-white/80 mb-6">I'll generate tags so fire, they’ll cancel your ex. 👁👄👁</p>
                 
                 <div className="space-y-4">
                   <input
@@ -240,7 +240,7 @@ export default function SocialNetwork() {
                     disabled={loading || !keywords.trim()}
                     className="w-full px-6 py-3 social-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Finding Hashtags...' : 'Suggest Hashtags 🏷️'}
+                    {loading ? 'Finding Hashtags 👁 ...' : 'Suggest Hashtags 🏷️'}
                   </button>
 
                   {hashtags.length > 0 && (
@@ -261,7 +261,7 @@ export default function SocialNetwork() {
                           hashtagsCopied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
                         }`}
                       >
-                        {hashtagsCopied ? 'Copied! ✓' : 'Copy All Hashtags 📋'}
+                        {hashtagsCopied ? 'Copied Like a Pro! ✓' : 'Copy All Hashtags 📋'}
                       </button>
                     </div>
                   )}
@@ -273,7 +273,7 @@ export default function SocialNetwork() {
 
         {/* Footer */}
         <div className="text-center mt-12 text-white/60">
-          <p>Perfect for Instagram, Twitter, TikTok, and all your social platforms! 🚀</p>
+          <p>Consulting the Council of Cringe… Stay on the line 😳</p>
         </div>
       </div>
     </div>
