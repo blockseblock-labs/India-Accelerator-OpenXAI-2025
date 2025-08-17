@@ -17,31 +17,41 @@ Classify the mood as one of these options: happy, sad, angry, excited, neutral, 
 
 Respond with ONLY the mood word, nothing else. Pick the best single word that describes the overall sentiment.`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    // Step 1: Get base URL from env or default to 11434
+    let baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434'
+
+    // Step 2: Check if current URL works, otherwise try 11435
+    try {
+      const test = await fetch(`${baseUrl}/api/tags`)
+      if (!test.ok) throw new Error()
+    } catch {
+      baseUrl = 'http://localhost:11435'
+    }
+
+    // Step 3: Make request to Ollama
+    const response = await fetch(`${baseUrl}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'llama3',
-        prompt: prompt,
+        prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      throw new Error(`Failed to get response from Ollama at ${baseUrl}`)
     }
 
     const data = await response.json()
-    
-    // Clean up the response to get just the mood
+
+    // Step 4: Clean up the response to get just the mood
     let mood = data.response?.toLowerCase().trim() || 'neutral'
-    
-    // Extract just the first word if there are multiple words
-    mood = mood.split(' ')[0]
-    
-    // Map to emoji
+    mood = mood.split(' ')[0] // First word only
+
+    // Step 5: Map to emoji
     const moodEmojis: { [key: string]: string } = {
       'happy': '😊',
       'sad': '😢',
@@ -52,12 +62,12 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
       'love': '😍',
       'frustrated': '😤'
     }
-    
+
     const emoji = moodEmojis[mood] || '😐'
-    
-    return NextResponse.json({ 
-      mood: mood,
-      emoji: emoji,
+
+    return NextResponse.json({
+      mood,
+      emoji,
       confidence: 'high'
     })
   } catch (error) {
@@ -67,4 +77,4 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
       { status: 500 }
     )
   }
-} 
+}
