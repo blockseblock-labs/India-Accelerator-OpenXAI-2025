@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 
 interface Flashcard {
@@ -15,7 +14,7 @@ interface QuizQuestion {
 }
 
 export default function LearnAI() {
-  const [activeTab, setActiveTab] = useState('flashcards')
+  const [activeTab, setActiveTab] = useState<'flashcards' | 'quiz' | 'study-buddy' | 'support'>('flashcards')
   const [loading, setLoading] = useState(false)
   
   // Flashcard states
@@ -34,44 +33,45 @@ export default function LearnAI() {
   
   // Study Buddy states
   const [question, setQuestion] = useState('')
-  const [answer, setAnswer] = useState('')
   const [chatHistory, setChatHistory] = useState<{question: string, answer: string}[]>([])
+
+  // Customer Support states
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [supportSubmitted, setSupportSubmitted] = useState(false)
 
   const generateFlashcards = async () => {
     if (!notes.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/flashcards', {
+      const res = await fetch('/api/flashcards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes })
       })
-      
-      const data = await response.json()
+      const data = await res.json()
       if (data.flashcards) {
         setFlashcards(data.flashcards)
         setCurrentCard(0)
         setFlipped(false)
       }
-    } catch (error) {
-      console.error('Error generating flashcards:', error)
+    } catch (e) {
+      console.error('Error generating flashcards:', e)
     }
     setLoading(false)
   }
 
   const generateQuiz = async () => {
     if (!quizText.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/quiz', {
+      const res = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: quizText })
       })
-      
-      const data = await response.json()
+      const data = await res.json()
       if (data.quiz) {
         setQuiz(data.quiz)
         setCurrentQuestion(0)
@@ -79,89 +79,102 @@ export default function LearnAI() {
         setShowResults(false)
         setScore(0)
       }
-    } catch (error) {
-      console.error('Error generating quiz:', error)
+    } catch (e) {
+      console.error('Error generating quiz:', e)
     }
     setLoading(false)
   }
 
   const askStudyBuddy = async () => {
     if (!question.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/study-buddy', {
+      const res = await fetch('/api/study-buddy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question })
       })
-      
-      const data = await response.json()
+      const data = await res.json()
       if (data.answer) {
-        const newChat = { question, answer: data.answer }
-        setChatHistory(prev => [...prev, newChat])
-        setAnswer(data.answer)
+        setChatHistory(prev => [...prev, { question, answer: data.answer }])
         setQuestion('')
       }
-    } catch (error) {
-      console.error('Error asking study buddy:', error)
+    } catch (e) {
+      console.error('Error asking study buddy:', e)
+    }
+    setLoading(false)
+  }
+
+  const handleSupportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!name || !email || !message) return
+    setLoading(true)
+    try {
+      await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      })
+      setSupportSubmitted(true)
+      setName('')
+      setEmail('')
+      setMessage('')
+    } catch (e) {
+      console.error('Error submitting support form:', e)
     }
     setLoading(false)
   }
 
   const nextCard = () => {
     if (currentCard < flashcards.length - 1) {
-      setCurrentCard(currentCard + 1)
+      setCurrentCard(c => c + 1)
       setFlipped(false)
     }
   }
 
   const prevCard = () => {
     if (currentCard > 0) {
-      setCurrentCard(currentCard - 1)
+      setCurrentCard(c => c - 1)
       setFlipped(false)
     }
   }
 
   const selectAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
-    
-    if (answerIndex === quiz[currentQuestion].correct) {
-      setScore(score + 1)
-    }
-    
+    if (answerIndex === quiz[currentQuestion].correct) setScore(s => s + 1)
     setTimeout(() => {
       if (currentQuestion < quiz.length - 1) {
-        setCurrentQuestion(currentQuestion + 1)
+        setCurrentQuestion(q => q + 1)
         setSelectedAnswer(null)
       } else {
         setShowResults(true)
       }
-    }, 1500)
+    }, 1200)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-400 via-black-300 to-black">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">LearnAI</h1>
           <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs (added Customer Support) */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex flex-wrap gap-2">
             {[
               { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
               { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' },
+              { id: 'support', label: '📩 Customer Support', desc: 'Contact Us' }
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => setActiveTab(tab.id as any)}
                 className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
+                  activeTab === (tab.id as any)
                     ? 'bg-white text-purple-600 shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
@@ -175,11 +188,10 @@ export default function LearnAI() {
 
         {/* Content */}
         <div className="max-w-4xl mx-auto">
-          {/* Flashcards Tab */}
+          {/* Flashcards */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
-              
               {flashcards.length === 0 ? (
                 <div>
                   <textarea
@@ -201,7 +213,7 @@ export default function LearnAI() {
                   <div className="mb-4 text-white">
                     Card {currentCard + 1} of {flashcards.length}
                   </div>
-                  
+
                   <div 
                     className={`flashcard ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
                     onClick={() => setFlipped(!flipped)}
@@ -243,11 +255,10 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Quiz Tab */}
+          {/* Quiz */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
-              
               {quiz.length === 0 && !showResults ? (
                 <div>
                   <textarea
@@ -271,11 +282,7 @@ export default function LearnAI() {
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
                   <button
-                    onClick={() => {
-                      setQuiz([])
-                      setShowResults(false)
-                      setScore(0)
-                    }}
+                    onClick={() => { setQuiz([]); setShowResults(false); setScore(0); setSelectedAnswer(null); setCurrentQuestion(0); }}
                     className="px-6 py-3 bg-blue-500 text-white rounded-lg"
                   >
                     Take Another Quiz
@@ -286,12 +293,10 @@ export default function LearnAI() {
                   <div className="mb-4 text-white">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
-                  
                   <div className="mb-6">
                     <h3 className="text-xl font-bold text-white mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
-                    
                     <div className="space-y-3">
                       {quiz[currentQuestion]?.options.map((option, index) => (
                         <button
@@ -314,7 +319,7 @@ export default function LearnAI() {
                         </button>
                       ))}
                     </div>
-                    
+
                     {selectedAnswer !== null && (
                       <div className="mt-4 p-4 bg-white/20 rounded-lg">
                         <p className="text-white font-medium">Explanation:</p>
@@ -327,34 +332,32 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Study Buddy Tab */}
+          {/* Study Buddy (kept by itself) */}
           {activeTab === 'study-buddy' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
-              
-              <div className="mb-6">
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
-                    onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
-                  />
-                  <button
-                    onClick={askStudyBuddy}
-                    disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? 'Thinking...' : 'Ask'}
-                  </button>
-                </div>
+
+              <div className="mb-6 flex gap-2">
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="Ask me anything you want to learn about..."
+                  className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
+                />
+                <button
+                  onClick={askStudyBuddy}
+                  disabled={loading || !question.trim()}
+                  className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Thinking...' : 'Ask'}
+                </button>
               </div>
 
               <div className="space-y-4 max-h-96 overflow-y-auto">
-                {chatHistory.map((chat, index) => (
-                  <div key={index} className="space-y-2">
+                {chatHistory.map((chat, i) => (
+                  <div key={i} className="space-y-2">
                     <div className="bg-blue-500/20 p-4 rounded-lg">
                       <p className="text-white font-medium">You:</p>
                       <p className="text-white/90">{chat.question}</p>
@@ -365,7 +368,6 @@ export default function LearnAI() {
                     </div>
                   </div>
                 ))}
-                
                 {chatHistory.length === 0 && (
                   <div className="text-center text-white/60 py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
@@ -374,8 +376,50 @@ export default function LearnAI() {
               </div>
             </div>
           )}
+
+          {/* Customer Support (separate tab) */}
+          {activeTab === 'support' && (
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-white mb-4">📩 Customer Support</h2>
+              {supportSubmitted ? (
+                <div className="text-center text-white">
+                  ✅ Thanks for contacting us! We’ll get back to you soon.
+                </div>
+              ) : (
+                <form onSubmit={handleSupportSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your Name"
+                    className="w-full p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your Email"
+                    className="w-full p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  />
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Your Message"
+                    className="w-full h-32 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading || !name || !email || !message}
+                    className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Sending...' : 'Send Message'}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
-} 
+}
