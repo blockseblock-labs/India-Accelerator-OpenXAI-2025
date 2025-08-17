@@ -16,6 +16,14 @@
   }
 }
 
+button {
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -26,7 +34,6 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* Audio visualization styles */
 .audio-visualizer {
   display: flex;
   align-items: flex-end;
