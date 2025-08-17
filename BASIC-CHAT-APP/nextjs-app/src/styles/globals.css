@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: theme('colors.chat-surface');
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-chat-bg text-chat-text antialiased;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .chat-input {
+    @apply bg-chat-surface border-chat-surface focus:border-chat-accent focus:outline-none focus:ring-2 focus:ring-chat-accent/20 transition-all duration-200;
+  }
+  
+  .chat-button {
+    @apply bg-chat-accent hover:bg-blue-600 focus:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-chat-accent/20 transition-all duration-200;
+  }
+  
+  .message-user {
+    @apply bg-chat-accent text-white;
+  }
+  
+  .message-bot {
+    @apply bg-chat-surface text-chat-text border border-gray-700;
+  }
+  
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.chat-surface') transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: theme('colors.chat-surface');
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.gray.600');
+  }
+}
