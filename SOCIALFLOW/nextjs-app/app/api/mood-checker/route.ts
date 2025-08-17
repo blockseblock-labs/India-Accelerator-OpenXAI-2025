@@ -23,7 +23,7 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3',
+        model: 'llama3:latest',
         prompt: prompt,
         stream: false,
       }),
