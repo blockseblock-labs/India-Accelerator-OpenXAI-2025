@@ -103,3 +103,59 @@ body {
   height: 100%;
   z-index: 1;
 } 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.5s forwards;
+}
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.35; }
+}
+.animate-pulse-slow {
+  animation: pulseSlow 3s infinite;
+}
+body {
+  background: linear-gradient(120deg, #1e3c72, #2a5298, #1e3c72);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.sun {
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #FFD700 0%, #FFA500 80%);
+  border-radius: 50%;
+  position: absolute;
+  top: 20%; /* base vertical position */
+  left: -10%; /* start offscreen left */
+  filter: drop-shadow(0 0 15px rgba(255, 200, 0, 0.7));
+  animation: sunMove 12s linear infinite;
+  transform: rotateX(20deg); /* gives slight 3D tilt */
+}
+
+@keyframes sunMove {
+  0% {
+    left: -10%;
+    top: 25%;
+    transform: rotateX(20deg);
+  }
+  50% {
+    left: 50%;
+    top: 15%;
+    transform: rotateX(20deg) scale(1.1); /* closer to viewer at mid-sky */
+  }
+  100% {
+    left: 110%;
+    top: 25%;
+    transform: rotateX(20deg);
+  }
+}
+
