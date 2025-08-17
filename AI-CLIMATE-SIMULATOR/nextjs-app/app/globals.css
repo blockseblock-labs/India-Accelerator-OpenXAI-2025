@@ -2,12 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --glow-color: 59, 130, 246;
+  --danger-color: 220, 38, 38;
+  --success-color: 22, 163, 74;
+  --ocean-blue: 14, 165, 233;
+  --forest-green: 21, 128, 61;
 }
 
+/* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -16,90 +23,113 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  overflow-x: hidden;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Globe container */
-.globe-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  background: radial-gradient(ellipse at center, #0c1445 0%, #000000 100%);
-  overflow: hidden;
-}
-
-/* Pollution overlay */
-.pollution-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* Metrics panel */
-.metrics-panel {
-  backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  max-width: 400px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-/* Animated background */
-.animated-bg {
-  background: linear-gradient(-45deg, #0c1445, #1e3a8a, #1e40af, #3b82f6);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
+/* Base Styles */
+@layer base {
+  html {
+    @apply h-full overflow-x-hidden scroll-smooth;
   }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-} 
 
-/* Ensure globe is always visible */
-.globe-container > div:first-child {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-} 
+  body {
+    @apply min-h-screen overflow-x-hidden;
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+      135deg,
+      rgb(var(--background-start-rgb)) 0%,
+      rgb(var(--background-end-rgb)) 100%
+    );
+    font-feature-settings: "kern";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Component Styles */
+@layer components {
+  .metrics-panel {
+    @apply backdrop-blur-xl bg-black/75 border border-white/10 
+           max-w-[400px] max-h-[80vh] overflow-y-auto 
+           shadow-lg transition-all duration-300 ease-in-out;
+  }
+
+  .metrics-panel:hover {
+    @apply border-blue-500/30 shadow-blue-500/20;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/10 border border-white/10 
+           shadow-lg transition-all duration-300;
+  }
+
+  .animated-bg {
+    @apply relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600;
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  .scrollbar {
+    @apply w-2.5;
+  }
+
+  .scrollbar-track {
+    @apply bg-gray-900 rounded;
+  }
+
+  .scrollbar-thumb {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 
+           rounded border-2 border-gray-900 
+           transition-colors duration-300;
+  }
+
+  .scrollbar-thumb:hover {
+    @apply from-blue-700 to-blue-800;
+  }
+
+  .globe-container {
+    @apply relative w-full h-screen overflow-hidden;
+    background: radial-gradient(circle at center, #0c1445 0%, #050816 50%, #000000 100%);
+    perspective: 1000px;
+  }
+
+  .globe-content {
+    @apply absolute inset-0 z-10;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+  }
+}
+
+/* Custom Animations */
+@layer utilities {
+  @keyframes gradientShift {
+    0%, 100% { 
+      background-position: 0% 50%; 
+    }
+    50% { 
+      background-position: 100% 50%; 
+    }
+  }
+
+  @keyframes pollutionPulse {
+    0%, 100% { 
+      opacity: 0.4; 
+    }
+    50% { 
+      opacity: 0.7; 
+    }
+  }
+
+  @keyframes shimmer {
+    0% { 
+      background-position: -200% 0; 
+    }
+    100% { 
+      background-position: 200% 0; 
+    }
+  }
+
+  .loading-shimmer {
+    @apply bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
