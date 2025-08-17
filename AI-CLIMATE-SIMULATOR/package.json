@@ -1,0 +1,12 @@
+{
+  "name": "ai-climate-simulator",
+  "version": "1.0.0",
+  "description": "**Dead-Earth** is an AI-controlled 3D globe simulation that demonstrates the devastating effects of pollution and climate change on our planet. Users give natural language commands to the AI, which calculates realistic environmental impacts and controls the Earth's health in real-time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
