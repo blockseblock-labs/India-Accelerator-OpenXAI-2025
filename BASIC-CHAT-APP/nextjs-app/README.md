@@ -92,7 +92,7 @@ Currently, the app uses a simulated Llama3 response system. To integrate with ac
    }
    ```
 
- Option 2: Cloud Llama3 API
+### Option 2: Cloud Llama3 API
 
 Replace the simulation function with your preferred cloud provider:
 
@@ -100,7 +100,7 @@ Replace the simulation function with your preferred cloud provider:
 - **OpenAI-compatible endpoints**
 - **Custom API endpoints**
 
-Option 3: Environment Variables
+### Option 3: Environment Variables
 
 Create a `.env.local` file:
 
@@ -114,20 +114,20 @@ LLAMA3_MODEL_NAME=llama3-model-name
 
 The app uses a custom design system built on Tailwind CSS:
 
-Colors
+### Colors
 - **Background**: `#0f0f23` (chat-bg)
 - **Surface**: `#1a1a3e` (chat-surface)
 - **Accent**: `#3b82f6` (chat-accent)
 - **Text**: `#e5e7eb` (chat-text)
 - **Muted Text**: `#9ca3af` (chat-text-muted)
 
- Components
+### Components
 - **Chat Messages**: Rounded corners with role-based styling
 - **Input Field**: Auto-expanding textarea with send button
 - **Loading Indicator**: Animated dots with thinking text
 - **Avatars**: Circular badges for user and AI
 
-📱 UI/UX Features
+## 📱 UI/UX Features
 
 - **Smooth Animations**: Slide-up animations for new messages
 - **Auto-expanding Input**: Textarea grows with content
@@ -136,8 +136,9 @@ Colors
 - **Timestamps**: Message time display
 - **Clear Chat**: Reset conversation functionality
 
-🛠️ Development
-Project Structure
+## 🛠️ Development
+
+### Project Structure
 ```
 src/
 ├── components/          # React components
@@ -157,35 +158,36 @@ src/
     └── chat.ts
 ```
 
-Build for Production
+### Build for Production
 
 ```bash
 npm run build
 npm start
 ```
 
-Customization
+### Customization
 
 1. **Styling**: Modify `tailwind.config.js` for custom colors and animations
 2. **Components**: Update components for different layouts or features
 3. **API Integration**: Replace simulation with real Llama3 API calls
 4. **Themes**: Add light/dark theme toggle functionality
 
-🔧 Configuration
+## 🔧 Configuration
 
-Tailwind Configuration
+### Tailwind Configuration
 The app includes custom Tailwind configuration for:
 - Custom color palette
 - Animation keyframes
 - Component classes
 - Responsive breakpoints
 
-TypeScript Configuration
+### TypeScript Configuration
 Strict TypeScript setup with:
 - Path aliases (`@/*` for `src/*`)
 - Next.js plugin integration
 - Type checking for all components
-📋 Todo
+
+## 📋 Todo
 
 - [ ] Real Llama3 API integration
 - [ ] Message persistence
