@@ -18,13 +18,11 @@ export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
   const [loading, setLoading] = useState(false)
   
-  // Flashcard states
   const [notes, setNotes] = useState('')
   const [flashcards, setFlashcards] = useState<Flashcard[]>([])
   const [currentCard, setCurrentCard] = useState(0)
   const [flipped, setFlipped] = useState(false)
   
-  // Quiz states
   const [quizText, setQuizText] = useState('')
   const [quiz, setQuiz] = useState<QuizQuestion[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -32,14 +30,18 @@ export default function LearnAI() {
   const [showResults, setShowResults] = useState(false)
   const [score, setScore] = useState(0)
   
-  // Study Buddy states
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [chatHistory, setChatHistory] = useState<{question: string, answer: string}[]>([])
+  const [mode, setMode] = useState<'normal' | 'eli5' | 'deepdive'>('normal')
+  const [sessionId] = useState(() =>
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2)
+  )
 
   const generateFlashcards = async () => {
     if (!notes.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/flashcards', {
@@ -47,7 +49,6 @@ export default function LearnAI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes })
       })
-      
       const data = await response.json()
       if (data.flashcards) {
         setFlashcards(data.flashcards)
@@ -62,7 +63,6 @@ export default function LearnAI() {
 
   const generateQuiz = async () => {
     if (!quizText.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/quiz', {
@@ -70,7 +70,6 @@ export default function LearnAI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: quizText })
       })
-      
       const data = await response.json()
       if (data.quiz) {
         setQuiz(data.quiz)
@@ -87,15 +86,13 @@ export default function LearnAI() {
 
   const askStudyBuddy = async () => {
     if (!question.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/study-buddy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({ question, mode, sessionId })
       })
-      
       const data = await response.json()
       if (data.answer) {
         const newChat = { question, answer: data.answer }
@@ -125,11 +122,9 @@ export default function LearnAI() {
 
   const selectAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
-    
     if (answerIndex === quiz[currentQuestion].correct) {
       setScore(score + 1)
     }
-    
     setTimeout(() => {
       if (currentQuestion < quiz.length - 1) {
         setCurrentQuestion(currentQuestion + 1)
@@ -143,13 +138,11 @@ export default function LearnAI() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
           <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
         </div>
 
-        {/* Tabs */}
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
@@ -173,13 +166,10 @@ export default function LearnAI() {
           </div>
         </div>
 
-        {/* Content */}
         <div className="max-w-4xl mx-auto">
-          {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
-              
               {flashcards.length === 0 ? (
                 <div>
                   <textarea
@@ -201,7 +191,6 @@ export default function LearnAI() {
                   <div className="mb-4 text-white">
                     Card {currentCard + 1} of {flashcards.length}
                   </div>
-                  
                   <div 
                     className={`flashcard ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
                     onClick={() => setFlipped(!flipped)}
@@ -215,7 +204,6 @@ export default function LearnAI() {
                       </div>
                     </div>
                   </div>
-
                   <div className="flex justify-between">
                     <button
                       onClick={prevCard}
@@ -243,11 +231,9 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
-              
               {quiz.length === 0 && !showResults ? (
                 <div>
                   <textarea
@@ -286,12 +272,10 @@ export default function LearnAI() {
                   <div className="mb-4 text-white">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
-                  
                   <div className="mb-6">
                     <h3 className="text-xl font-bold text-white mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
-                    
                     <div className="space-y-3">
                       {quiz[currentQuestion]?.options.map((option, index) => (
                         <button
@@ -314,7 +298,6 @@ export default function LearnAI() {
                         </button>
                       ))}
                     </div>
-                    
                     {selectedAnswer !== null && (
                       <div className="mt-4 p-4 bg-white/20 rounded-lg">
                         <p className="text-white font-medium">Explanation:</p>
@@ -327,11 +310,29 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
-              
+              <div className="mb-4 flex space-x-2">
+                <button
+                  onClick={() => setMode('normal')}
+                  className={`px-4 py-2 rounded-lg ${mode === 'normal' ? 'bg-white text-purple-600' : 'bg-white/20 text-white'}`}
+                >
+                  Normal
+                </button>
+                <button
+                  onClick={() => setMode('eli5')}
+                  className={`px-4 py-2 rounded-lg ${mode === 'eli5' ? 'bg-white text-purple-600' : 'bg-white/20 text-white'}`}
+                >
+                  ELI5
+                </button>
+                <button
+                  onClick={() => setMode('deepdive')}
+                  className={`px-4 py-2 rounded-lg ${mode === 'deepdive' ? 'bg-white text-purple-600' : 'bg-white/20 text-white'}`}
+                >
+                  Deep Dive
+                </button>
+              </div>
               <div className="mb-6">
                 <div className="flex space-x-2">
                   <input
@@ -351,7 +352,6 @@ export default function LearnAI() {
                   </button>
                 </div>
               </div>
-
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
@@ -365,7 +365,6 @@ export default function LearnAI() {
                     </div>
                   </div>
                 ))}
-                
                 {chatHistory.length === 0 && (
                   <div className="text-center text-white/60 py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
@@ -378,4 +377,4 @@ export default function LearnAI() {
       </div>
     </div>
   )
-} 
+}

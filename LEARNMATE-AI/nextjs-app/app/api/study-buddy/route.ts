@@ -1,46 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
+
+let sessionContext: { question: string; answer: string }[] = [];
 
 export async function POST(req: NextRequest) {
   try {
-    const { question } = await req.json()
+    const { question } = await req.json();
 
-    if (!question) {
-      return NextResponse.json(
-        { error: 'Question is required' },
-        { status: 400 }
-      )
-    }
+    const body = {
+      model: "llama3:latest",
+      prompt: question,
+      stream: false,
+    };
 
-    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
-
-Question: ${question}`
-
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
-      }),
-    })
+    const response = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      const errorText = await response.text();
+      console.error("Ollama API error:", response.status, errorText);
+      return NextResponse.json(
+        { error: "Ollama API failed", details: errorText },
+        { status: 500 }
+      );
     }
 
-    const data = await response.json()
-    
-    return NextResponse.json({ 
-      answer: data.response || 'I could not process your question. Please try again!' 
-    })
-  } catch (error) {
-    console.error('Study Buddy API error:', error)
+    const data = await response.json();
+
+    // Save Q&A in context
+    sessionContext.push({ question, answer: data.response });
+
+    return NextResponse.json({ answer: data.response, context: sessionContext });
+  } catch (err: any) {
+    console.error("Study buddy route error:", err);
     return NextResponse.json(
-      { error: 'Failed to get study buddy response' },
+      { error: "Internal server error", details: err.message },
       { status: 500 }
-    )
+    );
   }
-} 
+}
