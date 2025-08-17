@@ -44,26 +44,26 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-emerald-600 to-teal-600 p-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center text-white mb-12">
-          <h1 className="text-6xl font-bold mb-4">👁️ Vision Template</h1>
-          <p className="text-xl opacity-90">Analyze images with AI vision!</p>
+          <h1 className="text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-teal-300">PixelSight</h1>
+          <p className="text-lg text-white/80">AI-powered image understanding in a click.</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Image Upload Section */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 ring-1 ring-white/10 shadow-xl">
             <h2 className="text-2xl font-bold text-white mb-6">Upload Image</h2>
             
             <div className="space-y-4">
-              <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-white/30 border-dashed rounded-lg cursor-pointer hover:bg-white/5">
+              <label className="flex flex-col items-center justify-center w-full h-72 border-2 border-white/20 border-dashed rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   {selectedImage ? (
                     <img 
                       src={selectedImage} 
                       alt="Selected" 
-                      className="max-h-48 max-w-full rounded-lg"
+                      className="max-h-52 max-w-full rounded-lg shadow-md ring-1 ring-white/20"
                     />
                   ) : (
                     <>
@@ -87,22 +87,29 @@ export default function Home() {
                 <button
                   onClick={analyzeImage}
                   disabled={isAnalyzing}
-                  className="w-full flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="w-full flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow"
                 >
-                  <Eye size={20} />
-                  <span>{isAnalyzing ? 'Analyzing...' : 'Analyze Image'}</span>
+                  {isAnalyzing ? (
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                    </svg>
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                  <span>{isAnalyzing ? 'Analyzing…' : 'Analyze Image'}</span>
                 </button>
               )}
             </div>
           </div>
           
           {/* Analysis Results */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Analysis Results</h2>
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 ring-1 ring-white/10 shadow-xl">
+            <h2 className="text-2xl font-bold text-white mb-6">Analysis</h2>
             
             {analysis ? (
-              <div className="bg-black/20 rounded-lg p-6">
-                <p className="text-white leading-relaxed">{analysis}</p>
+              <div className="bg-black/20 rounded-xl p-6 ring-1 ring-white/10">
+                <p className="text-white/95 leading-relaxed">{analysis}</p>
               </div>
             ) : (
               <div className="text-center text-white/60 py-12">
@@ -112,13 +119,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        
-        <div className="mt-12 text-center">
-          <div className="bg-black/20 rounded-lg p-8 backdrop-blur-sm">
-            <h3 className="text-2xl font-bold text-white mb-4">Ready to build your vision app?</h3>
-            <p className="text-white/80">This template includes everything you need to get started with computer vision and image analysis.</p>
-          </div>
-        </div>
+
       </div>
     </main>
   )
