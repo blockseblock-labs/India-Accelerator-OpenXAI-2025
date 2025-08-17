@@ -141,7 +141,7 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -186,12 +186,12 @@ export default function LearnAI() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-lg border-0 bg-white text-black placeholder-black focus:ring-2 focus:ring-white/30"
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-purple-600 hover:bg-purple-900 text-white rounded-lg font-medium  disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
@@ -254,12 +254,12 @@ export default function LearnAI() {
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
                     placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-lg border-0 bg-white text-black placeholder-black focus:ring-2 focus:ring-white/30"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-purple-600 hover:bg-purple-900 text-white rounded-lg font-medium disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
@@ -339,13 +339,13 @@ export default function LearnAI() {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="flex-1 p-4 rounded-lg border-0 bg-white text-black placeholder-black focus:ring-2 focus:ring-white/30"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium  disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
@@ -367,7 +367,7 @@ export default function LearnAI() {
                 ))}
                 
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
+                  <div className="text-center text-white py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
                   </div>
                 )}
