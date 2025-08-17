@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Rajdhani } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const rajdhani = Rajdhani({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-rajdhani'
+})
 
 export const metadata: Metadata = {
-  title: 'LearnAI - Educational AI Tools',
-  description: 'AI-powered learning tools: Flashcard Maker, Quiz Generator, and Study Buddy',
+  title: 'LEARNMATE.AI - Neural Network Learning System',
+  description: 'Advanced AI-powered educational tools with retro cyberpunk interface: Flashcard Generator, Quiz Creator, and AI Study Assistant',
 }
 
 export default function RootLayout({
@@ -16,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
+      <body className={`${rajdhani.variable} font-rajdhani`}>{children}</body>
+          </html>
+    )
 } 

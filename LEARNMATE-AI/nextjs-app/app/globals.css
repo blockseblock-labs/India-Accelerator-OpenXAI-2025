@@ -2,45 +2,217 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 20, 20, 20;
+  --accent-red: 220, 38, 38;
+  --accent-red-dark: 185, 28, 28;
+  --grey-light: 75, 85, 99;
+  --grey-dark: 31, 41, 55;
+  --grey-darker: 17, 24, 39;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      135deg,
+      rgb(var(--background-start-rgb)) 0%,
+      rgb(var(--background-end-rgb)) 100%
+    );
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Retro Typography */
+.retro-title {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-shadow: 
+    0 0 10px rgba(220, 38, 38, 0.8),
+    0 0 20px rgba(220, 38, 38, 0.4),
+    0 0 30px rgba(220, 38, 38, 0.2);
 }
 
+.retro-subtitle {
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.retro-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+}
+
+/* Retro Button Styles */
+.retro-btn {
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid rgb(var(--accent-red));
+  background: linear-gradient(45deg, rgb(var(--accent-red)) 0%, rgb(var(--accent-red-dark)) 100%);
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 10px rgba(220, 38, 38, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.retro-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 5px 15px rgba(220, 38, 38, 0.4),
+    0 0 20px rgba(220, 38, 38, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.retro-btn:active {
+  transform: translateY(0);
+}
+
+.retro-btn-secondary {
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid rgb(var(--grey-light));
+  background: linear-gradient(45deg, rgb(var(--grey-dark)) 0%, rgb(var(--grey-darker)) 100%);
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 10px rgba(75, 85, 99, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.retro-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 5px 15px rgba(75, 85, 99, 0.4),
+    0 0 20px rgba(75, 85, 99, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Retro Card Styles */
+.retro-card {
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.9) 0%, 
+    rgba(17, 24, 39, 0.95) 100%);
+  border: 2px solid rgb(var(--accent-red));
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(220, 38, 38, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgb(var(--accent-red)) 50%, 
+    transparent 100%);
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Retro Input Styles */
+.retro-input {
+  font-family: 'Rajdhani', sans-serif;
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.8) 0%, 
+    rgba(17, 24, 39, 0.9) 100%);
+  border: 2px solid rgb(var(--grey-light));
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 0 10px rgba(75, 85, 99, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.retro-input:focus {
+  border-color: rgb(var(--accent-red));
+  box-shadow: 
+    0 0 15px rgba(220, 38, 38, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.retro-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Retro Tab Styles */
+.retro-tab {
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.8) 0%, 
+    rgba(17, 24, 39, 0.9) 100%);
+  border: 2px solid rgb(var(--grey-light));
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-tab.active {
+  background: linear-gradient(135deg, 
+    rgb(var(--accent-red)) 0%, 
+    rgb(var(--accent-red-dark)) 100%);
+  border-color: rgb(var(--accent-red));
+  color: white;
+  box-shadow: 
+    0 0 15px rgba(220, 38, 38, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.retro-tab:hover:not(.active) {
+  border-color: rgb(var(--accent-red));
+  color: white;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+}
+
+/* Flashcard Styles */
 .flashcard {
   perspective: 1000px;
+  margin: 20px 0;
 }
 
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 250px;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transform-style: preserve-3d;
 }
 
@@ -53,40 +225,157 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 30px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, 
+    rgba(220, 38, 38, 0.9) 0%, 
+    rgba(185, 28, 28, 0.95) 100%);
   color: white;
+  border: 2px solid rgb(var(--accent-red));
+  box-shadow: 
+    0 0 20px rgba(220, 38, 38, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.9) 0%, 
+    rgba(17, 24, 39, 0.95) 100%);
   color: white;
+  border: 2px solid rgb(var(--grey-light));
   transform: rotateY(180deg);
+  box-shadow: 
+    0 0 20px rgba(75, 85, 99, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+/* Quiz Option Styles */
 .quiz-option {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.8) 0%, 
+    rgba(17, 24, 39, 0.9) 100%);
+  border: 2px solid rgb(var(--grey-light));
+  color: white;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 10px rgba(75, 85, 99, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .quiz-option:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-color: rgb(var(--accent-red));
+  box-shadow: 
+    0 5px 15px rgba(220, 38, 38, 0.3),
+    0 0 20px rgba(220, 38, 38, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, 
+    rgba(34, 197, 94, 0.9) 0%, 
+    rgba(22, 163, 74, 0.95) 100%);
+  border-color: rgb(34, 197, 94);
   color: white;
+  box-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, 
+    rgba(220, 38, 38, 0.9) 0%, 
+    rgba(185, 28, 28, 0.95) 100%);
+  border-color: rgb(var(--accent-red));
   color: white;
-} 
+  box-shadow: 
+    0 0 20px rgba(220, 38, 38, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Chat Message Styles */
+.chat-message {
+  font-family: 'Rajdhani', sans-serif;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-message.user {
+  background: linear-gradient(135deg, 
+    rgba(220, 38, 38, 0.2) 0%, 
+    rgba(185, 28, 28, 0.3) 100%);
+  border: 2px solid rgba(220, 38, 38, 0.5);
+  color: white;
+}
+
+.chat-message.buddy {
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.8) 0%, 
+    rgba(17, 24, 39, 0.9) 100%);
+  border: 2px solid rgb(var(--grey-light));
+  color: white;
+}
+
+/* Loading Animation */
+.retro-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: rgb(var(--accent-red));
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Glitch Effect */
+.glitch {
+  position: relative;
+  animation: glitch 2s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .retro-title {
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+  }
+  
+  .flashcard-inner {
+    height: 200px;
+  }
+  
+  .flashcard-front, .flashcard-back {
+    padding: 20px;
+    font-size: 1rem;
+  }
+}
