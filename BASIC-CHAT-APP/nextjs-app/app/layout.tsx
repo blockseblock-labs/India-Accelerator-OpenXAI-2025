@@ -1,4 +1,5 @@
 import { Metadata, Viewport } from "next";
+import "./globals.css";
 
 import { siteConfig } from "@/config/site";
 
@@ -28,11 +29,11 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html>
-        <head />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body className="antialiased">
+        {children}
+      </body>
+    </html>
   );
 }
