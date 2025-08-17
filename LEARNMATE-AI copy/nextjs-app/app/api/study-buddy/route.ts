@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-let sessionContext: { question: string; answer: string }[] = [];
+let sessionContext: { question: string; answer: string; mode: string }[] = [];
+
+const modeInstructions: Record<string, string> = {
+  normal: "Answer clearly and concisely at a normal technical depth.",
+  eli5: "Explain this as if I am 5 years old. Use simple words and short sentences.",
+  dive: "Give a deep, detailed, technical explanation. Assume the reader wants expert-level depth.",
+};
 
 export async function POST(req: NextRequest) {
   try {
-    const { question } = await req.json();
+    const { question, mode = "normal" } = await req.json();
+
+    const instruction = modeInstructions[mode.toLowerCase()] || modeInstructions.normal;
 
     const body = {
       model: "llama3:latest",
-      prompt: question,
+      prompt: `${instruction}\n\nQuestion: ${question}`,
       stream: false,
     };
 
@@ -29,10 +37,13 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
 
-    // Save Q&A in context
-    sessionContext.push({ question, answer: data.response });
+    sessionContext.push({ question, answer: data.response, mode });
 
-    return NextResponse.json({ answer: data.response, context: sessionContext });
+    return NextResponse.json({ 
+      answer: data.response, 
+      mode, 
+      context: sessionContext 
+    });
   } catch (err: any) {
     console.error("Study buddy route error:", err);
     return NextResponse.json(
