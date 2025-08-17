@@ -74,77 +74,91 @@ export default function VoiceRecorder() {
   }
 
   return (
+<div className="space-y-8">
+  {/* Recording Controls */}
+  <div className="flex justify-center">
+    {!isRecording ? (
+      <button
+        onClick={startRecording}
+        className="flex items-center space-x-2 bg-gradient-to-r from-pink-500 to-red-600 hover:scale-105 text-white px-8 py-4 rounded-full shadow-lg font-bold transition-all"
+      >
+        <Mic size={20} />
+        <span>Start Recording</span>
+      </button>
+    ) : (
+      <button
+        onClick={stopRecording}
+        className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-full shadow-lg font-bold transition-all animate-pulse"
+      >
+        <Square size={20} />
+        <span>Stop Recording</span>
+      </button>
+    )}
+  </div>
+
+  {/* Recording Timer + Visualizer */}
+  {isRecording && (
+    <div className="text-center">
+      <div className="text-3xl font-mono text-white">{formatTime(recordingTime)}</div>
+      <div className="audio-visualizer mt-4">
+        <div className="audio-bar"></div>
+        <div className="audio-bar"></div>
+        <div className="audio-bar"></div>
+        <div className="audio-bar"></div>
+        <div className="audio-bar"></div>
+      </div>
+    </div>
+  )}
+
+  {/* Playback */}
+  {audioURL && (
     <div className="space-y-6">
-      {/* Recording Controls */}
-      <div className="flex justify-center space-x-4">
-        {!isRecording ? (
+      <audio
+        ref={audioRef}
+        src={audioURL}
+        onEnded={() => setIsPlaying(false)}
+        className="hidden"
+      />
+
+      <div className="flex justify-center">
+        {!isPlaying ? (
           <button
-            onClick={startRecording}
-            className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full transition-colors"
+            onClick={playAudio}
+            className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-105 text-white px-8 py-4 rounded-full shadow-lg font-bold transition-all"
           >
-            <Mic size={20} />
-            <span>Start Recording</span>
+            <Play size={20} />
+            <span>Play Recording</span>
           </button>
         ) : (
           <button
-            onClick={stopRecording}
-            className="flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full transition-colors"
+            onClick={pauseAudio}
+            className="flex items-center space-x-2 bg-gradient-to-r from-yellow-500 to-orange-600 hover:scale-105 text-white px-8 py-4 rounded-full shadow-lg font-bold transition-all"
           >
-            <Square size={20} />
-            <span>Stop Recording</span>
+            <Pause size={20} />
+            <span>Pause</span>
           </button>
         )}
       </div>
 
-      {/* Recording Timer */}
-      {isRecording && (
-        <div className="text-center">
-          <div className="text-2xl font-mono text-white">
-            {formatTime(recordingTime)}
-          </div>
-          <div className="flex justify-center mt-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          </div>
+      {/* Playback visualizer */}
+      {isPlaying && (
+        <div className="audio-visualizer">
+          <div className="audio-bar"></div>
+          <div className="audio-bar"></div>
+          <div className="audio-bar"></div>
+          <div className="audio-bar"></div>
+          <div className="audio-bar"></div>
         </div>
       )}
 
-      {/* Audio Playback */}
-      {audioURL && (
-        <div className="space-y-4">
-          <audio
-            ref={audioRef}
-            src={audioURL}
-            onEnded={() => setIsPlaying(false)}
-            className="hidden"
-          />
-          
-          <div className="flex justify-center space-x-4">
-            {!isPlaying ? (
-              <button
-                onClick={playAudio}
-                className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full transition-colors"
-              >
-                <Play size={20} />
-                <span>Play Recording</span>
-              </button>
-            ) : (
-              <button
-                onClick={pauseAudio}
-                className="flex items-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full transition-colors"
-              >
-                <Pause size={20} />
-                <span>Pause</span>
-              </button>
-            )}
-          </div>
-
-          <div className="bg-black/20 rounded-lg p-4">
-            <p className="text-white text-sm text-center opacity-80">
-              Recording saved! You can play it back or record a new one.
-            </p>
-          </div>
-        </div>
-      )}
+      <div className="bg-black/30 rounded-xl p-5 shadow-md text-center">
+        <p className="text-white/80 text-sm">
+          Recording saved! You can play it back or record a new one.
+        </p>
+      </div>
     </div>
+  )}
+</div>
+
   )
 } 
