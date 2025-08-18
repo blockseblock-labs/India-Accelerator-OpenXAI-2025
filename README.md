@@ -1,6 +1,6 @@
 # 📚 LearnAI Template
 
-A Next.js template for building educational AI applications! This template provides three powerful learning tools: Flashcard Maker, Quiz Generator, and Ask-Me Study Buddy.
+A Next.js template for building educational AI applications! This template provides three powerful learning tools: Flashcard Maker, Quiz Generator, and Ask-Me Study Buddy
 
 ## Features
 
@@ -19,7 +19,7 @@ A Next.js template for building educational AI applications! This template provi
 - **Interactive Learning**: Follow-up questions and clarifications
 - **Subject Agnostic**: Works for any topic or subject
 
-## 🚀 Getting Started
+## 🚀 Getting Start
 
 ### Installation
 
