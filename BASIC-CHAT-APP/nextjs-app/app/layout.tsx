@@ -1,38 +1,28 @@
-import { Metadata, Viewport } from "next";
+// app/layout.tsx
+import "./chat.css";
+import type { Metadata } from "next";
 
-import { siteConfig } from "@/config/site";
-
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
-  },
-};
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
-interface RootLayoutProps {
+// app/layout.tsx
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+}) {
   return (
-    <>
-      <html>
-        <head />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en">
+      <body
+        style={{
+          background: "linear-gradient(to bottom right, #0f172a, #1e293b, #000)",
+          color: "#f1f5f9",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {children}
+      </body>
+    </html>
   );
 }
+
