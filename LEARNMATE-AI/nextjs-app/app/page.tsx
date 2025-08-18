@@ -141,17 +141,17 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-emerald-50 to-rose-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-slate-800 mb-2">📚 LearnAI</h1>
+          <p className="text-slate-600 text-lg">AI-Powered Educational Tools</p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="bg-white/80 border border-slate-200 backdrop-blur-sm rounded-lg p-2 flex space-x-2 shadow-sm">
             {[
               { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
               { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
@@ -162,8 +162,8 @@ export default function LearnAI() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg transition-all ${
                   activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                    ? 'bg-white text-sky-700 shadow'
+                    : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 <div className="text-sm font-medium">{tab.label}</div>
@@ -177,8 +177,8 @@ export default function LearnAI() {
         <div className="max-w-4xl mx-auto">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+            <div className="bg-white/90 border border-slate-200 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-800 mb-4">🃏 Flashcard Maker</h2>
               
               {flashcards.length === 0 ? (
                 <div>
@@ -186,19 +186,19 @@ export default function LearnAI() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-sky-200"
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-sky-200 hover:bg-sky-300 text-sky-900 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-slate-600">
                     Card {currentCard + 1} of {flashcards.length}
                   </div>
                   
@@ -220,20 +220,20 @@ export default function LearnAI() {
                     <button
                       onClick={prevCard}
                       disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg disabled:opacity-50"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      className="px-4 py-2 bg-rose-200 hover:bg-rose-300 text-rose-900 rounded-lg"
                     >
                       New Flashcards
                     </button>
                     <button
                       onClick={nextCard}
                       disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg disabled:opacity-50"
                     >
                       Next
                     </button>
@@ -245,8 +245,8 @@ export default function LearnAI() {
 
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+            <div className="bg-white/90 border border-slate-200 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-800 mb-4">📝 Quiz Maker</h2>
               
               {quiz.length === 0 && !showResults ? (
                 <div>
@@ -254,20 +254,20 @@ export default function LearnAI() {
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
                     placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-sky-200"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-emerald-200 hover:bg-emerald-300 text-emerald-900 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
+                  <h3 className="text-3xl font-bold text-slate-800 mb-4">Quiz Complete!</h3>
+                  <p className="text-xl text-slate-700 mb-6">
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
                   <button
@@ -276,19 +276,19 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="px-6 py-3 bg-sky-200 hover:bg-sky-300 text-sky-900 rounded-lg"
                   >
                     Take Another Quiz
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-slate-600">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
                   
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
+                    <h3 className="text-xl font-bold text-slate-800 mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
                     
@@ -300,14 +300,14 @@ export default function LearnAI() {
                           disabled={selectedAnswer !== null}
                           className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
                             selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
+                              ? 'bg-slate-50 text-slate-800 hover:bg-slate-100'
                               : selectedAnswer === index
                               ? index === quiz[currentQuestion].correct
                                 ? 'correct'
                                 : 'incorrect'
                               : index === quiz[currentQuestion].correct
                               ? 'correct'
-                              : 'bg-white/10 text-white/60'
+                              : 'bg-slate-100 text-slate-500'
                           }`}
                         >
                           {option}
@@ -316,9 +316,9 @@ export default function LearnAI() {
                     </div>
                     
                     {selectedAnswer !== null && (
-                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                      <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <p className="text-slate-800 font-medium">Explanation:</p>
+                        <p className="text-slate-700">{quiz[currentQuestion]?.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -329,8 +329,8 @@ export default function LearnAI() {
 
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+            <div className="bg-white/90 border border-slate-200 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-800 mb-4">🤖 Ask-Me Study Buddy</h2>
               
               <div className="mb-6">
                 <div className="flex space-x-2">
@@ -339,13 +339,13 @@ export default function LearnAI() {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="flex-1 p-4 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-sky-200"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-violet-200 hover:bg-violet-300 text-violet-900 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
@@ -355,19 +355,19 @@ export default function LearnAI() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                    <div className="bg-sky-100 p-4 rounded-lg border border-sky-100">
+                      <p className="text-slate-800 font-medium">You:</p>
+                      <p className="text-slate-700">{chat.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                    <div className="bg-emerald-100 p-4 rounded-lg border border-emerald-100">
+                      <p className="text-slate-800 font-medium">Study Buddy:</p>
+                      <p className="text-slate-700">{chat.answer}</p>
                     </div>
                   </div>
                 ))}
                 
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
+                  <div className="text-center text-slate-500 py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
                   </div>
                 )}
