@@ -2,13 +2,41 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { text } = await req.json()
+    const { text, difficulty = "medium", previousScore } = await req.json()
 
     if (!text) {
       return NextResponse.json(
         { error: 'Text is required' },
         { status: 400 }
       )
+    }
+
+    let difficultyInstruction = ""
+    let timeLimit = 60
+    if (difficulty === "easy") {
+      difficultyInstruction = "Make questions simple with straightforward options."
+      timeLimit = 90
+    }
+    if (difficulty === "medium") {
+      difficultyInstruction = "Make questions moderately challenging with tricky distractors."
+      timeLimit = 60
+    }
+    if (difficulty === "hard") {
+      difficultyInstruction = "Make questions highly challenging with very close options."
+      timeLimit = 45
+    }
+
+    if (previousScore !== undefined) {
+      if (previousScore >= 80) {
+        difficultyInstruction = "Increase difficulty to hard"
+        timeLimit = 45
+      } else if (previousScore <= 40) {
+        difficultyInstruction = "Reduce difficulty to easy"
+        timeLimit = 90
+      } else {
+        difficultyInstruction = "Keep difficulty medium"
+        timeLimit = 60
+      }
     }
 
     const prompt = `Create a quiz from the following text. Generate 4-6 multiple choice questions in JSON format with the following structure:
@@ -22,8 +50,7 @@ export async function POST(req: NextRequest) {
     }
   ]
 }
-
-Make questions challenging but fair, with plausible distractors for incorrect options.
+${difficultyInstruction}
 
 Text: ${text}`
 
@@ -46,17 +73,13 @@ Text: ${text}`
     const data = await response.json()
     
     try {
-      // Try to parse JSON from the response
       const quizMatch = data.response.match(/\{[\s\S]*\}/)
       if (quizMatch) {
         const quizData = JSON.parse(quizMatch[0])
-        return NextResponse.json(quizData)
+        return NextResponse.json({ ...quizData, timeLimit })
       }
-    } catch (parseError) {
-      console.log('Could not parse JSON, returning formatted response')
-    }
+    } catch (parseError) {}
 
-    // Fallback: create a simple quiz structure
     return NextResponse.json({
       quiz: [
         {
@@ -65,13 +88,13 @@ Text: ${text}`
           correct: 0,
           explanation: data.response || 'Generated from your text'
         }
-      ]
+      ],
+      timeLimit
     })
   } catch (error) {
-    console.error('Quiz API error:', error)
     return NextResponse.json(
       { error: 'Failed to generate quiz' },
       { status: 500 }
     )
   }
-} 
+}
