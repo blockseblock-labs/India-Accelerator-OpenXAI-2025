@@ -255,6 +255,8 @@ export default function Home() {
               <RotateCcw size={16} />
               Reset Earth
             </button>
+
+
           </div>
 
           {/* Command Input */}
@@ -263,6 +265,9 @@ export default function Home() {
               <input
                 ref={inputRef}
                 type="text"
+
+
+                
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder="Type your environmental command..."
