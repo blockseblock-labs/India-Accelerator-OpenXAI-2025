@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    @layer base {
+      body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+    }
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -28,7 +36,7 @@ body {
 
 /* Custom educational theme */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #9cabf1 0%, #2e035a 100%);
 }
 
 .flashcard {
@@ -67,7 +75,7 @@ body {
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg, #ee7b8e 0%, #b11597 100%);
   color: white;
   transform: rotateY(180deg);
 }
