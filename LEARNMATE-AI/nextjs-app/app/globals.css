@@ -2,20 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 20, 20, 20;
-  --background-start-rgb: 10, 10, 10;
-  --background-end-rgb: 30, 0, 50; /* dark purple */
-  --accent-purple: #000000;
-  --accent-pink: #ffffff;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 240, 240, 240;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 15, 0, 30; /* deeper purple */
-  }
+:root {
+  --foreground-rgb: 240, 240, 240;
+  --background-start-rgb: 10, 10, 20;
+  --background-end-rgb: 30, 0, 50;
+  --accent-purple: #7e3ff2;
+  --accent-pink: #e05eff;
 }
 
 body {
@@ -70,10 +63,12 @@ body {
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+
 .flashcard-front {
   color: var(--accent-purple);
   font-weight: bold;
 }
+
 
 .flashcard-back {
   color: var(--accent-pink);
