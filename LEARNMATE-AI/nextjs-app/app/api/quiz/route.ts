@@ -1,14 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
+export const runtime = "nodejs";
+import { NextRequest, NextResponse } from "next/server";
+import Together from "together-ai";
+
+const together = new Together({
+  apiKey: process.env.TOGETHER_API_KEY, // stored in .env.local
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { text } = await req.json()
+    const { text } = await req.json();
 
     if (!text) {
       return NextResponse.json(
-        { error: 'Text is required' },
+        { error: "Text is required" },
         { status: 400 }
-      )
+      );
     }
 
     const prompt = `Create a quiz from the following text. Generate 4-6 multiple choice questions in JSON format with the following structure:
@@ -25,53 +31,48 @@ export async function POST(req: NextRequest) {
 
 Make questions challenging but fair, with plausible distractors for incorrect options.
 
-Text: ${text}`
+Text: ${text}`;
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
-      }),
-    })
+    // Call Together AI
+    const response = await together.chat.completions.create({
+      model: "deepseek-ai/DeepSeek-V3", // good model for text tasks
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
 
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
-    }
+    const rawOutput = response.choices[0]?.message?.content || "";
 
-    const data = await response.json()
-    
     try {
-      // Try to parse JSON from the response
-      const quizMatch = data.response.match(/\{[\s\S]*\}/)
+      // Try to extract JSON from model output
+      const quizMatch = rawOutput.match(/\{[\s\S]*\}/);
       if (quizMatch) {
-        const quizData = JSON.parse(quizMatch[0])
-        return NextResponse.json(quizData)
+        const quizData = JSON.parse(quizMatch[0]);
+        return NextResponse.json(quizData);
       }
     } catch (parseError) {
-      console.log('Could not parse JSON, returning formatted response')
+      console.error("JSON parse error:", parseError);
     }
 
-    // Fallback: create a simple quiz structure
+    // Fallback: at least return one question
     return NextResponse.json({
       quiz: [
         {
           question: "What is the main topic of the provided text?",
           options: ["Topic A", "Topic B", "Topic C", "Topic D"],
           correct: 0,
-          explanation: data.response || 'Generated from your text'
-        }
-      ]
-    })
+          explanation: rawOutput || "Generated from your text",
+        },
+      ],
+    });
   } catch (error) {
-    console.error('Quiz API error:', error)
+    console.error("Quiz API error:", error);
     return NextResponse.json(
-      { error: 'Failed to generate quiz' },
+      { error: "Failed to generate quiz" },
       { status: 500 }
-    )
+    );
   }
-} 
+}

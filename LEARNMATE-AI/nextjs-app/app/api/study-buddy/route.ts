@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Together from "together-ai"
+
+const together = new Together({
+  apiKey: process.env.TOGETHER_API_KEY, // make sure .env.local has TOGETHER_API_KEY=your_key_here
+})
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,31 +16,24 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
+    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. 
+    Provide explanations, examples, and encourage learning. Be friendly and supportive.
 
-Question: ${question}`
+    Question: ${question}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
-      }),
+    // Call Together AI
+    const response = await together.chat.completions.create({
+      model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo", // good model for Q&A
+      messages: [
+        { role: "user", content: prompt }
+      ],
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
-    }
-
-    const data = await response.json()
-    
     return NextResponse.json({ 
-      answer: data.response || 'I could not process your question. Please try again!' 
+      answer: response.choices[0]?.message?.content || 
+              "I could not process your question. Please try again!" 
     })
+
   } catch (error) {
     console.error('Study Buddy API error:', error)
     return NextResponse.json(
@@ -43,4 +41,4 @@ Question: ${question}`
       { status: 500 }
     )
   }
-} 
+}

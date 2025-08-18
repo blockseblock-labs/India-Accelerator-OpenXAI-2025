@@ -1,92 +1,83 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind base is already imported by Next's template */
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.nav-link {
+  @apply px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-100 transition;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* Reusable UI atoms */
+.btn-primary {
+  @apply inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-700 disabled:opacity-50 transition;
+}
+.btn-outline {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition;
+}
+.btn-danger {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.input {
+  @apply flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none;
+}
+.textarea {
+  @apply w-full h-40 p-4 rounded-lg border border-gray-300 bg-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none;
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.card {
+  @apply rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow transition;
+}
+.panel {
+  @apply bg-white/80 backdrop-blur rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm;
+}
+.panel-title {
+  @apply text-2xl md:text-3xl font-bold mb-4;
 }
 
-.flashcard {
+/* Chips */
+.chip {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:border-indigo-300 hover:text-indigo-700 transition;
+}
+.chip-active {
+  @apply border-indigo-500 text-indigo-700 shadow-sm;
+}
+
+/* Flip card */
+.flip-card {
   perspective: 1000px;
+  @apply h-48 md:h-56 cursor-pointer;
 }
-
-.flashcard-inner {
+.flip-card-inner {
   position: relative;
   width: 100%;
-  height: 200px;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.flashcard.flipped .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-.flashcard-front, .flashcard-back {
-  position: absolute;
-  width: 100%;
   height: 100%;
-  backface-visibility: hidden;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform-style: preserve-3d;
+  transition: transform .6s;
+  @apply rounded-xl;
 }
-
-.flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
-}
-
-.flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+.flip-card.is-flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
-
-.quiz-option {
-  transition: all 0.3s ease;
+.flip-card-face {
+  @apply rounded-xl flex items-center justify-center bg-white text-gray-900 p-5;
+}
+.flip-card-back {
+  @apply rounded-xl flex items-center justify-center bg-gray-100 text-gray-900 p-5;
 }
 
-.quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
 
-.quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+/* Quiz options */
+.option {
+  @apply w-full text-left px-4 py-3 rounded-lg border transition;
 }
+.option-idle { @apply bg-white hover:bg-gray-50 border-gray-300; }
+.option-correct { @apply bg-green-50 border-green-500 text-green-700; }
+.option-wrong { @apply bg-red-50 border-red-500 text-red-700; }
+.option-disabled { @apply bg-white border-gray-200 text-gray-400; }
 
-.quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+/* Simple chat bubbles */
+.bubble { @apply rounded-xl p-4 border; }
+.bubble.user { @apply bg-gray-100 border-gray-200; }
+.bubble.bot { @apply bg-indigo-50 border-indigo-200; }
+.bubble .label { @apply font-semibold text-sm mb-1 text-gray-700; }

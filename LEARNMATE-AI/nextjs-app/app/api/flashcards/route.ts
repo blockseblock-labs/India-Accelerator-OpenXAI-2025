@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Together from 'together-ai'
+
+const together = new Together({
+  apiKey: process.env.TOGETHER_API_KEY, // make sure this is in .env.local
+})
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,45 +30,35 @@ Focus on key concepts, definitions, and important facts. Make questions clear an
 
 Notes: ${notes}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
-      }),
+    // Call Together AI
+    const response = await together.chat.completions.create({
+      model: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', // good for text summarization
+      messages: [
+        { role: 'user', content: prompt }
+      ],
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
-    }
-
-    const data = await response.json()
-    
+    // Attempt to parse JSON from the model response
     try {
-      // Try to parse JSON from the response
-      const flashcardsMatch = data.response.match(/\{[\s\S]*\}/)
+      const flashcardsMatch = response.choices[0]?.message?.content?.match(/\{[\s\S]*\}/)
       if (flashcardsMatch) {
         const flashcardsData = JSON.parse(flashcardsMatch[0])
         return NextResponse.json(flashcardsData)
       }
     } catch (parseError) {
-      // If JSON parsing fails, return a structured response
-      console.log('Could not parse JSON, returning formatted response')
+      console.log('Could not parse JSON, returning fallback response')
     }
 
-    // Fallback: create a simple structure from the response
+    // Fallback response if parsing fails
     return NextResponse.json({
       flashcards: [
         {
-          front: "Generated from your notes",
-          back: data.response || 'No response from model'
-        }
-      ]
+          front: 'Generated from your notes',
+          back: response.choices[0]?.message?.content || 'No response from model',
+        },
+      ],
     })
+
   } catch (error) {
     console.error('Flashcards API error:', error)
     return NextResponse.json(
@@ -71,4 +66,4 @@ Notes: ${notes}`
       { status: 500 }
     )
   }
-} 
+}
