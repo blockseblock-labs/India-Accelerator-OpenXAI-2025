@@ -4,32 +4,32 @@ export async function POST(req: NextRequest) {
   try {
     const { message } = await req.json()
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('http://127.0.0.1:11434/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
-        prompt: message,
+        model: 'mistral',
+        messages: [{ role: 'user', content: message }],
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      throw new Error(`Ollama API error: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
-    
-    return NextResponse.json({ 
-      message: data.response || 'No response from model' 
+
+    return NextResponse.json({
+      message: data.message?.content || 'No response from model',
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Chat API error:', error)
     return NextResponse.json(
-      { error: 'Failed to process chat message' },
+      { error: error.message || 'Failed to process chat message' },
       { status: 500 }
     )
   }
-} 
+}
