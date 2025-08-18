@@ -1,147 +1,160 @@
-'use client'
+import React, { useState } from "react";
 
-import { Users, Thermometer, AlertTriangle, Droplets, Snowflake, Leaf, Zap } from 'lucide-react'
-
-interface EarthMetrics {
-  co2Level: number
-  toxicityLevel: number
-  temperature: number
-  humanPopulation: number
-  animalPopulation: number
-  plantPopulation: number
-  oceanAcidity: number
-  iceCapMelting: number
+interface EarthState {
+  temperature: number;
+  oceanPH: number;
+  iceLevel: number;
+  pollution: number;
+  forestCover: number;
+  freshwater: number;
+  airQuality: number;
+  renewableUsage: number;
 }
 
-interface MetricsPanelProps {
-  metrics: EarthMetrics
-  pollutionLevel: number
-}
+const App: React.FC = () => {
+  const [earth, setEarth] = useState<EarthState>({
+    temperature: 15,
+    oceanPH: 8.1,
+    iceLevel: 100,
+    pollution: 50,
+    forestCover: 70,
+    freshwater: 80,
+    airQuality: 60,
+    renewableUsage: 10,
+  });
 
-export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelProps) {
-  const formatNumber = (num: number) => {
-    if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B'
-    if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M'
-    if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K'
-    return num.toFixed(0)
-  }
+  const [policies, setPolicies] = useState({
+    renewableEnergy: false,
+    deforestation: false,
+    oceanCleanup: false,
+    industrialRegulation: false,
+    waterConservation: false,
+    reforestation: false,
+  });
 
-  const getHealthColor = (value: number, max: number, reverse = false) => {
-    const percentage = value / max
-    const adjustedPercentage = reverse ? 1 - percentage : percentage
-    
-    if (adjustedPercentage < 0.3) return 'text-green-400'
-    if (adjustedPercentage < 0.7) return 'text-yellow-400'
-    return 'text-red-400'
-  }
+  const togglePolicy = (policy: keyof typeof policies) => {
+    setPolicies((prev) => {
+      const updated = { ...prev, [policy]: !prev[policy] };
+
+      setEarth((prevEarth) => {
+        let newEarth = { ...prevEarth };
+
+        if (policy === "renewableEnergy") {
+          newEarth.pollution += updated[policy] ? -30 : 30;
+          newEarth.temperature += updated[policy] ? -2 : 2;
+          newEarth.renewableUsage += updated[policy] ? 20 : -20;
+          newEarth.airQuality += updated[policy] ? 15 : -15;
+        }
+        if (policy === "deforestation") {
+          newEarth.pollution += updated[policy] ? 40 : -40;
+          newEarth.iceLevel += updated[policy] ? -10 : 10;
+          newEarth.forestCover += updated[policy] ? -20 : 20;
+          newEarth.airQuality += updated[policy] ? -20 : 20;
+        }
+        if (policy === "oceanCleanup") {
+          newEarth.oceanPH += updated[policy] ? 0.3 : -0.3;
+          newEarth.pollution += updated[policy] ? -20 : 20;
+          newEarth.freshwater += updated[policy] ? 10 : -10;
+        }
+        if (policy === "industrialRegulation") {
+          newEarth.pollution += updated[policy] ? -40 : 40;
+          newEarth.temperature += updated[policy] ? -1 : 1;
+          newEarth.airQuality += updated[policy] ? 10 : -10;
+        }
+        if (policy === "waterConservation") {
+          newEarth.freshwater += updated[policy] ? 20 : -20;
+          newEarth.pollution += updated[policy] ? -10 : 10;
+        }
+        if (policy === "reforestation") {
+          newEarth.forestCover += updated[policy] ? 25 : -25;
+          newEarth.airQuality += updated[policy] ? 15 : -15;
+          newEarth.temperature += updated[policy] ? -1 : 1;
+        }
+
+        return {
+          ...newEarth,
+          pollution: Math.max(0, newEarth.pollution),
+          iceLevel: Math.min(100, Math.max(0, newEarth.iceLevel)),
+          forestCover: Math.min(100, Math.max(0, newEarth.forestCover)),
+          freshwater: Math.min(100, Math.max(0, newEarth.freshwater)),
+          renewableUsage: Math.min(100, Math.max(0, newEarth.renewableUsage)),
+          airQuality: Math.min(200, Math.max(0, newEarth.airQuality)),
+        };
+      });
+
+      return updated;
+    });
+  };
+
+  const getStatus = () => {
+    if (
+      earth.temperature > 25 ||
+      earth.pollution > 150 ||
+      earth.iceLevel < 40 ||
+      earth.forestCover < 30 ||
+      earth.freshwater < 40
+    ) {
+      return "⚠️ Critical – Earth is in danger!";
+    } else if (
+      earth.temperature > 20 ||
+      earth.pollution > 100 ||
+      earth.airQuality > 120
+    ) {
+      return "⚡ Warning – Conditions worsening.";
+    } else {
+      return "✅ Stable – Earth is in good condition.";
+    }
+  };
 
   return (
-    <div className="metrics-panel rounded-lg p-4 max-w-sm">
-      <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-        <AlertTriangle size={20} className="text-red-400" />
-        Earth Metrics
-      </h2>
-      
-      <div className="space-y-3">
-        {/* CO2 Levels */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap size={16} className="text-yellow-400" />
-            <span className="text-sm text-gray-300">CO₂ Level:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.co2Level, 2000, true)}`}>
-            {metrics.co2Level.toFixed(0)} ppm
-          </span>
-        </div>
+    <div className="min-h-screen bg-gradient-to-tr from-green-900 to-blue-900 text-white flex flex-col items-center p-10">
+      <h1 className="text-3xl font-bold mb-6">🌍 Advanced Earth Policy Controller</h1>
 
-        {/* Air Toxicity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Air Toxicity:</span>
+      {/* Policies Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl">
+        {Object.entries(policies).map(([key, value]) => (
+          <div
+            key={key}
+            className="bg-gray-800 p-3 rounded-xl shadow-md flex justify-between items-center"
+          >
+            <span className="capitalize font-medium text-sm">
+              {key.replace(/([A-Z])/g, " $1")}
+            </span>
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={value}
+                onChange={() => togglePolicy(key as keyof typeof policies)}
+              />
+              <div className="w-9 h-5 bg-gray-600 rounded-full peer peer-checked:bg-green-500 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:h-4 after:w-4 after:rounded-full after:transition-all peer-checked:after:translate-x-full"></div>
+            </label>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel, 100)}`}>
-            {metrics.toxicityLevel.toFixed(1)}%
-          </span>
-        </div>
+        ))}
+      </div>
 
-        {/* Temperature */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Thermometer size={16} className="text-orange-400" />
-            <span className="text-sm text-gray-300">Temperature:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.temperature, 50)}`}>
-            {metrics.temperature.toFixed(1)}°C
-          </span>
-        </div>
+      {/* Earth Metrics */}
+      <div className="mt-8 bg-black/40 p-4 rounded-xl w-full max-w-2xl">
+        <h2 className="text-xl font-bold mb-3">📊 Earth Metrics</h2>
+        <ul className="grid grid-cols-2 gap-2 text-sm">
+          <li>🌡️ Temperature: {earth.temperature.toFixed(1)} °C</li>
+          <li>🌊 Ocean pH: {earth.oceanPH.toFixed(2)}</li>
+          <li>🧊 Ice Level: {earth.iceLevel.toFixed(1)}%</li>
+          <li>🏭 Pollution: {earth.pollution.toFixed(1)} ppm</li>
+          <li>🌳 Forest Cover: {earth.forestCover.toFixed(1)}%</li>
+          <li>💧 Freshwater: {earth.freshwater.toFixed(1)}%</li>
+          <li>🌬️ Air Quality Index: {earth.airQuality.toFixed(1)}</li>
+          <li>☀️ Renewable Usage: {earth.renewableUsage.toFixed(1)}%</li>
+        </ul>
+      </div>
 
-        {/* Human Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Humans:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.humanPopulation)}
-          </span>
-        </div>
-
-        {/* Animal Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-green-400" />
-            <span className="text-sm text-gray-300">Animals:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.animalPopulation)}
-          </span>
-        </div>
-
-        {/* Plant Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-emerald-400" />
-            <span className="text-sm text-gray-300">Plants:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.plantPopulation)}
-          </span>
-        </div>
-
-        {/* Ocean Acidity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Droplets size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Ocean pH:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity, 9.0, true)}`}>
-            {metrics.oceanAcidity.toFixed(2)}
-          </span>
-        </div>
-
-        {/* Ice Cap Melting */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Snowflake size={16} className="text-cyan-400" />
-            <span className="text-sm text-gray-300">Ice Melting:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.iceCapMelting, 100)}`}>
-            {metrics.iceCapMelting.toFixed(1)}%
-          </span>
-        </div>
-
-        {/* Overall Pollution */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-600">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Pollution:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
-            {pollutionLevel.toFixed(1)}%
-          </span>
-        </div>
+      {/* Earth Status */}
+      <div className="mt-5 bg-gray-900 p-4 rounded-xl shadow-md w-full max-w-lg text-center">
+        <h2 className="text-lg font-bold mb-2">🌐 Earth Status</h2>
+        <p className="text-base">{getStatus()}</p>
       </div>
     </div>
-  )
-} 
+  );
+};
+
+export default App;
