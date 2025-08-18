@@ -1,6 +1,5 @@
-export type SiteConfig = typeof siteConfig;
-
 export const siteConfig = {
-  name: "nextjs-ollama-template",
-  description: "Nextjs + Ollama app that runs on OpenxAI!",
+  name: "Next.js Ollama Chat",
+  description: "A chat app built with Next.js and Ollama AI integration.",
 } as const;
+export type SiteConfig = typeof siteConfig;

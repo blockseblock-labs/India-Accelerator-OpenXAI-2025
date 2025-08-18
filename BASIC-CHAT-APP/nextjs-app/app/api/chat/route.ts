@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import ollama from "ollama";
-
-const model = "llama3";
-
+const model = "phi3:mini";
 export async function POST(request: NextRequest) {
   try {
-
     const data = await request.json();
     const response = await ollama.chat({
       model,
