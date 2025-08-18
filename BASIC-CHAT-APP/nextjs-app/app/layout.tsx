@@ -1,6 +1,7 @@
 import { Metadata, Viewport } from "next";
 
 import { siteConfig } from "@/config/site";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +30,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <html>
+      <html lang="en">
         <head />
         <body>{children}</body>
       </html>
