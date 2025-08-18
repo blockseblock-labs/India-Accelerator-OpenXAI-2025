@@ -17,7 +17,9 @@ interface QuizQuestion {
 export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
   const [loading, setLoading] = useState(false)
-  
+  // 🌟 Add this new state for theme
+  const [theme, setTheme] = useState("dark")
+
   // Flashcard states
   const [notes, setNotes] = useState('')
   const [flashcards, setFlashcards] = useState<Flashcard[]>([])
@@ -141,14 +143,33 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
+    <div
+  className={`min-h-screen ${
+    theme === "blue"
+      ? "bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 text-white"
+      : theme === "pastel"
+      ? "bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 text-black"
+      : "bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white"
+  }`}
+>
+
+    <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
           <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
         </div>
-
+        {/* 🌟 Theme Dropdown goes here */}
+        <div className="mt-4">
+        <select
+        value={theme}
+        onChange={(e) => setTheme(e.target.value)}
+              className="p-2 rounded border text-black"
+            >
+              <option value="dark">Dark Theme</option>
+              <option value="blue">Blue Theme</option>
+            </select>
+      </div>
         {/* Tabs */}
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
@@ -161,10 +182,11 @@ export default function LearnAI() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
+  activeTab === tab.id
+    ? 'bg-white text-purple-600 shadow-lg'
+    : 'text-white hover:bg-white/10'
+}`}
+
               >
                 <div className="text-sm font-medium">{tab.label}</div>
                 <div className="text-xs opacity-75">{tab.desc}</div>
@@ -214,6 +236,7 @@ export default function LearnAI() {
                         <p className="text-lg">{flashcards[currentCard]?.back}</p>
                       </div>
                     </div>
+
                   </div>
 
                   <div className="flex justify-between">
