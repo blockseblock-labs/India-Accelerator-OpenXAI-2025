@@ -1,3 +1,114 @@
+
+# Coverage directory used by tools like istanbul
+# Dependencies
+# Dependency directories
+# Editor directories and files
+# Environment variables
+# Gatsby files
+# Logs
+# Microbundle cache
+# Next.js build output
+# Nix
+# Nuxt.js build / generate output
+# nyc test coverage
+# Ollama models
+# Optional eslint cache
+# Optional npm cache directory
+# Optional REPL history
+# OS generated files
+# Output of 'npm pack'
+# parcel-bundler cache (https://parceljs.org/)
+# Production builds
+# Runtime data
+# Storybook build outputs
+# Temporary folders
+# Yarn Integrity file
+**/*.gguf
+**/*.pid
+**/*.pid.lock
+**/*.seed
+**/*.swo
+**/*.swp
+**/*.tgz
+**/*~
+**/._*
+**/.cache
+**/.cache/
+**/.DS_Store
+**/.DS_Store?
+**/.eslintcache
+**/.idea/
+**/.next
+**/.next/
+**/.node_repl_history
+**/.npm
+**/.nuxt
+**/.nyc_output
+**/.out
+**/.parcel-cache
+**/.rpt2_cache/
+**/.rts2_cache_cjs/
+**/.rts2_cache_es/
+**/.rts2_cache_umd/
+**/.Spotlight-V100
+**/.storybook-out
+**/.Trashes
+**/.vscode/
+**/.yarn-integrity
+**/build/
+**/coverage/
+**/dist
+**/dist/
+**/ehthumbs.db
+**/jspm_packages/
+**/lerna-debug.log*
+**/node_modules/
+**/npm-debug.log*
+**/pids
+**/public
+**/result
+**/result-*
+**/temp/
+**/Thumbs.db
+**/tmp/
+**/yarn-debug.log*
+**/yarn-error.log*
+*.gguf
+*.swo
+*.swp
+*.tgz
+*~
+._*
+.cache
+.cache/
+.DS_Store
+.DS_Store?
+.env
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
+.eslintcache
+.idea/
+.next
+.next/
+.node_repl_history
+.npm
+.nuxt
+.nyc_output
+.out
+.parcel-cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.Spotlight-V100
+.storybook-out
+.Trashes
+.vscode/
+.yarn-integrity
+<<<<<<< HEAD
+<<<<<<< HEAD
 # Dependencies
 **/node_modules/
 node_modules/
@@ -144,3 +255,22 @@ Thumbs.db
 **/result-*
 result
 result-* 
+=======
+result
+>>>>>>> 77b28b89b7204c220378d93eca53f695e9710d00
+
+=======
+>>>>>>> 77b28b89b7204c220378d93eca53f695e9710d00
+build/
+coverage/
+dist
+dist/
+ehthumbs.db
+jspm_packages/
+node_modules/
+public
+result
+result-* 
+temp/
+Thumbs.db
+tmp/
