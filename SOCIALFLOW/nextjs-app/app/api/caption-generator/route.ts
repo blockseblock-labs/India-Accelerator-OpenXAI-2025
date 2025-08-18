@@ -1,53 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { imageDescription } = await req.json()
+    const { image } = await req.json()
 
-    if (!imageDescription) {
-      return NextResponse.json(
-        { error: 'Image description is required' },
-        { status: 400 }
-      )
+    if (!image) {
+      return NextResponse.json({ error: 'No image provided' }, { status: 400 })
     }
 
-    const prompt = `Create an engaging Instagram caption for an image with the following description: "${imageDescription}"
-
-The caption should be:
-- Fun and engaging
-- Include relevant emojis
-- Be 1-2 sentences long
-- Perfect for social media sharing
-- Creative and attention-grabbing
-
-Generate just the caption, no extra text or explanations.`
-
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const ollamaResponse = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3',
-        prompt: prompt,
-        stream: false,
+        model: 'llama3.2:1b',
+        prompt: `Generate a short, catchy caption for this image. (Note: image is base64, only describe it in general terms).`
       }),
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+    const text = await ollamaResponse.text()
+    console.log('📢 Ollama raw response:', text)
+
+    if (!ollamaResponse.ok) {
+      return NextResponse.json({ error: 'Ollama request failed', details: text }, { status: 500 })
     }
 
-    const data = await response.json()
-    
-    return NextResponse.json({ 
-      caption: data.response || 'Unable to generate caption' 
-    })
+    let parsed
+    try {
+      parsed = JSON.parse(text)
+    } catch {
+      parsed = { response: text } // fallback if Ollama streams plain text
+    }
+
+    return NextResponse.json({ caption: parsed.response || parsed })
   } catch (error) {
-    console.error('Caption Generator API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate caption' },
-      { status: 500 }
-    )
+    console.error('🔥 API route crashed:', error)
+    return NextResponse.json({ error: String(error) }, { status: 500 })
   }
-} 
+}
