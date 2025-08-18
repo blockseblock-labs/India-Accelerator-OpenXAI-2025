@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 
 interface MoodResult {
   mood: string
@@ -11,80 +12,68 @@ interface MoodResult {
 export default function SocialNetwork() {
   const [activeTab, setActiveTab] = useState('caption')
   const [loading, setLoading] = useState(false)
-  
-  // Caption Generator states
+
+  // Caption Generator
   const [imageDescription, setImageDescription] = useState('')
   const [generatedCaption, setGeneratedCaption] = useState('')
   const [captionCopied, setCaptionCopied] = useState(false)
-  
-  // Mood Checker states
+
+  // Mood Checker
   const [textToAnalyze, setTextToAnalyze] = useState('')
   const [moodResult, setMoodResult] = useState<MoodResult | null>(null)
-  
-  // Hashtag Suggestor states
+
+  // Hashtag Suggestor
   const [keywords, setKeywords] = useState('')
   const [hashtags, setHashtags] = useState<string[]>([])
   const [hashtagsCopied, setHashtagsCopied] = useState(false)
 
   const generateCaption = async () => {
     if (!imageDescription.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/caption-generator', {
+      const res = await fetch('/api/caption-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageDescription })
+        body: JSON.stringify({ imageDescription }),
       })
-      
-      const data = await response.json()
-      if (data.caption) {
-        setGeneratedCaption(data.caption)
-      }
-    } catch (error) {
-      console.error('Error generating caption:', error)
+      const data = await res.json()
+      if (data.caption) setGeneratedCaption(data.caption)
+    } catch (err) {
+      console.error(err)
     }
     setLoading(false)
   }
 
   const checkMood = async () => {
     if (!textToAnalyze.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/mood-checker', {
+      const res = await fetch('/api/mood-checker', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textToAnalyze })
+        body: JSON.stringify({ text: textToAnalyze }),
       })
-      
-      const data = await response.json()
-      if (data.mood) {
-        setMoodResult(data)
-      }
-    } catch (error) {
-      console.error('Error checking mood:', error)
+      const data = await res.json()
+      if (data.mood) setMoodResult(data)
+    } catch (err) {
+      console.error(err)
     }
     setLoading(false)
   }
 
   const suggestHashtags = async () => {
     if (!keywords.trim()) return
-    
     setLoading(true)
     try {
-      const response = await fetch('/api/hashtag-suggestor', {
+      const res = await fetch('/api/hashtag-suggestor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keywords })
+        body: JSON.stringify({ keywords }),
       })
-      
-      const data = await response.json()
-      if (data.hashtags) {
-        setHashtags(data.hashtags)
-      }
-    } catch (error) {
-      console.error('Error suggesting hashtags:', error)
+      const data = await res.json()
+      if (data.hashtags) setHashtags(data.hashtags)
+    } catch (err) {
+      console.error(err)
     }
     setLoading(false)
   }
@@ -99,183 +88,179 @@ export default function SocialNetwork() {
         setHashtagsCopied(true)
         setTimeout(() => setHashtagsCopied(false), 2000)
       }
-    } catch (error) {
-      console.error('Failed to copy:', error)
+    } catch (err) {
+      console.error(err)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 text-gray-800 dark:text-gray-100">
+      <div className="container mx-auto px-6 py-12">
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">💬 Social Network AI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Social Media Tools</p>
+        <div className="text-center mb-12">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl font-extrabold mb-3 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
+            SocialFlow AI
+          </motion.h1>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            Smarter captions, moods & hashtags 
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+        <div className="flex justify-center mb-10">
+          <div className="flex space-x-6 border-b border-gray-300 dark:border-gray-700">
             {[
-              { id: 'caption', label: '📸 Caption', desc: 'Generate Captions', gradient: 'instagram-gradient' },
-              { id: 'mood', label: '😊 Mood', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
-              { id: 'hashtags', label: '#️⃣ Hashtags', desc: 'Suggest Tags', gradient: 'social-gradient' }
+              { id: 'caption', label: '📸 Caption' },
+              { id: 'mood', label: '😊 Mood' },
+              { id: 'hashtags', label: '#️⃣ Hashtags' },
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
+                className={`pb-3 px-4 font-medium transition-all duration-300 ${
                   activeTab === tab.id
-                    ? `${tab.gradient} text-white shadow-lg`
-                    : 'text-white hover:bg-white/10'
+                    ? 'text-purple-600 border-b-2 border-purple-500'
+                    : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                {tab.label}
               </button>
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto">
-          {/* Caption Generator Tab */}
-          {activeTab === 'caption' && (
-            <div className="tab-content">
-              <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">📸 Caption Generator</h2>
-                <p className="text-white/80 mb-6">Describe your image and get an Instagram-ready caption!</p>
-                
-                <div className="space-y-4">
-                  <textarea
-                    value={imageDescription}
-                    onChange={(e) => setImageDescription(e.target.value)}
-                    placeholder="Describe your image... (e.g., 'Sunset at the beach with friends')"
-                    className="w-full h-32 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 resize-none"
-                  />
-                  
-                  <button
-                    onClick={generateCaption}
-                    disabled={loading || !imageDescription.trim()}
-                    className="w-full px-6 py-3 instagram-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
-                  >
-                    {loading ? 'Generating Caption...' : 'Generate Caption ✨'}
-                  </button>
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Caption Generator */}
+            {activeTab === 'caption' && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h2 className="text-2xl font-bold mb-4">📸 Caption Generator</h2>
+                <textarea
+                  value={imageDescription}
+                  onChange={(e) => setImageDescription(e.target.value)}
+                  placeholder="Describe your image..."
+                  className="w-full h-28 p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-purple-400 outline-none"
+                />
+                <button
+                  onClick={generateCaption}
+                  disabled={loading || !imageDescription.trim()}
+                  className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg disabled:opacity-50"
+                >
+                  {loading ? 'Generating...' : 'Generate Caption ✨'}
+                </button>
 
-                  {generatedCaption && (
-                    <div className="bg-white/20 rounded-lg p-4 space-y-3">
-                      <h3 className="font-semibold text-white">Your Caption:</h3>
-                      <p className="text-white/90 text-lg leading-relaxed">{generatedCaption}</p>
-                      <button
-                        onClick={() => copyToClipboard(generatedCaption, 'caption')}
-                        className={`copy-button px-4 py-2 rounded-lg font-medium ${
-                          captionCopied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
-                        }`}
-                      >
-                        {captionCopied ? 'Copied! ✓' : 'Copy Caption 📋'}
-                      </button>
-                    </div>
-                  )}
-                </div>
+                {generatedCaption && (
+                  <div className="mt-6 bg-gray-100 dark:bg-gray-700 rounded-xl p-4">
+                    <p className="mb-3">{generatedCaption}</p>
+                    <button
+                      onClick={() => copyToClipboard(generatedCaption, 'caption')}
+                      className={`px-4 py-2 rounded-lg transition ${
+                        captionCopied
+                          ? 'bg-green-500 text-white'
+                          : 'border border-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      {captionCopied ? 'Copied! ✓' : 'Copy Caption'}
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Mood Checker Tab */}
-          {activeTab === 'mood' && (
-            <div className="tab-content">
-              <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">😊 Mood Checker</h2>
-                <p className="text-white/80 mb-6">Paste any text to analyze its emotional sentiment!</p>
-                
-                <div className="space-y-4">
-                  <textarea
-                    value={textToAnalyze}
-                    onChange={(e) => setTextToAnalyze(e.target.value)}
-                    placeholder="Paste a tweet, comment, or any text here..."
-                    className="w-full h-32 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 resize-none"
-                  />
-                  
-                  <button
-                    onClick={checkMood}
-                    disabled={loading || !textToAnalyze.trim()}
-                    className="w-full px-6 py-3 twitter-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
-                  >
-                    {loading ? 'Analyzing Mood...' : 'Check Mood 🔍'}
-                  </button>
+            {/* Mood Checker */}
+            {activeTab === 'mood' && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h2 className="text-2xl font-bold mb-4">😊 Mood Checker</h2>
+                <textarea
+                  value={textToAnalyze}
+                  onChange={(e) => setTextToAnalyze(e.target.value)}
+                  placeholder="Paste any text to analyze..."
+                  className="w-full h-28 p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-blue-400 outline-none"
+                />
+                <button
+                  onClick={checkMood}
+                  disabled={loading || !textToAnalyze.trim()}
+                  className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold shadow-lg disabled:opacity-50"
+                >
+                  {loading ? 'Analyzing...' : 'Check Mood 🔍'}
+                </button>
 
-                  {moodResult && (
-                    <div className="bg-white/20 rounded-lg p-6 text-center space-y-4">
-                      <div className="mood-indicator text-6xl">{moodResult.emoji}</div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-white capitalize">{moodResult.mood}</h3>
-                        <p className="text-white/80">Detected sentiment with {moodResult.confidence} confidence</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                {moodResult && (
+                  <div className="mt-6 text-center space-y-3">
+                    <div className="text-6xl">{moodResult.emoji}</div>
+                    <h3 className="text-xl font-bold capitalize">{moodResult.mood}</h3>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      {moodResult.confidence} confidence
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Hashtag Suggestor Tab */}
-          {activeTab === 'hashtags' && (
-            <div className="tab-content">
-              <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">#️⃣ Hashtag Suggestor</h2>
-                <p className="text-white/80 mb-6">Enter keywords and get trending hashtags for your post!</p>
-                
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={keywords}
-                    onChange={(e) => setKeywords(e.target.value)}
-                    placeholder="Enter keywords... (e.g., 'travel photography nature')"
-                    className="w-full p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
-                    onKeyDown={(e) => e.key === 'Enter' && suggestHashtags()}
-                  />
-                  
-                  <button
-                    onClick={suggestHashtags}
-                    disabled={loading || !keywords.trim()}
-                    className="w-full px-6 py-3 social-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
-                  >
-                    {loading ? 'Finding Hashtags...' : 'Suggest Hashtags 🏷️'}
-                  </button>
+            {/* Hashtag Suggestor */}
+            {activeTab === 'hashtags' && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h2 className="text-2xl font-bold mb-4">#️⃣ Hashtag Suggestor</h2>
+                <input
+                  type="text"
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                  placeholder="Enter keywords..."
+                  className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent focus:ring-2 focus:ring-green-400 outline-none"
+                />
+                <button
+                  onClick={suggestHashtags}
+                  disabled={loading || !keywords.trim()}
+                  className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold shadow-lg disabled:opacity-50"
+                >
+                  {loading ? 'Finding...' : 'Suggest Hashtags 🏷️'}
+                </button>
 
-                  {hashtags.length > 0 && (
-                    <div className="bg-white/20 rounded-lg p-4 space-y-4">
-                      <h3 className="font-semibold text-white">Suggested Hashtags:</h3>
-                      
-                      <div className="flex flex-wrap gap-2">
-                        {hashtags.map((hashtag, index) => (
-                          <span key={index} className="hashtag-tag">
-                            {hashtag}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      <button
-                        onClick={() => copyToClipboard(hashtags.join(' '), 'hashtags')}
-                        className={`copy-button px-4 py-2 rounded-lg font-medium ${
-                          hashtagsCopied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
-                        }`}
-                      >
-                        {hashtagsCopied ? 'Copied! ✓' : 'Copy All Hashtags 📋'}
-                      </button>
+                {hashtags.length > 0 && (
+                  <div className="mt-6 space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      {hashtags.map((tag, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-700"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
-                  )}
-                </div>
+                    <button
+                      onClick={() => copyToClipboard(hashtags.join(' '), 'hashtags')}
+                      className={`px-4 py-2 rounded-lg transition ${
+                        hashtagsCopied
+                          ? 'bg-green-500 text-white'
+                          : 'border border-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      {hashtagsCopied ? 'Copied! ✓' : 'Copy All'}
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
+          </motion.div>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-12 text-white/60">
-          <p>Perfect for Instagram, Twitter, TikTok, and all your social platforms! 🚀</p>
+        <div className="text-center mt-12 text-gray-500 dark:text-gray-400">
+          <p>✨ Made for Instagram, Twitter, TikTok & more</p>
         </div>
       </div>
     </div>
   )
-} 
+}

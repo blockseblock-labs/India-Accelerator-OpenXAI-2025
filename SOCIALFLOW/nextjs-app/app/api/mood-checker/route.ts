@@ -17,7 +17,8 @@ Classify the mood as one of these options: happy, sad, angry, excited, neutral, 
 
 Respond with ONLY the mood word, nothing else. Pick the best single word that describes the overall sentiment.`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    // Always use Ollama running on 127.0.0.1:11434
+    const response = await fetch('http://127.0.0.1:11434/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,31 +35,29 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
     }
 
     const data = await response.json()
-    
-    // Clean up the response to get just the mood
-    let mood = data.response?.toLowerCase().trim() || 'neutral'
-    
-    // Extract just the first word if there are multiple words
-    mood = mood.split(' ')[0]
-    
-    // Map to emoji
+
+    // Clean up the response safely
+    let mood = (data?.response || 'neutral').toLowerCase().trim()
+    mood = mood.split(' ')[0] // keep only first word
+
+    // Map mood → emoji
     const moodEmojis: { [key: string]: string } = {
-      'happy': '😊',
-      'sad': '😢',
-      'angry': '😠',
-      'excited': '🤩',
-      'neutral': '😐',
-      'anxious': '😰',
-      'love': '😍',
-      'frustrated': '😤'
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      excited: '🤩',
+      neutral: '😐',
+      anxious: '😰',
+      love: '😍',
+      frustrated: '😤',
     }
-    
+
     const emoji = moodEmojis[mood] || '😐'
-    
-    return NextResponse.json({ 
-      mood: mood,
-      emoji: emoji,
-      confidence: 'high'
+
+    return NextResponse.json({
+      mood,
+      emoji,
+      confidence: 'high',
     })
   } catch (error) {
     console.error('Mood Checker API error:', error)
@@ -67,4 +66,4 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
       { status: 500 }
     )
   }
-} 
+}

@@ -22,32 +22,34 @@ The caption should be:
 
 Generate just the caption, no extra text or explanations.`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
+    const response = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: 'llama3',
-        prompt: prompt,
+        model: "llama3",
+        prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      const errText = await response.text()
+      console.error("Ollama API error:", errText)
+      throw new Error("Failed to get response from Ollama")
     }
 
     const data = await response.json()
-    
-    return NextResponse.json({ 
-      caption: data.response || 'Unable to generate caption' 
+
+    return NextResponse.json({
+      caption: data?.response?.trim() || "Unable to generate caption",
     })
   } catch (error) {
-    console.error('Caption Generator API error:', error)
+    console.error("Caption Generator API error:", error)
     return NextResponse.json(
-      { error: 'Failed to generate caption' },
+      { error: "Failed to generate caption" },
       { status: 500 }
     )
   }
-} 
+}
