@@ -7,7 +7,7 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Dead-Earth Project - Climate Change Simulation",
+  title: "Earth Project - Climate Change Simulator",
   description:
     "Interactive 3D globe simulation showing the devastating effects of pollution and climate change on our planet.",
   keywords:
