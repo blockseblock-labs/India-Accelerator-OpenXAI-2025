@@ -143,6 +143,7 @@ export default function LearnAI() {
   }
 
   return (
+    /*theme button*/
     <div
   className={`min-h-screen ${
     theme === "blue"
