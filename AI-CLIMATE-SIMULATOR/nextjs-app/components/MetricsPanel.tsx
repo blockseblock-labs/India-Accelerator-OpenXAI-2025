@@ -1,6 +1,8 @@
 'use client'
 
 import { Users, Thermometer, AlertTriangle, Droplets, Snowflake, Leaf, Zap } from 'lucide-react'
+import CountUp from 'react-countup'
+import { motion } from 'framer-motion'
 
 interface EarthMetrics {
   co2Level: number
@@ -35,113 +37,118 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
     return 'text-red-400'
   }
 
+  const getBadge = (value: number, max: number, reverse = false) => {
+    const percentage = value / max
+    const adjustedPercentage = reverse ? 1 - percentage : percentage
+    
+    if (adjustedPercentage < 0.3) return <span className="ml-2 px-2 py-0.5 rounded bg-green-600/20 text-green-400 text-xs">Safe</span>
+    if (adjustedPercentage < 0.7) return <span className="ml-2 px-2 py-0.5 rounded bg-yellow-600/20 text-yellow-400 text-xs">Warning</span>
+    return <span className="ml-2 px-2 py-0.5 rounded bg-red-600/20 text-red-400 text-xs">Critical</span>
+  }
+
+  const MetricRow = ({
+    icon,
+    label,
+    value,
+    suffix,
+    max,
+    reverse = false,
+    isCountUp = false
+  }: {
+    icon: React.ReactNode
+    label: string
+    value: number
+    suffix?: string
+    max: number
+    reverse?: boolean
+    isCountUp?: boolean
+  }) => {
+    const percentage = Math.min((value / max) * 100, 100)
+
+    return (
+      <motion.div
+        className="space-y-1"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {icon}
+            <span className="text-sm text-gray-300">{label}</span>
+          </div>
+          <div className="flex items-center">
+            <span className={`text-sm font-semibold ${getHealthColor(value, max, reverse)}`}>
+              {isCountUp ? (
+                <CountUp end={value} decimals={suffix?.includes('%') ? 1 : 0} duration={1.5} />
+              ) : (
+                formatNumber(value)
+              )}
+              {suffix}
+            </span>
+            {getBadge(value, max, reverse)}
+          </div>
+        </div>
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-gray-700/50 rounded">
+          <div
+            className={`h-2 rounded transition-all duration-700 ${getHealthColor(value, max, reverse).replace('text-', 'bg-')}`}
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+      </motion.div>
+    )
+  }
+
   return (
-    <div className="metrics-panel rounded-lg p-4 max-w-sm">
+    <div className="rounded-2xl p-6 max-w-sm 
+      bg-gradient-to-br from-gray-900/90 via-gray-800/80 to-gray-900/70 
+      animate-gradient bg-[length:200%_200%] 
+      backdrop-blur-lg shadow-2xl border border-gray-700">
+      
       <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-        <AlertTriangle size={20} className="text-red-400" />
-        Earth Metrics
+        <AlertTriangle size={20} className="text-red-400 animate-pulse drop-shadow-[0_0_6px_#ef4444]" />
+        Earth Metrics Dashboard
       </h2>
       
-      <div className="space-y-3">
-        {/* CO2 Levels */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap size={16} className="text-yellow-400" />
-            <span className="text-sm text-gray-300">CO₂ Level:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.co2Level, 2000, true)}`}>
-            {metrics.co2Level.toFixed(0)} ppm
-          </span>
-        </div>
-
-        {/* Air Toxicity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Air Toxicity:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel, 100)}`}>
-            {metrics.toxicityLevel.toFixed(1)}%
-          </span>
-        </div>
-
-        {/* Temperature */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Thermometer size={16} className="text-orange-400" />
-            <span className="text-sm text-gray-300">Temperature:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.temperature, 50)}`}>
-            {metrics.temperature.toFixed(1)}°C
-          </span>
-        </div>
-
-        {/* Human Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Humans:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.humanPopulation)}
-          </span>
-        </div>
-
-        {/* Animal Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-green-400" />
-            <span className="text-sm text-gray-300">Animals:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.animalPopulation)}
-          </span>
-        </div>
-
-        {/* Plant Population */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-emerald-400" />
-            <span className="text-sm text-gray-300">Plants:</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.plantPopulation)}
-          </span>
-        </div>
-
-        {/* Ocean Acidity */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Droplets size={16} className="text-blue-400" />
-            <span className="text-sm text-gray-300">Ocean pH:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity, 9.0, true)}`}>
-            {metrics.oceanAcidity.toFixed(2)}
-          </span>
-        </div>
-
-        {/* Ice Cap Melting */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Snowflake size={16} className="text-cyan-400" />
-            <span className="text-sm text-gray-300">Ice Melting:</span>
-          </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.iceCapMelting, 100)}`}>
-            {metrics.iceCapMelting.toFixed(1)}%
-          </span>
-        </div>
+      <div className="space-y-5">
+        <MetricRow icon={<Zap size={16} className="text-yellow-400" />} label="CO₂ Level:" value={metrics.co2Level} suffix=" ppm" max={2000} reverse />
+        <MetricRow icon={<AlertTriangle size={16} className="text-red-400 animate-pulse" />} label="Air Toxicity:" value={metrics.toxicityLevel} suffix="%" max={100} isCountUp />
+        <MetricRow icon={<Thermometer size={16} className="text-orange-400" />} label="Temperature:" value={metrics.temperature} suffix="°C" max={50} isCountUp />
+        <MetricRow icon={<Users size={16} className="text-blue-400" />} label="Humans:" value={metrics.humanPopulation} max={8e9} />
+        <MetricRow icon={<Leaf size={16} className="text-green-400" />} label="Animals:" value={metrics.animalPopulation} max={1e9} />
+        <MetricRow icon={<Leaf size={16} className="text-emerald-400" />} label="Plants:" value={metrics.plantPopulation} max={5e9} />
+        <MetricRow icon={<Droplets size={16} className="text-blue-400" />} label="Ocean pH:" value={metrics.oceanAcidity} max={9.0} reverse isCountUp />
+        <MetricRow icon={<Snowflake size={16} className="text-cyan-400" />} label="Ice Melting:" value={metrics.iceCapMelting} suffix="%" max={100} isCountUp />
 
         {/* Overall Pollution */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-600">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
-            <span className="text-sm text-gray-300">Pollution:</span>
+        <motion.div
+          className="space-y-1 pt-3 border-t border-gray-600"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={16} className="text-red-400 animate-pulse" />
+              <span className="text-sm text-gray-300">Pollution:</span>
+            </div>
+            <div className="flex items-center">
+              <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
+                <CountUp end={pollutionLevel} decimals={1} duration={1.5} />%
+              </span>
+              {getBadge(pollutionLevel, 100)}
+            </div>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
-            {pollutionLevel.toFixed(1)}%
-          </span>
-        </div>
+          {/* Progress bar */}
+          <div className="w-full h-2 bg-gray-700/50 rounded">
+            <div
+              className={`h-2 rounded transition-all duration-700 ${getHealthColor(pollutionLevel, 100).replace('text-', 'bg-')}`}
+              style={{ width: `${Math.min((pollutionLevel / 100) * 100, 100)}%` }}
+            />
+          </div>
+        </motion.div>
       </div>
     </div>
   )
-} 
+}
