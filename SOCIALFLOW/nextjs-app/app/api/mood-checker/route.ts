@@ -17,19 +17,24 @@ Classify the mood as one of these options: happy, sad, angry, excited, neutral, 
 
 Respond with ONLY the mood word, nothing else. Pick the best single word that describes the overall sentiment.`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434'
+    const MODEL = process.env.OLLAMA_MODEL || 'llama3.2:1b'
+
+    const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3',
+        model: MODEL,
         prompt: prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => '')
+      console.error('Ollama error:', response.status, errorText)
       throw new Error('Failed to get response from Ollama')
     }
 
