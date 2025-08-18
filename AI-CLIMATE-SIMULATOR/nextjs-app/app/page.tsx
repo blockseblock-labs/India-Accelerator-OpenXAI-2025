@@ -215,7 +215,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="globe-container">
+    <div className="globe-container animate-fadeIn">
       {/* 3D Globe */}
       <Globe 
         pollutionLevel={pollutionLevel} 
@@ -235,16 +235,16 @@ export default function Home() {
 
       {/* Control Panel */}
       <div className="absolute top-4 left-4 z-20">
-        <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
+        <div className="metrics-panel bg-black/60 backdrop-blur-md rounded-2xl p-5 mb-4 max-w-sm max-h-[80vh] overflow-y-auto shadow-lg border border-gray-700">
           <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
-          
+  
           {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setIsSimulationRunning(!isSimulationRunning)}
               disabled={isProcessing}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded"
-            >
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 disabled:from-gray-700 disabled:to-gray-600 rounded-xl shadow-md transition-all duration-300"
+              >
               {isSimulationRunning ? <Pause size={16} /> : <Play size={16} />}
               {isSimulationRunning ? 'Pause' : 'Start'} Auto-Simulation
             </button>
@@ -267,7 +267,8 @@ export default function Home() {
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder="Type your environmental command..."
                 disabled={isProcessing}
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 disabled:bg-gray-700"
+               className="flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
+
               />
               <button
                 type="submit"
@@ -289,7 +290,8 @@ export default function Home() {
                   key={index}
                   onClick={() => handleExampleClick(example)}
                   disabled={isProcessing}
-                  className="block w-full text-left px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 rounded text-gray-300 disabled:text-gray-500"
+                  className="block w-full text-left px-3 py-2 text-sm bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-lg text-gray-200 shadow-sm transition"
+
                 >
                   {example}
                 </button>
@@ -306,10 +308,11 @@ export default function Home() {
               </h3>
               <div className="space-y-1">
                 {aiThinkingLog.map((step, index) => (
-                  <div key={index} className="text-xs text-gray-400 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div key={index} className="text-sm text-blue-400 flex items-center gap-2 animate-fadeIn">
+                    <Loader2 size={14} className="animate-spin text-blue-400" />
                     {step}
-                  </div>
+                    </div>
+
                 ))}
               </div>
             </div>
