@@ -18,10 +18,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} 
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(59, 130, 246, 0.25), transparent),
+              radial-gradient(1000px 500px at 90% 20%, rgba(168, 85, 247, 0.25), transparent),
+              linear-gradient(135deg, rgb(37, 99, 235), rgb(147, 51, 234));
+}

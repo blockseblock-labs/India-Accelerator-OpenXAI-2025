@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Send, Bot, User } from 'lucide-react'
 
 interface Message {
@@ -12,6 +12,25 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const lastChunkRef = useRef<string>("")
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+  }, [messages])
+
+  // --- Helpers to reduce visible repetition from small models ---
+  const squashImmediateRepeats = (text: string) => {
+    // Collapse immediate duplicated words: "can can" -> "can"
+    // Keep case-insensitive, avoid touching code blocks by keeping it light
+    let cleaned = text.replace(/\b(\w+)(\s+\1\b)+/gi, '$1')
+    // Collapse repeated punctuation "??", "..", "!!" (3+ to 2)
+    cleaned = cleaned.replace(/([!?.,])\1{2,}/g, '$1$1')
+    // Collapse triple spaces
+    cleaned = cleaned.replace(/\s{3,}/g, '  ')
+    return cleaned
+  }
 
   const sendMessage = async () => {
     if (!input.trim()) return
@@ -20,6 +39,7 @@ export default function Home() {
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
+    setError(null)
 
     try {
       const response = await fetch('/api/chat', {
@@ -30,15 +50,11 @@ export default function Home() {
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to get response')
-      }
+      if (!response.ok || !response.body) throw new Error('Failed to get response')
 
-      const reader = response.body?.getReader()
-      if (!reader) throw new Error('No reader available')
+      const reader = response.body.getReader()
 
-      const assistantMessage: Message = { role: 'assistant', content: '' }
-      setMessages(prev => [...prev, assistantMessage])
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }])
 
       const decoder = new TextDecoder()
       let done = false
@@ -48,23 +64,24 @@ export default function Home() {
         done = doneReading
         
         if (value) {
-          const chunk = decoder.decode(value, { stream: true })
+          const raw = decoder.decode(value, { stream: true })
+          const chunk = raw.replace(/\s+/g, ' ')
+          if (!chunk.trim()) continue
+          if (lastChunkRef.current === chunk) continue
           setMessages(prev => {
             const newMessages = [...prev]
             const lastMessage = newMessages[newMessages.length - 1]
-            if (lastMessage.role === 'assistant') {
-              lastMessage.content += chunk
+            if (lastMessage && lastMessage.role === 'assistant') {
+              lastMessage.content = squashImmediateRepeats(lastMessage.content + chunk)
             }
             return newMessages
           })
+          lastChunkRef.current = chunk
         }
       }
     } catch (error) {
       console.error('Error sending message:', error)
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Sorry, there was an error processing your message.' 
-      }])
+      setError('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -87,7 +104,7 @@ export default function Home() {
         
         <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1">
             {messages.length === 0 ? (
               <div className="text-center text-white/60 py-12">
                 <Bot size={48} className="mx-auto mb-4" />
@@ -107,13 +124,13 @@ export default function Home() {
                     </div>
                   )}
                   <div
-                    className={`max-w-xs lg:max-w-2xl px-4 py-2 rounded-lg ${
+                    className={`max-w-[80%] md:max-w-3xl px-4 py-2 rounded-lg leading-relaxed break-words whitespace-pre-wrap ${
                       message.role === 'user'
                         ? 'bg-blue-500 text-white'
-                        : 'bg-gray-700 text-white'
+                        : 'bg-gray-800/90 text-white backdrop-blur-sm'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <p>{message.content}</p>
                   </div>
                   {message.role === 'user' && (
                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -122,6 +139,9 @@ export default function Home() {
                   )}
                 </div>
               ))
+            )}
+            {error && (
+              <div className="text-center text-red-200 text-sm">{error}</div>
             )}
             {isLoading && (
               <div className="flex items-start space-x-3">

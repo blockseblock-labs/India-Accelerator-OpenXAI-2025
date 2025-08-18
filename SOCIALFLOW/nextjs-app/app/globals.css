@@ -115,3 +115,107 @@ body {
     transform: translateY(0);
   }
 } 
+
+/* New modern visuals */
+.gradient-text {
+  background: linear-gradient(90deg, #f97316 0%, #ec4899 40%, #8b5cf6 80%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+}
+
+.aurora-blob.orange {
+  background: radial-gradient(circle at 30% 30%, #fb923c, transparent 60%);
+  animation: floatOne 16s ease-in-out infinite;
+}
+
+.aurora-blob.pink {
+  background: radial-gradient(circle at 70% 20%, #ec4899, transparent 60%);
+  animation: floatTwo 18s ease-in-out infinite;
+}
+
+.aurora-blob.purple {
+  background: radial-gradient(circle at 50% 70%, #8b5cf6, transparent 60%);
+  animation: floatThree 20s ease-in-out infinite;
+}
+
+.aurora-blob.cyan {
+  background: radial-gradient(circle at 80% 60%, #06b6d4, transparent 60%);
+  animation: floatFour 22s ease-in-out infinite;
+}
+
+@keyframes floatOne {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -20px) scale(1.05); }
+}
+
+@keyframes floatTwo {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, 10px) scale(1.08); }
+}
+
+@keyframes floatThree {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(15px, 15px) scale(1.04); }
+}
+
+@keyframes floatFour {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-15px, -10px) scale(1.06); }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+}
+
+.ring-glow {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.hover-raise {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-raise:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -50%;
+  width: 50%;
+  height: 300%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  transform: rotate(25deg);
+  animation: shineSweep 2.4s ease-in-out infinite;
+}
+
+@keyframes shineSweep {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(300%) rotate(25deg); }
+}
