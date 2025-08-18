@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { Send, RotateCcw, Play, Pause, Brain, Users, Thermometer, AlertTriangle, Loader2 } from 'lucide-react'
+import { runMain } from 'node:module'
 
 // Dynamically import the 3D components to avoid SSR issues
 const Globe = dynamic(() => import('../components/Globe'), { ssr: false })
@@ -101,6 +102,7 @@ export default function Home() {
       await new Promise(resolve => setTimeout(resolve, 200))
       setAiThinkingLog(prev => [...prev, thinkingSteps[i]])
     }
+    runMain();
 
     try {
       const response = await fetch('/api/process-command', {
@@ -236,7 +238,7 @@ export default function Home() {
       {/* Control Panel */}
       <div className="absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
+          <h2 className="text-xl font-bold mb-2">AI Earth Controller System</h2>
           
           {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
@@ -255,6 +257,8 @@ export default function Home() {
               <RotateCcw size={16} />
               Reset Earth
             </button>
+
+
           </div>
 
           {/* Command Input */}
@@ -263,6 +267,9 @@ export default function Home() {
               <input
                 ref={inputRef}
                 type="text"
+
+
+
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder="Type your environmental command..."
