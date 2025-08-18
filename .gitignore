@@ -144,3 +144,9 @@ Thumbs.db
 **/result-*
 result
 result-* 
+
+# Python virtual envs
+.venv/
+
+# Visual Studio local settings
+.vs/
