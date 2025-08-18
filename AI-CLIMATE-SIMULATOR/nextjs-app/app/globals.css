@@ -1,3 +1,110 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+/* ::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Globe container */
+/* .globe-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, #0c1445 0%, #000000 100%);
+  overflow: hidden;
+}
+
+/* Pollution overlay */
+/* .pollution-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10; */
+/* } */
+
+/* Metrics panel */
+/* .metrics-panel {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Animated background */
+/* .animated-bg {
+  background: linear-gradient(-45deg, #0c1445, #1e3a8a, #1e40af, #3b82f6);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}  */ 
+
+/* Ensure globe is always visible */
+/* .globe-container > div:first-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; */ 
+/* }   */
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,6 +132,11 @@ body {
     )
     rgb(var(--background-start-rgb));
   overflow-x: hidden;
+
+  /* smooth text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Custom scrollbar */
@@ -63,6 +175,19 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 10;
+
+  /* animated smog */
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.6) 10%, transparent 60%);
+  animation: smogMove 20s linear infinite;
+}
+
+@keyframes smogMove {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200% 200%;
+  }
 }
 
 /* Metrics panel */
@@ -73,6 +198,16 @@ body {
   max-width: 400px;
   max-height: 80vh;
   overflow-y: auto;
+
+  /* glow & hover effect */
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metrics-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
 }
 
 /* Animated background */
@@ -92,7 +227,7 @@ body {
   100% {
     background-position: 0% 50%;
   }
-} 
+}
 
 /* Ensure globe is always visible */
 .globe-container > div:first-child {
@@ -102,4 +237,55 @@ body {
   width: 100%;
   height: 100%;
   z-index: 1;
-} 
+}
+
+/* Neon glow for headings */
+h1, h2, h3 {
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.7),
+    0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Floating effect for elements */
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Starry background */
+.starry-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.starry-bg span {
+  position: absolute;
+  display: block;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
