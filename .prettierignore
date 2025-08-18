@@ -1,0 +1,10 @@
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+**/.turbo/
+**/.cache/
+**/coverage/
+**/.venv/
+**/result*
+
