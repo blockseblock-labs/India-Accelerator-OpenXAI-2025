@@ -5,12 +5,13 @@ const model = "llama3:latest";
 
 export async function POST(request: NextRequest) {
   try {
-
     const data = await request.json();
+
     const response = await ollama.chat({
       model,
       messages: [{ role: "user", content: data.message }],
     });
+
     return NextResponse.json({ message: response.message.content });
   } catch (error: any) {
     return NextResponse.json(

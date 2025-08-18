@@ -1,10 +1,12 @@
-.chat-container {
+.chat-container p{
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center; /* vertical center */
   align-items: center;     /* horizontal center */
   height: 100vh;           /* full page height */
   background-color: #0d1117; /* dark GitHub Copilot-like bg */
+  font-family: sans-serif;
 }
 
 .chat-messages {
@@ -17,6 +19,28 @@
   padding: 1rem;
   background-color: #161b22;
   margin-bottom: 1rem;
+}
+
+.message {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #2563eb;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+}
+
+.message.assistant {
+  background-color: #1e293b;
+  color: white;
+  margin-right: auto;
+  text-align: left;
 }
 
 .chat-input {
@@ -43,5 +67,6 @@
   color: white;
   cursor: pointer;
 }
+
 
 

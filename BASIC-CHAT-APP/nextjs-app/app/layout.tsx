@@ -1,8 +1,13 @@
-// app/layout.tsx
+import "./chat.css";
+// import "./globals.css";
 import "./chat.css";
 import type { Metadata } from "next";
 
-// app/layout.tsx
+export const metadata: Metadata = {
+  title: "Copilot Chat",
+  description: "A Copilot-style chat app powered by Ollama",
+};
+
 export default function RootLayout({
   children,
 }: {
