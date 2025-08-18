@@ -145,17 +145,17 @@ export default function LearnAI() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-4">📚 </h1>
+          <p className="text-white/80 text-lg"><i>AI Educational Tools</i></p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+              { id: 'flashcards', label: 'Flashcards', desc: 'Make Flashcards' },
+              { id: 'quiz', label: ' Quiz', desc: 'Create Quiz' },
+              { id: 'study-buddy', label: ' Study Buddy', desc: 'Ask Questions' }
             ].map(tab => (
               <button
                 key={tab.id}

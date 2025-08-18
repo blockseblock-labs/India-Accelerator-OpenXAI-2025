@@ -28,7 +28,7 @@ body {
 
 /* Custom educational theme */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: none;
 }
 
 .flashcard {
@@ -62,12 +62,12 @@ body {
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: black;
   color: white;
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: black;
   color: white;
   transform: rotateY(180deg);
 }
