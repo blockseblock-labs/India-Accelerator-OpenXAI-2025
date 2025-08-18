@@ -74,7 +74,7 @@ A modern, feature-rich AI chat application powered by Llama 3.2, built with Next
 
 4. **Start the development server**
    ```bash
-   npm run dev
+npm run dev
    ```
 
 5. **Open your browser**

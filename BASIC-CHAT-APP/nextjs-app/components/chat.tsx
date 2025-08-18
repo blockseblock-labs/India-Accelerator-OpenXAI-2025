@@ -60,7 +60,7 @@ export function Chat() {
 
     try {
       const response = await fetch("/api/chat", {
-        method: "POST",
+              method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -128,7 +128,7 @@ export function Chat() {
       } catch (err) {
         console.log('Share cancelled');
       }
-    } else {
+                } else {
       // Fallback: copy to clipboard
       const chatText = messages
         .map(msg => `${msg.isUser ? 'You' : 'AI'}: ${msg.content}`)
@@ -209,7 +209,7 @@ export function Chat() {
           
           {/* Scroll anchor */}
           <div ref={messagesEndRef} />
-        </div>
+      </div>
       </div>
 
       {/* Action buttons when messages exist */}
