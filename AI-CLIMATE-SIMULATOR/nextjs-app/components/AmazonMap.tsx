@@ -1,52 +1,32 @@
-"use client";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import React from 'react';
 
-// Amazon region geo-coordinates (approximate, for demo)
-const amazonRegion = [
-  { name: "Manaus", coordinates: [-60.025, -3.107] },
-  { name: "Leticia", coordinates: [-69.9406, -4.215] },
-  { name: "Iquitos", coordinates: [-73.2472, -3.7437] },
-  { name: "Macapá", coordinates: [-51.0501, 0.0349] },
-  { name: "Belém", coordinates: [-48.5011, -1.4558] },
-  { name: "Porto Velho", coordinates: [-63.9039, -8.7608] },
-];
-
-export default function AmazonMap() {
+// SVG map of Amazon region (simplified, stylized for dashboard)
+// This is a placeholder. For a more detailed map, use a geojson or SVG from a GIS source.
+export default function AmazonMap({ highlightedCities = [], width = 400, height = 300 }) {
+  // Example city coordinates (relative to SVG viewBox)
+  const cities = [
+    { name: 'Manaus', x: 180, y: 120, status: 'active' },
+    { name: 'Belém', x: 300, y: 100, status: 'unverified' },
+    { name: 'Rio Branco', x: 80, y: 200, status: 'offline' },
+    { name: 'Porto Velho', x: 140, y: 160, status: 'active' },
+  ];
+  const statusColor = {
+    active: '#22c55e',
+    unverified: '#fde047',
+    offline: '#ef4444',
+  };
   return (
-    <div className="w-full h-full">
-      <ComposableMap
-        projection="geoMercator"
-        projectionConfig={{ scale: 600, center: [-60, -4] }}
-        width={600}
-        height={400}
-        style={{ background: "transparent" }}
-      >
-        <Geographies geography="https://raw.githubusercontent.com/deldersveld/topojson/master/continents/south-america.json">
-          {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="#112244"
-                stroke="#5ecfff"
-                style={{ outline: "none" }}
-              />
-            ))
-          }
-        </Geographies>
-        {amazonRegion.map((city, i) => (
-          <Marker key={city.name} coordinates={city.coordinates}>
-            <circle r={8} fill="#5ecfff" opacity={0.7} />
-            <text
-              textAnchor="middle"
-              y={-16}
-              style={{ fontFamily: "sans-serif", fill: "#5ecfff", fontSize: 12 }}
-            >
-              {city.name}
-            </text>
-          </Marker>
-        ))}
-      </ComposableMap>
-    </div>
+    <svg viewBox="0 0 400 300" width={width} height={height} className="rounded-xl">
+      {/* Amazon region shape (stylized) */}
+      <path d="M60,220 Q100,60 200,60 Q320,80 340,200 Q300,260 200,250 Q100,240 60,220 Z" fill="#5ecfff22" stroke="#5ecfff" strokeWidth="4" />
+      {/* Cities */}
+      {cities.map(city => (
+        <circle key={city.name} cx={city.x} cy={city.y} r={9} fill={statusColor[city.status]} stroke="#fff" strokeWidth="2" />
+      ))}
+      {/* City labels */}
+      {cities.map(city => (
+        <text key={city.name+"-label"} x={city.x+12} y={city.y+4} fontSize="13" fill="#b6c9e0">{city.name}</text>
+      ))}
+    </svg>
   );
 }

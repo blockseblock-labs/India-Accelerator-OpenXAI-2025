@@ -50,7 +50,7 @@ const exampleCommands = [
 ]
 
 const availableModels = [
-  { id: 'llama3.2:1b', name: 'Llama 3.2 (1B)', description: 'Fast, minimal reasoning (default)', disabled: false },
+  { id: 'llama3-8b-8192', name: 'Llama 3 (8B)', description: 'Groq Llama 3 (8B) - default', disabled: false },
   { id: 'deepseek-r1:8b', name: 'DeepSeek R1 (8B)', description: 'Slow & accurate', disabled: true },
   { id: 'qwen3:8b', name: 'Qwen3 (8B)', description: 'Fast inference', disabled: true },
   { id: 'deepseek-r1:1.5b', name: 'DeepSeek R1 (1.5B)', description: 'Fast inference', disabled: true }
@@ -89,7 +89,7 @@ export default function Home() {
           command,
           currentMetrics: metrics,
           pollutionLevel,
-          model: 'llama3.2:1b',
+          model: 'llama3-8b-8192',
         }),
       })
       if (!response.ok) {
@@ -108,7 +108,7 @@ export default function Home() {
         analysis: data.analysis,
         timestamp: new Date(),
         responseTime,
-        model: 'llama3.2:1b'
+  model: 'llama3-8b-8192'
       }
       setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)])
     } catch (error) {
@@ -175,7 +175,7 @@ export default function Home() {
   const [currentAnalysis, setCurrentAnalysis] = useState<string>('')
   const [aiThinkingLog, setAiThinkingLog] = useState<string[]>([])
   const [specialEvent, setSpecialEvent] = useState<string | null>(null)
-  const [selectedModel, setSelectedModel] = useState('llama3.2:1b')
+  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192')
   const [apiError, setApiError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   // ...existing code...
@@ -192,6 +192,17 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black font-orbitron">
+      {/* Top-center navigation buttons (smaller, elegant) */}
+      <div className="absolute top-5 left-1/2 -translate-x-1/2 z-50 flex gap-2">
+        <Link href="/location" className="flex items-center gap-1 px-3 py-1.5 bg-cyan-900/80 hover:bg-cyan-700/90 rounded-full shadow-md text-cyan-100 font-semibold text-sm tracking-wide transition border border-cyan-400/30 backdrop-blur-md">
+          <MapPin size={16} className="opacity-80" />
+          <span className="hidden sm:inline">Locations</span>
+        </Link>
+        <Link href="/dashboard" className="flex items-center gap-1 px-3 py-1.5 bg-cyan-900/80 hover:bg-cyan-700/90 rounded-full shadow-md text-cyan-100 font-semibold text-sm tracking-wide transition border border-cyan-400/30 backdrop-blur-md">
+          <BarChart2 size={16} className="opacity-80" />
+          <span className="hidden sm:inline">Dashboard</span>
+        </Link>
+      </div>
       {/* Error message if backend fails */}
       {apiError && (
         <div className="absolute top-0 left-0 w-full z-50 bg-red-900/90 text-red-200 text-center py-3 font-bold text-lg shadow-lg">
@@ -234,20 +245,6 @@ export default function Home() {
             {currentAnalysis || 'No analysis yet.'}
           </div>
         </div>
-        {/* Ergonomic top-center floating menu for navigation after analysis */}
-        {showMenu && (
-          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
-            <div className="flex items-center gap-3 bg-black/80 border border-cyan-400/40 rounded-full px-4 py-2 shadow-xl backdrop-blur-md animate-fade-in">
-              <Link href="/location" className="flex items-center gap-1 px-3 py-1 bg-green-700/70 hover:bg-green-800/90 rounded-full text-green-100 font-semibold text-sm transition">
-                <MapPin size={16} /> Location
-              </Link>
-              <Link href="/dashboard" className="flex items-center gap-1 px-3 py-1 bg-cyan-700/70 hover:bg-cyan-800/90 rounded-full text-cyan-100 font-semibold text-sm transition">
-                <BarChart2 size={16} /> Dashboard
-              </Link>
-              <button onClick={() => setShowMenu(false)} className="ml-2 text-xs text-cyan-300 hover:text-cyan-100 transition underline">Close</button>
-            </div>
-          </div>
-        )}
       </div>
       {/* AI Earth Controller (left, glassmorphic) */}
       <div className="absolute top-8 left-8 z-40">

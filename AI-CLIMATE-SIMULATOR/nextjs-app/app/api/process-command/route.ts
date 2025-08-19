@@ -1,117 +1,60 @@
-// Helper: Extract JSON from LLM response
-function extractJson(text: string, model: string): any {
-  let parsed = null;
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try { parsed = JSON.parse(jsonMatch[0]); } catch {}
-  }
-  if (!parsed) {
-    try { parsed = JSON.parse(text.trim()); } catch {}
-  }
-  if (!parsed && text.includes("<think>")) {
-    const cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-    const cleanJsonMatch = cleanText.match(/\{[\s\S]*\}/);
-    if (cleanJsonMatch) {
-      try { parsed = JSON.parse(cleanJsonMatch[0]); } catch {}
-    }
-  }
-  if (!parsed && (model.includes("deepseek-r1:1.5b") || model.includes("deepseek-r1:7b"))) {
-    const jsonStart = text.indexOf("{");
-    const jsonEnd = text.lastIndexOf("}") + 1;
-    if (jsonStart !== -1 && jsonEnd > jsonStart) {
-      const extractedJson = text.substring(jsonStart, jsonEnd);
-      try { parsed = JSON.parse(extractedJson); } catch {}
-    }
-  }
-  return parsed;
-}
-
-// Helper: Modular comparison text
-function createComparisonText(metrics: any, current: any, pollution: number, validatedPollution: number): string {
-  const changes: string[] = [];
-  const add = (label: string, oldVal: number, newVal: number, unit = "") => {
-    if (oldVal !== newVal) {
-      const direction = newVal > oldVal ? "↑" : "↓";
-      changes.push(`${label}: ${oldVal}${unit} ${direction} ${newVal}${unit}`);
-    }
-  };
-  add("CO₂", current.co2Level, metrics.co2Level, "ppm");
-  add("Air Toxicity", current.toxicityLevel, metrics.toxicityLevel, "%");
-  add("Temperature", current.temperature, metrics.temperature, "°C");
-  add("Humans", current.humanPopulation, metrics.humanPopulation);
-  add("Animals", current.animalPopulation, metrics.animalPopulation);
-  add("Plants", current.plantPopulation, metrics.plantPopulation);
-  add("Ocean pH", current.oceanAcidity, metrics.oceanAcidity);
-  add("Ice Melting", current.iceCapMelting, metrics.iceCapMelting, "%");
-  add("Pollution", pollution, validatedPollution, "%");
-  return changes.length > 0 ? `\n\n📊 Changes:\n${changes.join("\n")}` : "";
-}
-/**
- * process-command API v2.0.0
- * Production-ready, modular, and robust environmental impact endpoint
- * Updated: 2025-08-19
- */
-
 import { NextRequest, NextResponse } from "next/server";
-// Use GroqCloud for LLM
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-function validateInput(obj: any): obj is {
-  command: string;
-  currentMetrics: Record<string, number>;
-  pollutionLevel: number;
-  model?: string;
-} {
-  return (
-    typeof obj === 'object' &&
-    typeof obj.command === 'string' &&
-    typeof obj.currentMetrics === 'object' &&
-    typeof obj.pollutionLevel === 'number'
-  );
-}
-
-function createFallback(command: string, currentMetrics: any, pollutionLevel: number, isCatastrophic: boolean, catastrophicType: string, specialEvent: string | null) {
-  // ...existing fallback logic from previous code...
-  // (copy the fallback logic block here, unchanged)
-}
-
-function validateMetrics(metrics: any, currentMetrics: any) {
-  // ...existing validation logic from previous code...
-  // (copy the validation logic block here, unchanged)
-}
-
 export async function POST(request: NextRequest) {
   try {
-    if (!GROQ_API_KEY) {
-      return NextResponse.json({
-        error: "GROQ_API_KEY is not set in environment variables. Please check your .env.local and restart the dev server from the nextjs-app directory."
-      }, { status: 500 });
-    }
-    const body = await request.json();
-    if (!validateInput(body)) {
-      return NextResponse.json({ error: "Invalid input. Please provide command, currentMetrics, and pollutionLevel." }, { status: 400 });
-    }
-    const { command, currentMetrics, pollutionLevel, model = "deepseek-r1:8b" } = body;
+    const {
+      command,
+      currentMetrics,
+      pollutionLevel,
+      model = "llama3-8b-8192",
+    } = await request.json();
 
-    // Catastrophic event detection (modular)
+    // Catastrophic event detection
     const lowerCommand = command.toLowerCase();
     let specialEvent = null;
     let isCatastrophic = false;
     let catastrophicType = "";
-    if (/(meteor|asteroid|smash)/.test(lowerCommand)) {
-      specialEvent = "meteor"; isCatastrophic = true; catastrophicType = "meteor";
-    } else if (/(nuclear|bomb|war)/.test(lowerCommand)) {
-      specialEvent = "nuclear"; isCatastrophic = true; catastrophicType = "nuclear";
-    } else if (/(volcano|erupt)/.test(lowerCommand)) {
-      specialEvent = "volcano"; isCatastrophic = true; catastrophicType = "volcano";
-    } else if (/(moon|lunar|crash)/.test(lowerCommand)) {
-      specialEvent = "moon"; isCatastrophic = true; catastrophicType = "moon";
+    if (
+      lowerCommand.includes("meteor") ||
+      lowerCommand.includes("asteroid") ||
+      lowerCommand.includes("smash")
+    ) {
+      specialEvent = "meteor";
+      isCatastrophic = true;
+      catastrophicType = "meteor";
+    } else if (
+      lowerCommand.includes("nuclear") ||
+      lowerCommand.includes("bomb") ||
+      lowerCommand.includes("war")
+    ) {
+      specialEvent = "nuclear";
+      isCatastrophic = true;
+      catastrophicType = "nuclear";
+    } else if (
+      lowerCommand.includes("volcano") ||
+      lowerCommand.includes("erupt")
+    ) {
+      specialEvent = "volcano";
+      isCatastrophic = true;
+      catastrophicType = "volcano";
+    } else if (
+      lowerCommand.includes("moon") ||
+      lowerCommand.includes("lunar") ||
+      lowerCommand.includes("crash")
+    ) {
+      specialEvent = "moon";
+      isCatastrophic = true;
+      catastrophicType = "moon";
     } else if (lowerCommand.includes("god") && lowerCommand.includes("save")) {
-      specialEvent = "god"; isCatastrophic = false; catastrophicType = "god";
+      specialEvent = "god";
+      isCatastrophic = false;
+      catastrophicType = "god";
     }
 
-    // Adjust prompt based on model
+    // Prompt construction (same as before)
     const isQwen = model.includes("qwen");
     const isDeepseekSmall =
       model.includes("deepseek-r1:1.5b") || model.includes("deepseek-r1:7b");
@@ -234,114 +177,356 @@ ${
 }
 `;
 
-
-    // Call GroqCloud LLM (OpenAI-compatible API)
-    if (!GROQ_API_KEY) {
-      return NextResponse.json({
-        error: "GROQ_API_KEY is not set in environment variables. Please check your .env.local and restart the dev server from the nextjs-app directory."
-      }, { status: 500 });
-    }
-    let groqResponse;
-    try {
-      groqResponse = await fetch(GROQ_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "llama3-8b-8192", // safer default for GroqCloud
-          messages: [
-            { role: "system", content: "You are an environmental AI expert analyzing the impact of human actions on Earth. Respond ONLY with a valid JSON object as described." },
-            { role: "user", content: prompt }
-          ],
-          max_tokens: 1024,
-          temperature: 0.2
-        }),
-      });
-    } catch (err) {
-      return NextResponse.json({
-        error: "Failed to reach GroqCloud API endpoint.",
-        details: err instanceof Error ? err.message : String(err)
-      }, { status: 500 });
-    }
+    // Call Groq API
+    const groqResponse = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: "You are an environmental AI expert analyzing the impact of human actions on Earth. Respond ONLY with a valid JSON object as described." },
+          { role: "user", content: prompt }
+        ],
+        max_tokens: 1024,
+        temperature: 0.2
+      }),
+    });
 
     if (!groqResponse.ok) {
-      let errorDetails = await groqResponse.text();
-      // Log GroqCloud error to terminal for debugging
-      console.error('GroqCloud API error:', groqResponse.status, errorDetails);
-      return NextResponse.json({
-        error: `GroqCloud request failed: ${groqResponse.statusText}`,
-        details: errorDetails
-      }, { status: 500 });
+      throw new Error(`Groq request failed: ${groqResponse.statusText}`);
     }
+
     const groqData = await groqResponse.json();
     let responseText = groqData.choices?.[0]?.message?.content || "";
 
-  // (Debug logging removed for production)
-
-    // Modular JSON extraction and fallback
-    function extractJson(text: string): any {
-      let parsed = null;
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try { parsed = JSON.parse(jsonMatch[0]); } catch {}
+    // === Robust JSON extraction and fallback logic (from working Ollama code) ===
+    let parsedResponse = null;
+    // Strategy 1: Look for JSON object
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        parsedResponse = JSON.parse(jsonMatch[0]);
+      } catch (parseError) {
+        console.log("JSON parse failed for matched content:", jsonMatch[0]);
       }
-      if (!parsed) {
-        try { parsed = JSON.parse(text.trim()); } catch {}
-      }
-      if (!parsed && text.includes("<think>")) {
-        const cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-        const cleanJsonMatch = cleanText.match(/\{[\s\S]*\}/);
-        if (cleanJsonMatch) {
-          try { parsed = JSON.parse(cleanJsonMatch[0]); } catch {}
-        }
-      }
-      if (!parsed && (model.includes("deepseek-r1:1.5b") || model.includes("deepseek-r1:7b"))) {
-        const jsonStart = text.indexOf("{");
-        const jsonEnd = text.lastIndexOf("}") + 1;
-        if (jsonStart !== -1 && jsonEnd > jsonStart) {
-          const extractedJson = text.substring(jsonStart, jsonEnd);
-          try { parsed = JSON.parse(extractedJson); } catch {}
-        }
-      }
-      return parsed;
     }
-
-    let parsedResponse = extractJson(responseText, model);
+    // Strategy 2: If no JSON found, try to parse the entire response
     if (!parsedResponse) {
-      parsedResponse = createFallback(command, currentMetrics, pollutionLevel, isCatastrophic, catastrophicType, specialEvent);
+      try {
+        parsedResponse = JSON.parse(responseText.trim());
+      } catch (parseError) {
+        console.log("Full response parse failed:", responseText);
+      }
     }
-
-  // Validate and sanitize the response
-  let validatedMetrics = validateMetrics(parsedResponse.metrics, currentMetrics);
-
-  // (Debug logging removed for production)
-
-  const validatedPollutionLevel = Math.max(0, Math.min(parsedResponse.pollutionLevel || pollutionLevel, 100));
-
-    // Modular comparison text
-    function createComparisonText(metrics: any, current: any, pollution: number, validatedPollution: number) {
-      const changes = [];
-      const add = (label: string, oldVal: number, newVal: number, unit = "") => {
-        if (oldVal !== newVal) {
-          const direction = newVal > oldVal ? "↑" : "↓";
-          changes.push(`${label}: ${oldVal}${unit} ${direction} ${newVal}${unit}`);
+    // Strategy 3: Handle Qwen's think tags and extract JSON from within
+    if (!parsedResponse && responseText.includes("<think>")) {
+      // Remove think tags and try to find JSON
+      const cleanText = responseText
+        .replace(/<think>[\s\S]*?<\/think>/g, "")
+        .trim();
+      const cleanJsonMatch = cleanText.match(/\{[\s\S]*\}/);
+      if (cleanJsonMatch) {
+        try {
+          parsedResponse = JSON.parse(cleanJsonMatch[0]);
+        } catch (parseError) {
+          console.log(
+            "JSON parse failed for cleaned content:",
+            cleanJsonMatch[0]
+          );
         }
-      };
-      add("CO₂", current.co2Level, metrics.co2Level, "ppm");
-      add("Air Toxicity", current.toxicityLevel, metrics.toxicityLevel, "%");
-      add("Temperature", current.temperature, metrics.temperature, "°C");
-      add("Humans", current.humanPopulation, metrics.humanPopulation);
-      add("Animals", current.animalPopulation, metrics.animalPopulation);
-      add("Plants", current.plantPopulation, metrics.plantPopulation);
-      add("Ocean pH", current.oceanAcidity, metrics.oceanAcidity);
-      add("Ice Melting", current.iceCapMelting, metrics.iceCapMelting, "%");
-      add("Pollution", pollution, validatedPollution, "%");
-      return changes.length > 0 ? `\n\n📊 Changes:\n${changes.join("\n")}` : "";
+      }
     }
-  const comparisonText = createComparisonText(validatedMetrics, currentMetrics, pollutionLevel, validatedPollutionLevel);
-  const enhancedAnalysis = (parsedResponse.analysis || "Environmental impact calculated successfully.") + comparisonText;
+    // Strategy 4: Handle deepseek-r1:1.5b responses with explanations
+    if (
+      !parsedResponse &&
+      (model.includes("deepseek-r1:1.5b") || model.includes("deepseek-r1:7b"))
+    ) {
+      // Remove all text before the first { and after the last }
+      const jsonStart = responseText.indexOf("{");
+      const jsonEnd = responseText.lastIndexOf("}") + 1;
+      if (jsonStart !== -1 && jsonEnd > jsonStart) {
+        const extractedJson = responseText.substring(jsonStart, jsonEnd);
+        try {
+          parsedResponse = JSON.parse(extractedJson);
+        } catch (parseError) {
+          console.log(
+            "JSON parse failed for extracted content:",
+            extractedJson
+          );
+        }
+      }
+    }
+    // Strategy 5: If still no JSON, create a fallback response
+    if (!parsedResponse) {
+      console.log("Creating fallback response for model:", model);
+      console.log("Response that failed to parse:", responseText);
+      // Create a more intelligent fallback based on the command
+      const commandLower = command.toLowerCase();
+      let co2Increase = 20;
+      let toxicityIncrease = 5;
+      let tempIncrease = 0.5;
+      let humanLoss = 1000000;
+      let animalLoss = 5000000;
+      let plantLoss = 10000000;
+      let pollutionIncrease = 3;
+      // Adjust based on command type
+      if (
+        commandLower.includes("car") ||
+        commandLower.includes("drive") ||
+        commandLower.includes("transport")
+      ) {
+        co2Increase = 30;
+        toxicityIncrease = 8;
+        tempIncrease = 0.8;
+        pollutionIncrease = 5;
+      } else if (
+        commandLower.includes("factory") ||
+        commandLower.includes("industry") ||
+        commandLower.includes("manufacture")
+      ) {
+        co2Increase = 50;
+        toxicityIncrease = 15;
+        tempIncrease = 1.2;
+        pollutionIncrease = 10;
+      } else if (
+        commandLower.includes("deforest") ||
+        commandLower.includes("cut") ||
+        commandLower.includes("tree")
+      ) {
+        co2Increase = 40;
+        plantLoss = 50000000;
+        animalLoss = 10000000;
+        pollutionIncrease = 8;
+      } else if (
+        commandLower.includes("pollute") ||
+        commandLower.includes("waste") ||
+        commandLower.includes("dump")
+      ) {
+        toxicityIncrease = 20;
+        pollutionIncrease = 15;
+        humanLoss = 2000000;
+      }
+      // For catastrophic events, ensure they have appropriate impact
+      if (isCatastrophic) {
+        if (catastrophicType === "nuclear") {
+          co2Increase = 135;
+          toxicityIncrease = 80;
+          tempIncrease = -16; // Nuclear winter
+          humanLoss = 7650000000; // 85% loss
+          animalLoss = 50000000000;
+          plantLoss = 300000000000;
+          pollutionIncrease = 80;
+        } else if (catastrophicType === "meteor") {
+          co2Increase = 200;
+          toxicityIncrease = 60;
+          tempIncrease = 15; // Global warming from impact
+          humanLoss = 8100000000; // 90% loss
+          animalLoss = 90000000000;
+          plantLoss = 800000000000;
+          pollutionIncrease = 70;
+        } else if (catastrophicType === "volcano") {
+          co2Increase = 300;
+          toxicityIncrease = 40;
+          tempIncrease = -10; // Initial cooling, then warming
+          humanLoss = 3600000000; // 40% loss
+          animalLoss = 40000000000;
+          plantLoss = 200000000000;
+          pollutionIncrease = 50;
+        } else if (catastrophicType === "moon") {
+          co2Increase = 500; // Massive atmospheric disruption
+          toxicityIncrease = 95; // Near complete atmospheric poisoning
+          tempIncrease = 50; // Global firestorm
+          humanLoss = 8991000000; // 99.9% loss - near extinction
+          animalLoss = 99900000000; // 99.9% loss
+          plantLoss = 999000000000; // 99.9% loss
+          pollutionIncrease = 95; // Complete environmental collapse
+        } else if (catastrophicType === "god") {
+          // God saves the Earth - reset everything to pristine condition
+          co2Increase = 415 - currentMetrics.co2Level; // Reset to 415ppm
+          toxicityIncrease = 5 - currentMetrics.toxicityLevel; // Reset to 5%
+          tempIncrease = 30 - currentMetrics.temperature; // Reset to 30°C
+          humanLoss = currentMetrics.humanPopulation - 9000000000; // Restore to 9B
+          animalLoss = currentMetrics.animalPopulation - 100000000000; // Restore to 100B
+          plantLoss = currentMetrics.plantPopulation - 1000000000000; // Restore to 1T
+          pollutionIncrease = 0 - pollutionLevel; // Reset to 0%
+        }
+      }
+      parsedResponse = {
+        analysis: `The command "${command}" will have environmental consequences. ${responseText.substring(
+          0,
+          200
+        )}...`,
+        metrics: {
+          co2Level: Math.min(currentMetrics.co2Level + co2Increase, 2000),
+          toxicityLevel: Math.min(
+            currentMetrics.toxicityLevel + toxicityIncrease,
+            100
+          ),
+          temperature: Math.min(currentMetrics.temperature + tempIncrease, 50),
+          humanPopulation: Math.max(
+            currentMetrics.humanPopulation - humanLoss,
+            0
+          ),
+          animalPopulation: Math.max(
+            currentMetrics.animalPopulation - animalLoss,
+            0
+          ),
+          plantPopulation: Math.max(
+            currentMetrics.plantPopulation - plantLoss,
+            0
+          ),
+          oceanAcidity: Math.max(currentMetrics.oceanAcidity - 0.01, 6.0),
+          iceCapMelting: Math.min(currentMetrics.iceCapMelting + 1, 100),
+        },
+        pollutionLevel: Math.min(pollutionLevel + pollutionIncrease, 100),
+        specialEvent: specialEvent,
+      };
+    }
+
+    // Validate and sanitize the response
+    let validatedMetrics = {
+      co2Level: Math.max(
+        0,
+        Math.min(
+          parsedResponse.metrics?.co2Level || currentMetrics.co2Level,
+          2000
+        )
+      ),
+      toxicityLevel: Math.max(
+        0,
+        Math.min(
+          parsedResponse.metrics?.toxicityLevel || currentMetrics.toxicityLevel,
+          100
+        )
+      ),
+      temperature: Math.max(
+        -50,
+        Math.min(
+          parsedResponse.metrics?.temperature || currentMetrics.temperature,
+          50
+        )
+      ),
+      humanPopulation: Math.max(
+        0,
+        parsedResponse.metrics?.humanPopulation ||
+          currentMetrics.humanPopulation
+      ),
+      animalPopulation: Math.max(
+        0,
+        parsedResponse.metrics?.animalPopulation ||
+          currentMetrics.animalPopulation
+      ),
+      plantPopulation: Math.max(
+        0,
+        parsedResponse.metrics?.plantPopulation ||
+          currentMetrics.plantPopulation
+      ),
+      oceanAcidity: Math.max(
+        6.0,
+        Math.min(
+          parsedResponse.metrics?.oceanAcidity || currentMetrics.oceanAcidity,
+          9.0
+        )
+      ),
+      iceCapMelting: Math.max(
+        0,
+        Math.min(
+          parsedResponse.metrics?.iceCapMelting || currentMetrics.iceCapMelting,
+          100
+        )
+      ),
+    };
+
+    const validatedPollutionLevel = Math.max(
+      0,
+      Math.min(parsedResponse.pollutionLevel || pollutionLevel, 100)
+    );
+
+    // Create before/after comparison for the analysis
+    const createComparisonText = () => {
+      const changes = [];
+      if (validatedMetrics.co2Level !== currentMetrics.co2Level) {
+        const change = validatedMetrics.co2Level - currentMetrics.co2Level;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `CO₂: ${currentMetrics.co2Level}ppm ${direction} ${validatedMetrics.co2Level}ppm`
+        );
+      }
+      if (validatedMetrics.toxicityLevel !== currentMetrics.toxicityLevel) {
+        const change =
+          validatedMetrics.toxicityLevel - currentMetrics.toxicityLevel;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Air Toxicity: ${currentMetrics.toxicityLevel}% ${direction} ${validatedMetrics.toxicityLevel}%`
+        );
+      }
+      if (validatedMetrics.temperature !== currentMetrics.temperature) {
+        const change =
+          validatedMetrics.temperature - currentMetrics.temperature;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Temperature: ${currentMetrics.temperature}°C ${direction} ${validatedMetrics.temperature}°C`
+        );
+      }
+      if (validatedMetrics.humanPopulation !== currentMetrics.humanPopulation) {
+        const change =
+          validatedMetrics.humanPopulation - currentMetrics.humanPopulation;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Humans: ${currentMetrics.humanPopulation.toLocaleString()} ${direction} ${validatedMetrics.humanPopulation.toLocaleString()}`
+        );
+      }
+      if (
+        validatedMetrics.animalPopulation !== currentMetrics.animalPopulation
+      ) {
+        const change =
+          validatedMetrics.animalPopulation - currentMetrics.animalPopulation;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Animals: ${currentMetrics.animalPopulation.toLocaleString()} ${direction} ${validatedMetrics.animalPopulation.toLocaleString()}`
+        );
+      }
+      if (validatedMetrics.plantPopulation !== currentMetrics.plantPopulation) {
+        const change =
+          validatedMetrics.plantPopulation - currentMetrics.plantPopulation;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Plants: ${currentMetrics.plantPopulation.toLocaleString()} ${direction} ${validatedMetrics.plantPopulation.toLocaleString()}`
+        );
+      }
+      if (validatedMetrics.oceanAcidity !== currentMetrics.oceanAcidity) {
+        const change =
+          validatedMetrics.oceanAcidity - currentMetrics.oceanAcidity;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Ocean pH: ${currentMetrics.oceanAcidity} ${direction} ${validatedMetrics.oceanAcidity}`
+        );
+      }
+      if (validatedMetrics.iceCapMelting !== currentMetrics.iceCapMelting) {
+        const change =
+          validatedMetrics.iceCapMelting - currentMetrics.iceCapMelting;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Ice Melting: ${currentMetrics.iceCapMelting}% ${direction} ${validatedMetrics.iceCapMelting}%`
+        );
+      }
+      if (validatedPollutionLevel !== pollutionLevel) {
+        const change = validatedPollutionLevel - pollutionLevel;
+        const direction = change > 0 ? "↑" : "↓";
+        changes.push(
+          `Pollution: ${pollutionLevel}% ${direction} ${validatedPollutionLevel}%`
+        );
+      }
+      return changes.length > 0 ? `\n\n📊 Changes:\n${changes.join("\n")}` : "";
+    };
+
+    const comparisonText = createComparisonText();
+    const enhancedAnalysis =
+      (parsedResponse.analysis ||
+        "Environmental impact calculated successfully.") + comparisonText;
 
     const finalResponse = {
       analysis: enhancedAnalysis,
@@ -349,8 +534,6 @@ ${
       pollutionLevel: validatedPollutionLevel,
       specialEvent: parsedResponse.specialEvent || specialEvent,
     };
-
-  // (Debug logging removed for production)
 
     return NextResponse.json(finalResponse);
   } catch (error) {

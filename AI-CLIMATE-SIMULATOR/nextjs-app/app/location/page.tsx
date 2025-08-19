@@ -1,4 +1,5 @@
-import AmazonRainforestMapSlide from '../../components/AmazonRainforestMapSlide';
+
+import LocationAttackDashboard from '../../components/LocationAttackDashboard';
 export default function Page() {
-  return <AmazonRainforestMapSlide />;
+  return <LocationAttackDashboard />;
 }
