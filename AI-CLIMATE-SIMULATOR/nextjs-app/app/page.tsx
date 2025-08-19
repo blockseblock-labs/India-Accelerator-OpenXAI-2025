@@ -56,11 +56,11 @@ const availableModels = [
 
 export default function Home() {
   const [metrics, setMetrics] = useState<EarthMetrics>({
-    co2Level: 415, // Starting CO2 level (ppm)
-    toxicityLevel: 5, // Starting toxicity level (1-100)
-    temperature: 30, // Starting temperature (°C) - hotter baseline
-    humanPopulation: 9000000000, // 9 billion humans
-    animalPopulation: 100000000000, // 100 billion animals
+    co2Level: 420, // Starting CO2 level (ppm)
+    toxicityLevel: 5.1, // Starting toxicity level (1-100)
+    temperature: 31, // Starting temperature (°C) - hotter baseline
+    humanPopulation: 9100000000, // 9 billion humans
+    animalPopulation: 110000000000, // 100 billion animals
     plantPopulation: 1000000000000,
     oceanAcidity: 8.1, // pH level
     iceCapMelting: 10, // Percentage melted
@@ -79,14 +79,14 @@ export default function Home() {
 
   // AI thinking process simulation
   const thinkingSteps = [
-    "Analyzing environmental impact...",
-    "Calculating CO2 emissions...",
-    "Estimating population effects...",
-    "Computing temperature changes...",
-    "Assessing ocean acidification...",
-    "Evaluating biodiversity loss...",
-    "Projecting climate consequences...",
-    "Finalizing impact assessment..."
+    "ANALYZING ENVIRONMENTAL IMPACT...",
+    "CALCULATING CO2 EMISSIONS...",
+    "ESTIMATING POPULATION EFFECTS...",
+    "COMPUTING TEMPERATURE CHANGES...",
+    "ASSESSING OCEAN ACIDIFICATION...",
+    "EVALUATING BIODIVERSITY LOSS...",
+    "PROJECTING CLIMATE CONSEQUENCES...",
+    "FINALYZING IMPACT ASSESSMENT..."
   ]
 
   const processUserCommand = async (command: string) => {
@@ -171,9 +171,9 @@ export default function Home() {
       co2Level: 415,
       toxicityLevel: 5,
       temperature: 30,
-      humanPopulation: 9000000000,
-      animalPopulation: 100000000000,
-      plantPopulation: 1000000000000,
+      humanPopulation: 10000000000,
+      animalPopulation: 150000000000,
+      plantPopulation: 1700000000000,
       oceanAcidity: 8.1,
       iceCapMelting: 10,
     })
