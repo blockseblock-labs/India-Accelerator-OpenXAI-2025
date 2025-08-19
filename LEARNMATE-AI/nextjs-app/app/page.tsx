@@ -141,17 +141,36 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated SVG Wave Background */}
+      <div className="absolute inset-0 -z-10">
+        <svg viewBox="0 0 1440 320" className="w-full h-80 opacity-70 animate-pulse">
+          <defs>
+            <linearGradient id="blueGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#2563eb" />
+              <stop offset="100%" stopColor="#1e3a8a" />
+            </linearGradient>
+          </defs>
+          <path fill="url(#blueGradient)" fillOpacity="1" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,154.7C840,149,960,171,1080,186.7C1200,203,1320,213,1380,218.7L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+        </svg>
+      </div>
+      {/* Animated Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-700/60 via-blue-900/80 to-indigo-900/90 blur-2xl -z-20 animate-gradient-move"></div>
+      {/* Floating AI Icon */}
+      <div className="absolute top-8 right-8 z-20 animate-float">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-700 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-blue-300/40 animate-glow">
+          <span className="text-4xl text-white drop-shadow-lg">🤖</span>
+        </div>
+      </div>
+      <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-5xl font-extrabold text-white mb-4 drop-shadow-lg tracking-tight">📚 LearnAI</h1>
+          <p className="text-white/90 text-lg font-medium">AI-Powered Educational Tools</p>
         </div>
-
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl p-2 flex space-x-2 shadow-xl">
             {[
               { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
               { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
@@ -160,19 +179,18 @@ export default function LearnAI() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
+                className={`px-7 py-4 rounded-xl font-semibold transition-all duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400/60 focus:ring-offset-2 focus:ring-offset-blue-900/40
+                  ${activeTab === tab.id
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white scale-105 shadow-lg shadow-blue-700/30'
+                    : 'text-white/80 hover:bg-white/20 hover:text-white/100'}
+                `}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                <div className="text-base font-bold flex items-center gap-2">{tab.label} {tab.id === activeTab && <span className="ml-1 w-2 h-2 bg-blue-300 rounded-full animate-pulse"></span>}</div>
+                <div className="text-xs opacity-80 font-medium">{tab.desc}</div>
               </button>
             ))}
           </div>
         </div>
-
         {/* Content */}
         <div className="max-w-4xl mx-auto">
           {/* Flashcards Tab */}
@@ -378,4 +396,4 @@ export default function LearnAI() {
       </div>
     </div>
   )
-} 
+}
