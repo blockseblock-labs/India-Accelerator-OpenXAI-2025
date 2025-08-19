@@ -17,101 +17,205 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(135deg, #2B32B2 0%, #1488CC 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
 }
 
-/* Custom social media theme */
+button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .social-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
+  box-shadow: 0 4px 15px -5px rgba(0, 180, 219, 0.3);
 }
 
 .instagram-gradient {
-  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  background: linear-gradient(45deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  box-shadow: 0 4px 15px -5px rgba(131, 58, 180, 0.3);
 }
 
 .twitter-gradient {
-  background: linear-gradient(135deg, #1DA1F2 0%, #0d47a1 100%);
+  background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+  box-shadow: 0 4px 15px -5px rgba(86, 204, 242, 0.3);
 }
 
 .social-card {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
+  height: auto;
+  min-height: auto;
+  max-width: 800px;
+  margin: 2rem auto;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  overflow-y: auto;
 }
 
-.social-card:hover {
-  backdrop-filter: blur(15px);
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.tab-content {
+  height: 100%;
+  opacity: 1;
+  transform: none;
+}
+
+.result-container {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.social-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.social-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.social-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.social-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .mood-indicator {
   display: inline-block;
-  font-size: 2rem;
-  animation: bounce 2s infinite;
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+  animation: floatAnimation 3s ease-in-out infinite;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
 
 .hashtag-tag {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #43CBFF 0%, #9708CC 100%);
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
+  padding: 0.375rem 0.75rem;
   margin: 0.125rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 15px rgba(67, 203, 255, 0.2);
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .hashtag-tag:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(67, 203, 255, 0.3);
+}
+
+input, textarea {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: block;
+  background: rgba(255, 255, 255, 0.07) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.content-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+input:focus, textarea:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
 }
 
 .copy-button {
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #43CBFF 0%, #9708CC 100%);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.625rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .copy-button:hover {
   transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(67, 203, 255, 0.3);
 }
 
 .copy-button.copied {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  transform: scale(0.95);
-}
-
-.tab-content {
-  animation: fadeIn 0.3s ease-in-out;
+  background: linear-gradient(135deg, #00C853 0%, #009624 100%);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-} 
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-gradient-animated {
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.search-area-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.search-area-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease-out;
+}
+
+.search-area-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.search-area-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in;
+}
+
+textarea:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-1px);
+}
