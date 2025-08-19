@@ -174,7 +174,7 @@ export default function LearnAI() {
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto fade-in">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
