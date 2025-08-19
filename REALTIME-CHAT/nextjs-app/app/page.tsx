@@ -81,8 +81,8 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600">
       <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
         <div className="text-center text-white mb-8">
-          <h1 className="text-6xl font-bold mb-4">💬 TextStream Template</h1>
-          <p className="text-xl opacity-90">Real-time AI chat with streaming responses!</p>
+          <h1 className="text-6xl font-bold mb-4">💬 Virtual friend</h1>
+          <p className="text-xl opacity-90">Real-time AI chat with Human Intervention</p>
         </div>
         
         <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col">
@@ -140,27 +140,28 @@ export default function Home() {
           </div>
           
           {/* Input */}
-          <div className="flex space-x-4">
+          <div className="relative px-6 py-5 bg-white/30 border-t border-white/20">
             <textarea
+              className="w-full resize-none rounded-full px-5 py-3 border-2 border-transparent bg-white/60 text-gray-700 shadow-inner placeholder-gray-400 transition focus:border-gradient-to-r focus:from-blue-400 focus:to-pink-400 focus:ring-2 focus:ring-blue-200"
+              rows={1}
+              placeholder="Type a creative message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message here..."
-              className="flex-1 bg-white/20 text-white placeholder-white/60 px-4 py-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-white/50"
-              rows={1}
-              disabled={isLoading}
+              onKeyDown={handleKeyPress}
+              style={{
+                borderImage: "linear-gradient(90deg, #60a5fa, #f472b6) 1",
+              }}
             />
             <button
+              className="absolute right-10 bottom-7 bg-gradient-to-br from-blue-500 to-indigo-500 text-white rounded-full p-3 shadow-lg transition-transform duration-200 hover:scale-125 hover:rotate-12"
               onClick={sendMessage}
-              disabled={isLoading || !input.trim()}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              aria-label="Send"
             >
-              <Send size={20} />
-              <span>Send</span>
+              <Send size={22} />
             </button>
           </div>
         </div>
       </div>
     </main>
   )
-} 
+}
