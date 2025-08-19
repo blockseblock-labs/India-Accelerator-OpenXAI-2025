@@ -1,30 +1,38 @@
-## Nextjs Ollama Template
+# Next.js Ollama Template
 
-Template to make a Nextjs + Ollama app that runs on OpenxAI (and any other NixOS infrastructure).
+A starter template to build UI powered by [Ollama](https://ollama.com/) models, running on OpenxAI (or any NixOS-based infra).  
+This repo helps you quickly scaffold a conversational AI frontend with a Next.js app connected to an Ollama backend.
 
-## Modification Steps
+---
+# 🚀 Features
 
-1. Replace all instances of "nextjs-ollama-template" with the name of your project. This should be unique, as no apps with the same name can be run on a single Xnode.
-2. Pick your ollama model from https://ollama.com/library and enter it's identifier in [ollama-model.txt](./ollama-model.txt).
-3. Build your Nextjs app
-4. Once your app is ready for deployment and runs using `nix run`, push to GitHub and copy your GitHub url (e.g. https://github.com/Openmesh-Network/nextjs-ollama-template).
+- Next.js frontend with a ChatGPT-inspired interface
+- Backend powered by Ollama (choose any model from the Ollama library)
+- Runs on OpenxAI / NixOS infrastructure
+- Easy local development with `npm run dev`
 
-## Commands (in root folder)
+---
 
-```
-sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-sudo rm -rf /nix/var/nix/daemon-socket/socket
-sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+## 🛠️ Setup & Modification Steps
 
+1. **Rename Project**  
+   Replace all instances of `nextjs-ollama-template` with your own project name.  
+   _(Project name must be unique per Xnode.)_
 
-nix run
-```
+2. **Pick Your Model**  
+   Open [ollama-model.txt](./ollama-model.txt) and add the model identifier you want to use.  
+   👉 Browse available models here: https://ollama.com/library
 
-## Commands (in nextjs-app)
+3. **Build the App**  
+   Start customizing your Next.js UI. The default styling is clean and minimal — feel free to adjust to match your needs.
 
-```
-npm i
-npm run dev
-npm run build
-npm run start
-```
+4. **Deploy**  
+   Once it runs with `nix run`, push to GitHub.  
+   Example repo URL:  
+
+In Next.js app folder (nextjs-app)
+
+npm install
+npm run dev     # start dev server
+npm run build   # production build
+npm run start   # start production server
