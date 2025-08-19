@@ -140,38 +140,39 @@ export default function LearnAI() {
     }, 1500)
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
-        </div>
+return (
+  <div className="min-h-screen bg-background">
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-primary mb-4">📚 LearnAI</h1>
+        <p className="text-muted text-lg">AI-Powered Educational Tools</p>
+      </div>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
-            {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
-              >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
-              </button>
-            ))}
-          </div>
+      {/* Tabs */}
+      <div className="flex justify-center mb-8">
+        <div className="bg-card rounded-lg p-2 flex space-x-2 shadow-md">
+          {[
+            { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
+            { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
+            { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 rounded-lg transition-all ${
+                activeTab === tab.id
+                  ? 'bg-primary text-black shadow-lg'
+                  : 'text-foreground hover:bg-white/10'
+              }`}
+            >
+              <div className="text-sm font-medium">{tab.label}</div>
+              <div className="text-xs opacity-75">{tab.desc}</div>
+            </button>
+          ))}
         </div>
+      </div>
+
 
         {/* Content */}
         <div className="max-w-4xl mx-auto">
