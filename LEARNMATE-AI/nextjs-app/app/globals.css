@@ -2,35 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark orange + black theme */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --background: #000000;   /* pure black background */
+  --foreground: #f5f5f5;   /* near-white text */
+  --primary: #ff8c00;      /* orange accent */
+  --secondary: #ff4500;    /* deep orange/red */
+  --card: #111111;         /* card bg */
+  --muted: #aaaaaa;        /* muted text */
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-background text-foreground;
 }
 
-/* Custom educational theme */
+/* Gradient for headers / highlight sections */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
 }
 
+/* Flashcards */
 .flashcard {
   perspective: 1000px;
 }
@@ -58,35 +49,54 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
+  color: black;
+  font-weight: bold;
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  color: var(--primary);
   transform: rotateY(180deg);
+  font-weight: bold;
 }
 
+.flashcard-front:hover,
+.flashcard-back:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.8), 0 0 40px rgba(255, 140, 0, 0.6);
+}
+
+/* Quiz buttons */
 .quiz-option {
   transition: all 0.3s ease;
+  background: #111;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 12px;
 }
 
 .quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.9), 0 0 30px rgba(255, 140, 0, 0.6);
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
+  color: black;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 1);
 }
 
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #ff1744 0%, #ff9100 100%);
   color: white;
-} 
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 23, 68, 0.9);
+}
