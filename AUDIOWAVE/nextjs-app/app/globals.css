@@ -3,45 +3,187 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 36, 0, 70;
+  --background-end-rgb: 255, 0, 110;
+  --primary-glow: conic-gradient(
+    from 180deg at 50% 50%,
+    #4f46e5 0deg,
+    #8b5cf6 120deg,
+    #ec4899 240deg,
+    #4f46e5 360deg
+  );
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* 3D Animated Background */
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #0a0a0a;
+  height: 100vh;
+  width:100vw;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  perspective: 1500px;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
-/* Audio visualization styles */
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transform-style: preserve-3d;
+}
+
+.bg-gradient {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  left: -25%;
+  top: -25%;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
+    linear-gradient(45deg, #1a0b2e 0%, #271043 50%, #1a0b2e 100%);
+  transform: rotateX(45deg) rotateY(-15deg) translateZ(-500px);
+  filter: blur(2px);
+  animation: gradientMove 15s ease infinite;
+}
+
+.grid-overlay {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  left: -50%;
+  top: -50%;
+  background-image: 
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  transform: rotateX(45deg) rotateY(-15deg) translateZ(-400px);
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gradientMove {
+  0%, 100% { transform: rotateX(45deg) rotateY(-15deg) translateZ(-500px); }
+  50% { transform: rotateX(45deg) rotateY(-25deg) translateZ(-500px); }
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 30px 30px; }
+}
+
+/* Modern glassmorphism styles */
+.bg-glass {
+  background: rgba(30, 27, 75, 0.7);
+  border-radius: 2rem;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.bg-glass:hover {
+  transform: translateY(-4px) translateZ(20px);
+  box-shadow: 
+    0 12px 40px 0 rgba(31, 38, 135, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+/* Audio visualization */
 .audio-visualizer {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
+  height: 60px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
 }
 
 .audio-bar {
-  width: 3px;
-  background: linear-gradient(to top, #8b5cf6, #06b6d4);
-  border-radius: 2px;
-  animation: audioWave 1s ease-in-out infinite alternate;
+  width: 4px;
+  background: linear-gradient(to top, 
+    rgba(139, 92, 246, 0.8),
+    rgba(6, 182, 212, 0.8),
+    rgba(236, 72, 153, 0.8));
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+  animation: audioWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: height;
 }
 
 @keyframes audioWave {
-  0% { height: 10px; }
-  100% { height: 30px; }
-} 
+  0% { height: 10px; opacity: 0.6; }
+  100% { height: 45px; opacity: 1; }
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-500 
+         hover:from-indigo-600 hover:to-purple-600 
+         text-white px-6 py-3 rounded-xl font-semibold 
+         shadow-lg transition-all duration-300 
+         text-center transform hover:-translate-y-1;
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-pink-500 to-red-500 
+         hover:from-pink-600 hover:to-red-600 
+         text-white px-6 py-3 rounded-xl font-semibold 
+         shadow-lg transition-all duration-300 
+         text-center transform hover:-translate-y-1;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  background: rgba(49, 46, 129, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(49, 46, 129, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+}
+
+/* Fade-in animation */
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+    filter: blur(8px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .background-animation {
+    perspective: 800px;
+  }
+  
+  .bg-gradient, .grid-overlay {
+    transform: rotateX(35deg) rotateY(-10deg) translateZ(-300px);
+  }
+}
