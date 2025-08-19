@@ -182,7 +182,7 @@ ${
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: model,
+        model: model ,
         prompt: prompt,
         stream: false,
       }),
