@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface Flashcard {
   front: string
@@ -14,15 +14,29 @@ interface QuizQuestion {
   explanation: string
 }
 
+interface FallingSymbol {
+  id: number
+  symbol: string
+  x: number
+  y: number
+  speed: number
+  opacity: number
+  size: number
+}
+
 export default function LearnAI() {
   const [activeTab, setActiveTab] = useState('flashcards')
   const [loading, setLoading] = useState(false)
+  const [symbols, setSymbols] = useState<FallingSymbol[]>([])
   
   // Flashcard states
   const [notes, setNotes] = useState('')
   const [flashcards, setFlashcards] = useState<Flashcard[]>([])
   const [currentCard, setCurrentCard] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [numCards, setNumCards] = useState(5)
+  const [autoPlay, setAutoPlay] = useState(true)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
   
   // Quiz states
   const [quizText, setQuizText] = useState('')
@@ -31,11 +45,98 @@ export default function LearnAI() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showResults, setShowResults] = useState(false)
   const [score, setScore] = useState(0)
-  
+  const [timeLeft, setTimeLeft] = useState(20)
+  const TIMER_PER_QUESTION = 20
+
   // Study Buddy states
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [chatHistory, setChatHistory] = useState<{question: string, answer: string}[]>([])
+
+  // Enhanced educational symbols with sophisticated colors
+  const educationalSymbols = [
+    // Biology symbols - sophisticated
+    '🧬', '🦠', 'DNA', 'Cell', 'Gene', 'ATP', 'CO₂', 'H₂O', 'RNA', '💊', '👩‍⚕', '🩺', '💉',
+    // Chemistry symbols - sophisticated
+    'NaCl', 'CH₄', 'NH₃', 'HCl', 'Fe', 'Au', 'Cu', 'Zn', '🧪', '📐',
+    // Computer Science symbols - sophisticated
+    'AI', 'ML', 'API', 'HTTP', 'JSON', 'CSS', 'HTML', 'SQL', '0', '1', '👩🏻‍💻', '📓', '✍🏻', '💡',
+    // Mathematics symbols - sophisticated
+    '∫', '∑', '√', 'π', '∞', 'α', 'β', 'γ', 'δ', 'ε'
+  ]
+
+  // Enhanced rain animation with sophisticated effects
+  useEffect(() => {
+    const initialSymbols: FallingSymbol[] = Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      symbol: educationalSymbols[Math.floor(Math.random() * educationalSymbols.length)],
+      x: Math.random() * 100,
+      y: -Math.random() * 150,
+      speed: 0.3 + Math.random() * 0.8,
+      opacity: 0.15 + Math.random() * 0.3,
+      size: 18
+    }))
+    setSymbols(initialSymbols)
+
+    const interval = setInterval(() => {
+      setSymbols(prevSymbols =>
+        prevSymbols.map(symbol => {
+          let newY = symbol.y + symbol.speed
+          let newX = symbol.x
+          if (newY > 110) {
+            return {
+              ...symbol,
+              y: -10,
+              x: Math.random() * 100,
+              symbol: educationalSymbols[Math.floor(Math.random() * educationalSymbols.length)],
+              speed: 0.3 + Math.random() * 0.8,
+              opacity: 0.15 + Math.random() * 0.3,
+              size: 18
+            }
+          }
+          return { ...symbol, y: newY, x: newX }
+        })
+      )
+    }, 80)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Flashcard slideshow autoplay
+  useEffect(() => {
+    if (!autoPlay || flashcards.length === 0) {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      intervalRef.current = null
+      return
+    }
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setCurrentCard(prev => (prev < flashcards.length - 1 ? prev + 1 : 0))
+        setFlipped(false)
+      }, 2000)
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }, [autoPlay, flashcards, currentCard])
+
+  // Download flashcards as CSV
+  const downloadFlashcards = () => {
+    const csv = [
+      ['Front', 'Back'],
+      ...flashcards.map(card => [
+        `"${card.front.replace(/"/g, '""')}"`,
+        `"${card.back.replace(/"/g, '""')}"`
+      ])
+    ].map(row => row.join(',')).join('\r\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'flashcards.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const generateFlashcards = async () => {
     if (!notes.trim()) return
@@ -45,7 +146,7 @@ export default function LearnAI() {
       const response = await fetch('/api/flashcards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notes })
+        body: JSON.stringify({ notes, numCards })
       })
       
       const data = await response.json()
@@ -123,17 +224,47 @@ export default function LearnAI() {
     }
   }
 
+  // Timer effect for quiz
+  useEffect(() => {
+    if (activeTab !== 'quiz' || quiz.length === 0 || showResults) return
+    if (selectedAnswer !== null) return // pause timer if answered
+
+    setTimeLeft(TIMER_PER_QUESTION)
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          // Time's up, auto-advance
+          setSelectedAnswer(-1) // mark as incorrect
+          setTimeout(() => {
+            if (currentQuestion < quiz.length - 1) {
+              setCurrentQuestion(q => q + 1)
+              setSelectedAnswer(null)
+              setTimeLeft(TIMER_PER_QUESTION)
+            } else {
+              setShowResults(true)
+            }
+          }, 1200)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+    // eslint-disable-next-line
+  }, [activeTab, quiz, currentQuestion, selectedAnswer, showResults])
+
+  // Update selectAnswer to stop timer and only score if correct and in time
   const selectAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
-    
-    if (answerIndex === quiz[currentQuestion].correct) {
+    if (answerIndex === quiz[currentQuestion].correct && timeLeft > 0) {
       setScore(score + 1)
     }
-    
     setTimeout(() => {
       if (currentQuestion < quiz.length - 1) {
         setCurrentQuestion(currentQuestion + 1)
         setSelectedAnswer(null)
+        setTimeLeft(TIMER_PER_QUESTION)
       } else {
         setShowResults(true)
       }
@@ -141,101 +272,227 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Enhanced navy blue gradient background */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%)'
+          }}
+        />
+      </div>
+
+      {/* Enhanced educational rain background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {symbols.map(symbol => {
+          let color = '#94a3b8'
+          let textShadow = '0 0 3px rgba(148, 163, 184, 0.2)'
+          let fontWeight = '300'
+          if (['🧬', '🦠', 'DNA', 'Cell', 'Gene', 'Protein', 'ATP', 'CO₂', 'H₂O', 'RNA', '💊', '👩‍⚕', '🩺', '💉'].some(bio => symbol.symbol.includes(bio))) {
+            color = '#6b8e5a'
+            textShadow = '0 0 3px rgba(107, 142, 90, 0.3)'
+          } else if (['H₂O', 'CO₂', 'NaCl', 'CH₄', 'NH₃', 'HCl', 'Fe', 'Au', 'Cu', 'Zn', '🧪', '📐'].some(chem => symbol.symbol.includes(chem))) {
+            color = '#7dd3fc'
+            textShadow = '0 0 3px rgba(125, 211, 252, 0.3)'
+          } else if (['AI', 'ML', 'API', 'HTTP', 'JSON', 'CSS', 'HTML', 'SQL', '0', '1', '👩🏻‍💻', '📓', '✍🏻', '💡'].some(cs => symbol.symbol.includes(cs))) {
+            color = '#a78bfa'
+            textShadow = '0 0 3px rgba(167, 139, 250, 0.3)'
+          } else if (['∫', '∑', '√', 'π', '∞', 'α', 'β', 'γ', 'δ', 'ε'].some(math => symbol.symbol.includes(math))) {
+            color = '#f87171'
+            textShadow = '0 0 3px rgba(248, 113, 113, 0.3)'
+          }
+          return (
+            <div
+              key={symbol.id}
+              className="absolute font-mono raining-symbol-enhanced"
+              style={{
+                left: `${symbol.x}%`,
+                top: `${symbol.y}%`,
+                opacity: symbol.opacity,
+                fontSize: `${symbol.size}px`,
+                color: color,
+                textShadow: textShadow,
+                fontWeight: fontWeight,
+                transform: `rotate(${Math.random() * 20 - 10}deg)`,
+                transition: 'top 0.08s linear',
+                letterSpacing: fontWeight === '500' ? '0.05em' : 'normal'
+              }}
+              title={symbol.symbol}
+            >
+              {symbol.symbol}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Content overlay */}
+      <div className="relative z-10 container mx-auto px-6 py-12">
+        {/* Enhanced Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block px-8 py-6 glass-card">
+            <h1 className="text-5xl font-light text-white mb-4 tracking-tight">
+              Learn<span className="text-gradient">AI</span>
+            </h1>
+            <p className="text-gray-400 text-lg font-light">Intelligent learning tools</p>
+          </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+        {/* Enhanced Tabs */}
+        <div className="flex justify-center mb-12">
+          <div className="inline-flex glass-card-subtle rounded-full p-1">
             {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+              { id: 'flashcards', label: 'Cards' },
+              { id: 'quiz', label: 'Quiz' },
+              { id: 'study-buddy', label: 'Chat' }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
+                className={`relative px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 micro-interaction ${
                   activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                    ? 'bg-gray-700/50 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
                 }`}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full" />
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto">
+        {/* Enhanced Content */}
+        <div className="max-w-2xl mx-auto">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+            <div className="glass-card p-8 animate-fade-in-up">
+              <h2 className="text-2xl font-light text-white mb-6">Flashcards</h2>
               
               {flashcards.length === 0 ? (
-                <div>
+                <div className="space-y-4">
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    placeholder="Paste your notes here..."
+                    className="w-full h-32 p-4 rounded-lg border border-gray-600 bg-gray-900/50 text-white placeholder-gray-500 focus:border-gray-500 focus:ring-0 resize-none transition-colors glass-card-subtle"
                   />
+                  <div className="flex items-center space-x-4">
+                    <label className="text-gray-400 text-sm">
+                      Number of cards:
+                      <input
+                        type="number"
+                        min={1}
+                        max={30}
+                        value={numCards}
+                        onChange={e => setNumCards(Number(e.target.value))}
+                        className="ml-2 w-16 p-1 rounded bg-gray-900/50 border border-gray-600 text-white glass-card-subtle"
+                      />
+                    </label>
+                  </div>
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? 'Generating...' : 'Generate Flashcards'}
+                    {loading ? 'Creating...' : 'Create Cards'}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Card {currentCard + 1} of {flashcards.length}
+                  <div className="mb-4 flex items-center justify-between text-sm text-gray-400">
+                    <span>
+                      {currentCard + 1} / {flashcards.length}
+                    </span>
+                    <button
+                      onClick={downloadFlashcards}
+                      className="px-3 py-1 btn-secondary transition-colors text-xs"
+                    >
+                      Download Cards
+                    </button>
                   </div>
                   
                   <div 
-                    className={`flashcard ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
+                    className={`flashcard-enhanced ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
                     onClick={() => setFlipped(!flipped)}
                   >
                     <div className="flashcard-inner">
                       <div className="flashcard-front">
-                        <p className="text-lg font-medium">{flashcards[currentCard]?.front}</p>
+                        <p className="text-lg text-white">{flashcards[currentCard]?.front}</p>
                       </div>
                       <div className="flashcard-back">
-                        <p className="text-lg">{flashcards[currentCard]?.back}</p>
+                        <p className="text-lg text-white">{flashcards[currentCard]?.back}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between">
+                  {/* Enhanced Slideshow controls */}
+                  <div className="flex justify-center items-center space-x-4 mb-4">
+                    <button
+                      onClick={() => {
+                        setAutoPlay(false)
+                        prevCard()
+                      }}
+                      className="px-3 py-2 btn-secondary"
+                      title="Previous"
+                    >
+                      ⏮
+                    </button>
+                    {autoPlay ? (
+                      <button
+                        onClick={() => setAutoPlay(false)}
+                        className="px-3 py-2 btn-secondary"
+                        title="Pause"
+                      >
+                        ⏸
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setAutoPlay(true)}
+                        className="px-3 py-2 btn-secondary"
+                        title="Play"
+                      >
+                        ▶️
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setAutoPlay(false)
+                        nextCard()
+                      }}
+                      className="px-3 py-2 btn-secondary"
+                      title="Next"
+                    >
+                      ⏭
+                    </button>
+                  </div>
+
+                  <div className="flex justify-between items-center">
                     <button
                       onClick={prevCard}
                       disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
                     >
-                      Previous
+                      ← Previous
                     </button>
                     <button
-                      onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      onClick={() => {
+                        setFlashcards([])
+                        setAutoPlay(true)
+                        setNumCards(5)
+                      }}
+                      className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                     >
-                      New Flashcards
+                      New
                     </button>
                     <button
                       onClick={nextCard}
                       disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
                     >
-                      Next
+                      Next →
                     </button>
                   </div>
                 </div>
@@ -245,30 +502,30 @@ export default function LearnAI() {
 
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+            <div className="glass-card p-8 animate-fade-in-up">
+              <h2 className="text-2xl font-light text-white mb-6">Quiz</h2>
               
               {quiz.length === 0 && !showResults ? (
-                <div>
+                <div className="space-y-4">
                   <textarea
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
-                    placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    placeholder="Paste text here..."
+                    className="w-full h-32 p-4 rounded-lg border border-gray-600 bg-gray-900/50 text-white placeholder-gray-500 focus:border-gray-500 focus:ring-0 resize-none transition-colors glass-card-subtle"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? 'Creating Quiz...' : 'Create Quiz'}
+                    {loading ? 'Creating...' : 'Create Quiz'}
                   </button>
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
-                    You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
+                  <h3 className="text-3xl font-light text-white mb-4">Complete</h3>
+                  <p className="text-xl text-gray-400 mb-6">
+                    {score} / {quiz.length} correct
                   </p>
                   <button
                     onClick={() => {
@@ -276,19 +533,25 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="px-6 py-3 btn-secondary"
                   >
-                    Take Another Quiz
+                    New Quiz
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Question {currentQuestion + 1} of {quiz.length}
+                  <div className="mb-4 flex justify-between items-center text-sm text-gray-400">
+                    <span>Question {currentQuestion + 1} / {quiz.length}</span>
+                    <span>Score: {score}</span>
+                    <span>
+                      Time:{" "}
+                      <span className={timeLeft <= 5 ? "text-red-400 font-bold" : "text-white"}>
+                        {timeLeft}s
+                      </span>
+                    </span>
                   </div>
-                  
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
+                    <h3 className="text-xl font-light text-white mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
                     
@@ -298,16 +561,16 @@ export default function LearnAI() {
                           key={index}
                           onClick={() => selectAnswer(index)}
                           disabled={selectedAnswer !== null}
-                          className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
+                          className={`w-full p-4 text-left rounded-lg border transition-all quiz-option ${
                             selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
+                              ? 'border-gray-600 text-white hover:border-gray-500 hover:bg-gray-700/50 glass-card-subtle'
                               : selectedAnswer === index
                               ? index === quiz[currentQuestion].correct
-                                ? 'correct'
-                                : 'incorrect'
+                                ? 'border-green-500 bg-green-900/30 text-green-100'
+                                : 'border-red-500 bg-red-900/30 text-red-100'
                               : index === quiz[currentQuestion].correct
-                              ? 'correct'
-                              : 'bg-white/10 text-white/60'
+                              ? 'border-green-500 bg-green-900/30 text-green-100'
+                              : 'border-gray-600 text-gray-400'
                           }`}
                         >
                           {option}
@@ -316,9 +579,14 @@ export default function LearnAI() {
                     </div>
                     
                     {selectedAnswer !== null && (
-                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                      <div className="mt-4">
+                        {selectedAnswer === quiz[currentQuestion].correct ? (
+                          <span className="text-green-400 font-semibold text-lg">Correct!</span>
+                        ) : (
+                          <span className="text-red-400 font-semibold text-lg">
+                            {selectedAnswer === -1 ? 'Time\'s up! Incorrect.' : 'Incorrect.'}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -329,48 +597,48 @@ export default function LearnAI() {
 
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+            <div className="glass-card p-8 animate-fade-in-up">
+              <h2 className="text-2xl font-light text-white mb-6">Study Buddy</h2>
               
-              <div className="mb-6">
+              <div className="space-y-4">
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    placeholder="Ask anything..."
+                    className="flex-1 p-4 rounded-lg border border-gray-600 bg-gray-900/50 text-white placeholder-gray-500 focus:border-gray-500 focus:ring-0 transition-colors glass-card-subtle"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? 'Thinking...' : 'Ask'}
+                    {loading ? '...' : 'Ask'}
                   </button>
                 </div>
-              </div>
 
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {chatHistory.map((chat, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {chatHistory.map((chat, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="glass-card-subtle p-4 rounded-lg">
+                        <p className="text-sm font-medium text-gray-300">You</p>
+                        <p className="text-gray-400">{chat.question}</p>
+                      </div>
+                      <div className="glass-card-subtle p-4 rounded-lg">
+                        <p className="text-sm font-medium text-gray-300">Study Buddy</p>
+                        <p className="text-gray-400">{chat.answer}</p>
+                      </div>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                  ))}
+                  
+                  {chatHistory.length === 0 && (
+                    <div className="text-center text-gray-500 py-12">
+                      <p className="text-sm">Ask me anything and I'll help you learn.</p>
                     </div>
-                  </div>
-                ))}
-                
-                {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
-                    Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -378,4 +646,4 @@ export default function LearnAI() {
       </div>
     </div>
   )
-} 
+}
