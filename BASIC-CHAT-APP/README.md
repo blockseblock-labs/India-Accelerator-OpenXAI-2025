@@ -28,3 +28,7 @@ npm run dev
 npm run build
 npm run start
 ```
+<!-- “Some part of this code was partially generated using AI tools”-->
+
+
+
