@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
       command,
       currentMetrics,
       pollutionLevel,
-      model = "deepseek-r1:8b",
+      model = "llama3:latest",
     } = await request.json();
 
     // Check for catastrophic events
