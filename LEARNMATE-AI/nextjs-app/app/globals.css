@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 20, 20, 20; /* Dark text */
+  --background-start-rgb: 245, 240, 230; /* Soft beige */
+  --background-end-rgb: 255, 255, 255; /* White */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 245, 240, 230; /* Beige text */
+    --background-start-rgb: 15, 15, 15; /* Dark brown/black */
+    --background-end-rgb: 0, 0, 0; /* Black */
   }
 }
 
@@ -24,13 +24,15 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: "Inter", sans-serif;
 }
 
 /* Custom educational theme */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6d5b8 0%, #b08968 100%); /* beige → brown */
 }
 
+/* Flashcard styles */
 .flashcard {
   perspective: 1000px;
 }
@@ -48,7 +50,8 @@ body {
   transform: rotateY(180deg);
 }
 
-.flashcard-front, .flashcard-back {
+.flashcard-front,
+.flashcard-back {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -58,35 +61,45 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Front (beige/brown) */
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #d4a373 0%, #b08968 100%);
+  color: #fffaf0; /* Off-white text */
 }
 
+/* Back (dark brown) */
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  background: linear-gradient(135deg, #3e2c20 0%, #5a3e2b 100%);
+  color: #f5f0e6; /* Beige text */
   transform: rotateY(180deg);
 }
 
+/* Quiz options */
 .quiz-option {
   transition: all 0.3s ease;
+  background: #f5f0e6; /* Light beige */
+  border: 1px solid #b08968; /* Soft brown border */
+  border-radius: 8px;
+  padding: 12px;
 }
 
 .quiz-option:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #e6d5b8; /* Beige hover */
 }
 
+/* Correct Answer */
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); /* Brown shades */
+  color: #fffaf0;
 }
 
+/* Incorrect Answer */
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+  background: linear-gradient(135deg, #c97b63 0%, #f4a261 100%); /* Warm red/orange */
+  color: #fffaf0;
+}

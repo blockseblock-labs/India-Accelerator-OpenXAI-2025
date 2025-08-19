@@ -139,6 +139,9 @@ export default function LearnAI() {
       }
     }, 1500)
   }
+  <head>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
