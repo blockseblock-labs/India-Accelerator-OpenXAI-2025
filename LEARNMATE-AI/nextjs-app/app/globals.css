@@ -62,12 +62,12 @@ body {
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #e46206 0%, #00fe66 100%);
   color: white;
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg, #d914a8 0%, #08e799 100%);
   color: white;
   transform: rotateY(180deg);
 }
@@ -82,11 +82,11 @@ body {
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #fe4fc7 0%, #0dfe00 100%);
   color: white;
 }
 
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #140f10 0%, #feb540 100%);
   color: white;
 } 
