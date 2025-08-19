@@ -4,14 +4,15 @@ export async function POST(req: NextRequest) {
   try {
     const { text } = await req.json()
 
-    if (!text) {
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
       return NextResponse.json(
-        { error: 'Text is required' },
+        { error: 'Text is required and must be a non-empty string' },
         { status: 400 }
       )
     }
 
-    const prompt = `Create a quiz from the following text. Generate 4-6 multiple choice questions in JSON format with the following structure:
+    const prompt = `Create a quiz from the following text. 
+Generate 4-6 multiple choice questions in strict JSON format with this structure only:
 {
   "quiz": [
     {
@@ -23,55 +24,62 @@ export async function POST(req: NextRequest) {
   ]
 }
 
-Make questions challenging but fair, with plausible distractors for incorrect options.
+- Make questions challenging but fair.  
+- Ensure options are plausible.  
+- Return ONLY valid JSON, no extra text.  
 
 Text: ${text}`
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'llama3.2:1b',
-        prompt: prompt,
+        prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      console.error(`Ollama API Error: ${response.statusText}`)
+      return NextResponse.json(
+        { error: 'Failed to get response from Ollama API' },
+        { status: 502 }
+      )
     }
 
     const data = await response.json()
-    
+
+    // Try strict JSON extraction
     try {
-      // Try to parse JSON from the response
       const quizMatch = data.response.match(/\{[\s\S]*\}/)
       if (quizMatch) {
         const quizData = JSON.parse(quizMatch[0])
-        return NextResponse.json(quizData)
+        if (quizData.quiz && Array.isArray(quizData.quiz)) {
+          return NextResponse.json(quizData)
+        }
       }
     } catch (parseError) {
-      console.log('Could not parse JSON, returning formatted response')
+      console.warn('JSON parsing failed, using fallback quiz response')
     }
 
-    // Fallback: create a simple quiz structure
+    // Fallback: simple structured quiz
     return NextResponse.json({
       quiz: [
         {
           question: "What is the main topic of the provided text?",
           options: ["Topic A", "Topic B", "Topic C", "Topic D"],
           correct: 0,
-          explanation: data.response || 'Generated from your text'
-        }
-      ]
+          explanation: data.response?.slice(0, 300) || 'Generated from your text',
+        },
+      ],
     })
+
   } catch (error) {
     console.error('Quiz API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate quiz' },
+      { error: 'Internal server error while generating quiz' },
       { status: 500 }
     )
   }
-} 
+}
