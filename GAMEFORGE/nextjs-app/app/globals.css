@@ -6,28 +6,63 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  /* 🎨 New custom theme colors */
+  --primary: #4f46e5; /* Indigo */
+  --secondary: #14b8a6; /* Teal */
+  --accent: #f59e0b; /* Amber */
+  --soft-bg: #f9fafb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
+    --background-start-rgb: 17, 24, 39;
     --background-end-rgb: 0, 0, 0;
+
+    --soft-bg: #111827;
   }
 }
 
 body {
+  font-family: 'Inter', sans-serif;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      to bottom right,
+      rgba(var(--background-start-rgb), 0.9),
+      rgba(var(--background-end-rgb), 1)
+    );
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
+/* 🎭 Smooth UI elements */
+button, .btn {
+  @apply px-4 py-2 rounded-2xl font-semibold shadow-md transition-transform duration-200;
+  background-color: var(--primary);
+  color: white;
+}
+button:hover, .btn:hover {
+  transform: scale(1.05);
+  background-color: var(--secondary);
+}
+
+/* ✨ Card styles */
+.card {
+  @apply rounded-2xl shadow-lg p-6 transition-all duration-300;
+  background-color: var(--soft-bg);
+}
+.card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* 🎮 Game canvas enhancements */
 #gameCanvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+  border: 4px solid var(--primary);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+}
