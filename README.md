@@ -47,20 +47,15 @@ Edit
 ✔ Collaborate with peers and mentors  
 ✔ Develop problem-solving and coding skills  
 
----
-
-## 📸 Screenshots / Demo
-
-_Add screenshots, video demos, or deployment links here once available._
 
 ---
 
 ## 🤝 Contributing
 
-If you’d like to contribute:  
+
 
 1. Fork the repo  
-2. Create a new branch (`feature-xyz`)  
+2. Create a new branch
 3. Commit your changes  
 4. Push and create a pull request  
 
@@ -69,9 +64,8 @@ If you’d like to contribute:
 ## 📬 Contact
 
 - **Author**: Shivprasad Chinchole  
-- **GitHub**: [ShivprasadChinnchole](https://github.com/ShivprasadChinnchole)  
-- **LinkedIn**: [Your LinkedIn Link]  
-- **Email**: your-email@example.com  
+- **GitHub**: [ShivprasadChinnchole](https://github.com/ShivprasadChinnchole)    
+- **Email**: cshivh.2000@gmail.com 
 
 ---
 
