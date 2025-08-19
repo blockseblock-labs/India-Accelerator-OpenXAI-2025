@@ -33,7 +33,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #080808;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -68,7 +68,7 @@ body {
 /* Metrics panel */
 .metrics-panel {
   backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(54, 31, 31, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   max-width: 400px;
   max-height: 80vh;

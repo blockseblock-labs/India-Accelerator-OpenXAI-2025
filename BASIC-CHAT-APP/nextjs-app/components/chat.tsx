@@ -13,6 +13,7 @@ export function Chat() {
       {error && <span style={{ color: "red" }}>{error}</span>}
       <span>{response}</span>
       <div>
+        <p><h1>made some basic changes </h1></p>
         <input
           disabled={loading}
           value={message}
@@ -45,9 +46,19 @@ export function Chat() {
               .finally(() => setLoading(false));
           }}
         >
-          Send
+          send
         </button>
       </div>
+      <style jsx>{`
+        div {
+          background-color: grey;
+          padding: 20px;
+          border-radius: 8px;
+        }
+        input {
+          margin-right: 10px;
+        }
+      `}</style>
     </div>
   );
 }
