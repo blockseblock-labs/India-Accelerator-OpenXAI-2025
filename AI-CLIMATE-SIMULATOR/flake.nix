@@ -1,12 +1,12 @@
 {
-  description = "Dead-Earth Project - Interactive Climate Change Simulation with Nextjs + Ollama";
+  description   = "Dead-Earth Project - Interactive Climate Change Simulation with Nextjs + Ollama";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
   };
 
-  outputs =
+  outputs   =
     {
       self,
       nixpkgs,
