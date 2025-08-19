@@ -2,91 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Smooth fonts and base styles */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --ring: 0 0% 0%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html, body {
+  height: 100%;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-gray-50 text-gray-900 antialiased;
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Card + button micro-interactions */
+.card {
+  @apply bg-white rounded-2xl shadow-md p-6 border border-gray-100;
 }
 
-.flashcard {
-  perspective: 1000px;
+.btn {
+  @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium shadow-md border border-gray-200 transition-transform hover:-translate-y-0.5 active:translate-y-0;
 }
 
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
+.btn-primary {
+  @apply bg-gray-900 text-white hover:bg-gray-800;
 }
 
-.flashcard.flipped .flashcard-inner {
-  transform: rotateY(180deg);
+.input {
+  @apply w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent;
 }
 
-.flashcard-front, .flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+/* Simple fade for tab changes */
+.fade-enter {
+  animation: fadeIn 250ms ease-out;
 }
-
-.flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-.flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
-  transform: rotateY(180deg);
-}
-
-.quiz-option {
-  transition: all 0.3s ease;
-}
-
-.quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
-}
-
-.quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
