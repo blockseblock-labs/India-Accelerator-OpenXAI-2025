@@ -2,116 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Root theme variables */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 17, 24, 39; /* Elegant dark gray */
+  --background-light: 245, 247, 250;
+  --background-dark: 15, 23, 42;
+  --glass-light: rgba(255, 255, 255, 0.12);
+  --glass-dark: rgba(255, 255, 255, 0.06);
+  --blur-strength: 18px;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  --transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-light: 28, 36, 56;
+    --background-dark: 6, 10, 20;
+    --glass-light: rgba(255, 255, 255, 0.08);
+    --glass-dark: rgba(0, 0, 0, 0.4);
   }
 }
 
+/* Body background with elegant gradients */
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
+  background: radial-gradient(
+      circle at top left,
+      rgba(99, 102, 241, 0.18),
+      transparent 40%
+    ),
+    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.18), transparent 40%),
+    linear-gradient(
       to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-light)),
+      rgb(var(--background-dark))
+    );
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  transition: background var(--transition-slow);
 }
 
-/* Custom social media theme */
-.social-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.instagram-gradient {
-  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
-}
-
-.twitter-gradient {
-  background: linear-gradient(135deg, #1DA1F2 0%, #0d47a1 100%);
-}
-
+/* ====== Glassmorphic Cards ====== */
 .social-card {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(var(--blur-strength));
+  background: var(--glass-light);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-slow), background var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .social-card:hover {
-  backdrop-filter: blur(15px);
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: var(--glass-dark);
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
 }
 
-.mood-indicator {
-  display: inline-block;
-  font-size: 2rem;
-  animation: bounce 2s infinite;
+/* ====== Modern Gradients ====== */
+.instagram-gradient {
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+.twitter-gradient {
+  background: linear-gradient(135deg, #1da1f2, #0d8ddb);
 }
 
+.social-gradient {
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+}
+
+/* ====== Hashtags ====== */
 .hashtag-tag {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #6366f1, #ec4899);
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  margin: 0.125rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  margin: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
 }
 
 .hashtag-tag:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 5px 14px rgba(99, 102, 241, 0.5);
 }
 
+/* ====== Copy Button ====== */
 .copy-button {
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #3b82f6, #9333ea);
+  color: white;
+  font-weight: 600;
+  padding: 0.55rem 1.3rem;
+  border-radius: 0.75rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
 }
 
 .copy-button:hover {
   transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5);
 }
 
 .copy-button.copied {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  transform: scale(0.95);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  transform: scale(0.97);
+  box-shadow: 0 6px 14px rgba(34, 197, 94, 0.45);
 }
 
+/* ====== Mood Indicator ====== */
+.mood-indicator {
+  display: inline-block;
+  font-size: 2.2rem;
+  animation: floatBounce 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+}
+
+@keyframes floatBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* ====== Tab Animations ====== */
 .tab-content {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeInUp 0.5s var(--transition-fast);
 }
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-} 
+}
