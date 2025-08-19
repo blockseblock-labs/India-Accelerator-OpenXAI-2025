@@ -31,14 +31,16 @@ Notes: ${notes}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'llama3:latest',
         prompt: prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      const errorText = await response.text();
+      console.error('Ollama error:', response.status, errorText);
+      throw new Error(`Failed to get response from Ollama: ${response.status} ${errorText}`);
     }
 
     const data = await response.json()
@@ -71,4 +73,4 @@ Notes: ${notes}`
       { status: 500 }
     )
   }
-} 
+}
