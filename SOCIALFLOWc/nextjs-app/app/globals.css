@@ -54,33 +54,34 @@ body {
 
 /* Neon gradients */
 .social-gradient {
-  background: linear-gradient(135deg, #6525d2 0%, #410181 100%);
+  background: linear-gradient(135deg, #083457);
 }
 
 .instagram-gradient {
-  background: linear-gradient(135deg, #e524e8, #e70c67);
+  background: linear-gradient(135deg, #083457);
 }
 
 .twitter-gradient {
-  background: linear-gradient(135deg, #0d5ee9 , #1a02b4);
+  background: linear-gradient(135deg, #083457);
 }
 
 /* Hashtags */
 .hashtag-tag {
   display: inline-block;
+  
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
-  background: linear-gradient(90deg, #8b4cf8, #6b3e98);
-  color: white;
+  background: linear-gradient(90deg, #9ac4f0);
+  color: black;
   font-size: 0.85rem;
-  font-weight: 600;
-  box-shadow: 0 2px 10px rgba(229, 46, 113, 0.5);
+  font-weight: bold;
+  box-shadow: 0 2px rgba(1, 6, 24, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hashtag-tag:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 16px #230145;
+  box-shadow: 0 4px 16px #083457;
 }
 
 /* Copy Button */
@@ -94,11 +95,11 @@ body {
 }
 
 .caption-copy-button {
-  background: linear-gradient(135deg, #ad49ae, #b94274);
+  background: linear-gradient(135deg, #083457);
 }
 
 .hashtag-copy-button{
-  background: linear-gradient(135deg, #415acc, #7e26d7);
+  background: linear-gradient(135deg, #083457);
 }
 
 .copy-button:hover {
