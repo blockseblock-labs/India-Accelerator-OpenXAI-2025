@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==== THEME TOKENS ==== */
+:root {
+  --fg: 30,30,30;
+
+  /* background gradient (light) */
+  --bg-start: 255,223,186;   /* peach */
+  --bg-end:   186,230,255;   /* sky */
+
+  /* brand & UI (light) */
+  --brand-1: #7c3aed;  /* violet */
+  --brand-2: #f472b6;  /* pink */
+  --card-front-1: #ff8a00;   /* orange */
+  --card-front-2: #ff3d7f;   /* pink-red */
+  --card-back-1: #6d28d9;    /* deep violet */
+  --card-back-2: #a21caf;    /* magenta */
+  --ok-1: #10b981;           /* emerald */
+  --ok-2: #84cc16;           /* lime */
+  --bad-1: #ef4444;          /* red */
+  --bad-2: #f59e0b;          /* amber */
+  --shadow: 0,0,0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: 240,240,240;
+
+    /* background gradient (dark) */
+    --bg-start: 40,20,60;    /* deep purple */
+    --bg-end:   10,10,30;    /* midnight */
+
+    /* brand & UI (dark) */
+    --brand-1: #a78bfa;      /* softer violet */
+    --brand-2: #fb7185;      /* rose */
+    --card-front-1: #f97316; /* orange-500 */
+    --card-front-2: #db2777; /* fuchsia-600 */
+    --card-back-1: #8b5cf6;  /* violet-500 */
+    --card-back-2: #c026d3;  /* fuchsia-600 */
+    --ok-1: #34d399;         /* emerald-400 */
+    --ok-2: #a3e635;         /* lime-400 */
+    --bad-1: #f87171;        /* red-400 */
+    --bad-2: #fbbf24;        /* amber-400 */
+    --shadow: 0,0,0;
+  }
+}
+
+/* ==== GLOBAL ==== */
+body {
+  color: rgb(var(--fg));
+  background: linear-gradient(to bottom, rgb(var(--bg-start)), rgb(var(--bg-end)));
+}
+
+/* ==== EDUCATIONAL THEME ==== */
+.learn-gradient {
+  background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 100%);
+}
+
+/* ==== FLASHCARDS ==== */
+.flashcard { perspective: 1000px; }
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: 0 6px 14px rgba(var(--shadow), 0.18);
+  color: white;
+}
+
+.flashcard-front {
+  background: linear-gradient(135deg, var(--card-front-1) 0%, var(--card-front-2) 100%);
+}
+
+.flashcard-back {
+  background: linear-gradient(135deg, var(--card-back-1) 0%, var(--card-back-2) 100%);
+  transform: rotateY(180deg);
+}
+
+/* ==== QUIZ OPTIONS ==== */
+.quiz-option { transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; }
+
+.quiz-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(var(--shadow), 0.22);
+}
+
+.quiz-option.correct {
+  background: linear-gradient(135deg, var(--ok-1) 0%, var(--ok-2) 100%);
+  color: white;
+}
+
+.quiz-option.incorrect {
+  background: linear-gradient(135deg, var(--bad-1) 0%, var(--bad-2) 100%);
+  color: white;
+}
