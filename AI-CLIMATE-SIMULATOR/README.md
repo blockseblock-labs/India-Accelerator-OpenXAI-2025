@@ -170,6 +170,7 @@ demo-app-ENVIRO-TRACK/
 
 This project aims to raise awareness about climate change through AI-powered interactive visualization, making complex environmental concepts tangible and impactful through natural language interaction.
 
+
 ### 🤝 Contributing
 
 1. Fork the repository
