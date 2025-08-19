@@ -1,24 +1,26 @@
 # 🎵 SoundWave Template
 
-A Next.js template for building amazing audio experiences! This template provides voice recording, playback, and transcription capabilities with a beautiful modern interface.
+A **Next.js starter template** for building modern audio experiences! It comes with voice recording, playback, and transcription support—wrapped in a sleek, responsive interface.
 
 ## Features
 
-- **Voice Recording**: Real-time audio recording with MediaRecorder API
-- **Audio Playback**: Built-in audio controls with play/pause functionality
-- **Recording Timer**: Live timer display during recording
-- **Visual Feedback**: Animated recording indicator and controls
-- **Transcription Ready**: API endpoint for voice-to-text conversion
-- **Modern UI**: Beautiful gradient background with glassmorphism effects
+- **Voice Recording**: Real-time audio capture with the MediaRecorder API  
+- **Audio Playback**: Built-in player with play/pause controls  
+- **Recording Timer**: Live duration tracking while recording  
+- **Visual Feedback**: Animated recording indicators and controls  
+- **Transcription Ready**: API endpoint for speech-to-text conversion  
+- **Modern UI**: Gradient background with glassmorphism styling  
+
+---
 
 ## 🚀 Getting Started
 
 ### Installation
 
-1. Navigate to the nextjs-app directory:
+1. Navigate to the project directory:
 ```bash
 cd nextjs-app
-```
+
 
 2. Install dependencies:
 ```bash
@@ -60,6 +62,8 @@ The template includes:
 - **Transcription API**: Ready-to-use speech-to-text endpoint
 
 ### Using the Voice Recorder
+
+
 
 The `VoiceRecorder` component provides:
 
