@@ -58,7 +58,7 @@ export default function Home() {
   const [metrics, setMetrics] = useState<EarthMetrics>({
     co2Level: 420, // Starting CO2 level (ppm)
     toxicityLevel: 5.1, // Starting toxicity level (1-100)
-    temperature: 30, // Starting temperature (°C) - hotter baseline
+    temperature: 31, // Starting temperature (°C) - hotter baseline
     humanPopulation: 9100000000, // 9 billion humans
     animalPopulation: 110000000000, // 100 billion animals
     plantPopulation: 1000000000000,
