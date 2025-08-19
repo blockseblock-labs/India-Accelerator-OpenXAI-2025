@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "openai": "^5.13.1",
+    "together-ai": "^0.22.0"
+  }
+}
