@@ -455,16 +455,31 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
   const [moonCrashActive, setMoonCrashActive] = useState(false)
   const [moonDebrisActive, setMoonDebrisActive] = useState(false)
 
-  // Load better Earth textures
-  const earthTextures = useMemo(() => {
-    const textureLoader = new THREE.TextureLoader()
-    return {
-      colorMap: textureLoader.load('/global-datacenter-visualization/src/00_earthmap1k.jpg'),
-      bumpMap: textureLoader.load('/global-datacenter-visualization/src/01_earthbump1k.jpg'),
-      specularMap: textureLoader.load('/global-datacenter-visualization/src/02_earthspec1k.jpg'),
-      lightsMap: textureLoader.load('/global-datacenter-visualization/src/03_earthlights1k.jpg')
-    }
-  }, [])
+  // Load better Earth textures, fallback to procedural color if missing
+  const [texturesLoaded, setTexturesLoaded] = useState(false);
+  const [earthTextures, setEarthTextures] = useState<any>(null);
+  useEffect(() => {
+    const textureLoader = new THREE.TextureLoader();
+    let loaded = 0;
+    const textures: any = {};
+    const onLoad = () => {
+      loaded++;
+      if (loaded === 2) setTexturesLoaded(true);
+    };
+    textureLoader.load(
+      '/global-datacenter-visualization/src/00_earthmap1k.jpg',
+      (t) => { textures.colorMap = t; onLoad(); },
+      undefined,
+      () => { setTexturesLoaded(false); }
+    );
+    textureLoader.load(
+      '/global-datacenter-visualization/src/01_earthbump1k.jpg',
+      (t) => { textures.bumpMap = t; onLoad(); },
+      undefined,
+      () => { setTexturesLoaded(false); }
+    );
+    setEarthTextures(textures);
+  }, []);
 
   // Convert lat/lon to 3D position on Earth surface (exact copy from global-datacenter-visualization)
   const latLonToVector3 = (lat: number, lon: number, radius: number = 5.01) => {
@@ -573,13 +588,17 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
       {/* Earth with proper textures and population dots as children */}
       <mesh ref={earthRef}>
         <icosahedronGeometry args={[5, 16]} />
-        <meshStandardMaterial 
-          map={earthTextures.colorMap}
-          bumpMap={earthTextures.bumpMap}
-          bumpScale={0.1}
-          roughness={0.8}
-          metalness={0.1}
-        />
+        {texturesLoaded && earthTextures?.colorMap && earthTextures?.bumpMap ? (
+          <meshStandardMaterial 
+            map={earthTextures.colorMap}
+            bumpMap={earthTextures.bumpMap}
+            bumpScale={0.1}
+            roughness={0.8}
+            metalness={0.1}
+          />
+        ) : (
+          <meshStandardMaterial color={0x2266cc} roughness={0.8} metalness={0.1} />
+        )}
 
         {/* Population dots as children of Earth mesh - they will rotate with the Earth */}
         <group>

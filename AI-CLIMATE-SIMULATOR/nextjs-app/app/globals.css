@@ -1,3 +1,10 @@
+/* Import Orbitron from Google Fonts for NASA-style headings */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+/* Tailwind custom font class for Orbitron */
+.font-orbitron {
+  font-family: 'Orbitron', 'Arial', 'sans-serif';
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
