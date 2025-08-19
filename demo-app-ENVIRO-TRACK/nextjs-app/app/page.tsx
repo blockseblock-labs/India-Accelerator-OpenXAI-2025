@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
-import { Send, RotateCcw, Play, Pause, Brain, Loader2 } from 'lucide-react'
+import { Send, RotateCcw, Play, Pause, Brain, Users, Thermometer, AlertTriangle, Loader2 } from 'lucide-react'
 
-// Dynamically import 3D components
+// Dynamically import the 3D components to avoid SSR issues
 const Globe = dynamic(() => import('../components/Globe'), { ssr: false })
 const MetricsPanel = dynamic(() => import('../components/MetricsPanel'), { ssr: false })
 
@@ -26,12 +26,6 @@ interface AICommand {
   responseTime: number
   model: string
 }
-
-type SpecialEvent =
-  | 'Severe Global Warming Alert!'
-  | 'Polar Ice Cap Crisis!'
-  | 'Ocean Acidification Alert!'
-  | null
 
 const exampleCommands = [
   "Add 1 million V8 trucks to the world",
@@ -62,14 +56,14 @@ const availableModels = [
 
 export default function Home() {
   const [metrics, setMetrics] = useState<EarthMetrics>({
-    co2Level: 415,
-    toxicityLevel: 5,
-    temperature: 30,
-    humanPopulation: 9000000000,
-    animalPopulation: 100000000000,
+    co2Level: 415, // Starting CO2 level (ppm)
+    toxicityLevel: 5, // Starting toxicity level (1-100)
+    temperature: 30, // Starting temperature (°C) - hotter baseline
+    humanPopulation: 9000000000, // 9 billion humans
+    animalPopulation: 100000000000, // 100 billion animals
     plantPopulation: 1000000000000,
-    oceanAcidity: 8.1,
-    iceCapMelting: 10,
+    oceanAcidity: 8.1, // pH level
+    iceCapMelting: 10, // Percentage melted
   })
 
   const [isSimulationRunning, setIsSimulationRunning] = useState(false)
@@ -77,12 +71,13 @@ export default function Home() {
   const [userInput, setUserInput] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [commandHistory, setCommandHistory] = useState<AICommand[]>([])
-  const [currentAnalysis, setCurrentAnalysis] = useState('')
+  const [currentAnalysis, setCurrentAnalysis] = useState<string>('')
   const [aiThinkingLog, setAiThinkingLog] = useState<string[]>([])
-  const [specialEvent, setSpecialEvent] = useState<SpecialEvent>(null)
+  const [specialEvent, setSpecialEvent] = useState<string | null>(null)
   const [selectedModel, setSelectedModel] = useState('llama3.2:1b')
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // AI thinking process simulation
   const thinkingSteps = [
     "Analyzing environmental impact...",
     "Calculating CO2 emissions...",
@@ -98,65 +93,77 @@ export default function Home() {
     setIsProcessing(true)
     setAiThinkingLog([])
     setCurrentAnalysis('')
-
+    
     const startTime = Date.now()
-
-    // Simulate AI thinking with random step delays
+    
+    // Simulate AI thinking process
     for (let i = 0; i < thinkingSteps.length; i++) {
-      const delay = 200 + Math.random() * 300
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise(resolve => setTimeout(resolve, 200))
       setAiThinkingLog(prev => [...prev, thinkingSteps[i]])
     }
 
     try {
       const response = await fetch('/api/process-command', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           command,
           currentMetrics: metrics,
           pollutionLevel,
-          model: selectedModel,
+          model: 'llama3.2:1b', // Always use llama3.2:1b
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to process command')
+      if (!response.ok) {
+        throw new Error('Failed to process command')
+      }
 
       const data = await response.json()
       const endTime = Date.now()
       const responseTime = (endTime - startTime) / 1000
 
+      // Update metrics
       setMetrics(data.metrics)
       setPollutionLevel(data.pollutionLevel)
       setCurrentAnalysis(data.analysis)
-      if (data.specialEvent) setSpecialEvent(data.specialEvent)
+      setSpecialEvent(data.specialEvent)
 
+      // Add to command history
       const newCommand: AICommand = {
         command,
         analysis: data.analysis,
         timestamp: new Date(),
         responseTime,
-        model: selectedModel
+        model: 'llama3.2:1b' // Always use llama3.2:1b
       }
-      setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)])
+      setCommandHistory(prev => [newCommand, ...prev.slice(0, 9)]) // Keep last 10
+
     } catch (error) {
       console.error('Error processing command:', error)
       setCurrentAnalysis('Error: Failed to process command. Please try again.')
     } finally {
       setIsProcessing(false)
       setAiThinkingLog([])
+      // Special events are permanent until full reset or God save
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!isProcessing && userInput.trim()) processUserCommand(userInput.trim())
+    if (!isProcessing && userInput.trim()) {
+      processUserCommand(userInput.trim())
+    }
   }
 
   const handleExampleClick = (example: string) => {
     if (isProcessing) return
     setUserInput(example)
-    setTimeout(() => processUserCommand(example), 100)
+    // Auto-submit after a short delay
+    setTimeout(() => {
+      processUserCommand(example)
+    }, 100)
   }
 
   const resetEarth = () => {
@@ -179,56 +186,59 @@ export default function Home() {
     setIsProcessing(false)
   }
 
-  // Nonlinear auto-simulation loop
+  // Auto-simulation loop for continuous degradation
   useEffect(() => {
-    if (!isSimulationRunning || isProcessing) return
+    if (!isSimulationRunning || isProcessing) return // Pause auto-sim when processing commands
+
     const interval = setInterval(() => {
       setMetrics(prev => ({
         ...prev,
-        co2Level: Math.min(prev.co2Level + 0.05 + prev.co2Level * 0.0005, 2000),
-        toxicityLevel: Math.min(prev.toxicityLevel + 0.05 + prev.toxicityLevel * 0.0002, 100),
-        temperature: Math.min(prev.temperature + 0.01 + (prev.co2Level - 400) * 0.002, 50),
-        humanPopulation: Math.max(prev.humanPopulation - Math.floor(prev.humanPopulation * 0.00001), 0),
-        animalPopulation: Math.max(prev.animalPopulation - Math.floor(prev.animalPopulation * 0.00005), 0),
-        plantPopulation: Math.max(prev.plantPopulation - Math.floor(prev.plantPopulation * 0.00005), 0),
+        co2Level: Math.min(prev.co2Level + 0.1, 2000), // Much slower degradation
+        toxicityLevel: Math.min(prev.toxicityLevel + 0.05, 100),
+        temperature: Math.min(prev.temperature + 0.01, 50),
+        humanPopulation: Math.max(prev.humanPopulation - 100, 0),
+        animalPopulation: Math.max(prev.animalPopulation - 500, 0),
+        plantPopulation: Math.max(prev.plantPopulation - 5000, 0),
         oceanAcidity: Math.max(prev.oceanAcidity - 0.001, 6.0),
-        iceCapMelting: Math.min(prev.iceCapMelting + 0.05 + prev.temperature * 0.01, 100),
+        iceCapMelting: Math.min(prev.iceCapMelting + 0.05, 100),
       }))
-    }, 5000)
+    }, 5000) // Much slower - every 5 seconds instead of 2
+
     return () => clearInterval(interval)
-  }, [isSimulationRunning, isProcessing])
+  }, [isSimulationRunning, isProcessing]) // Also depend on isProcessing
 
-  // Special events based on metrics
+  // Focus input on mount
   useEffect(() => {
-    if (!specialEvent) {
-      if (metrics.co2Level > 1000) setSpecialEvent('Severe Global Warming Alert!')
-      else if (metrics.iceCapMelting > 50) setSpecialEvent('Polar Ice Cap Crisis!')
-      else if (metrics.oceanAcidity < 7.0) setSpecialEvent('Ocean Acidification Alert!')
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
-  }, [metrics, specialEvent])
-
-  useEffect(() => { inputRef.current?.focus() }, [])
+  }, [])
 
   return (
     <div className="globe-container">
       {/* 3D Globe */}
-      <Globe pollutionLevel={pollutionLevel} metrics={metrics} specialEvent={specialEvent} />
-
+      <Globe 
+        pollutionLevel={pollutionLevel} 
+        metrics={metrics} 
+        specialEvent={specialEvent}
+      />
+      
       {/* Pollution Overlay */}
-      {pollutionLevel > 0 && (
-        <div
-          className="absolute inset-0 bg-red-500 pointer-events-none"
-          style={{
-            opacity: Math.min(pollutionLevel / 100 * 0.5, 0.5),
-            filter: `blur(${Math.min(pollutionLevel / 100 * 8, 8)}px)`
-          }}
-        />
-      )}
+      <div className="pollution-overlay">
+        {pollutionLevel > 0 && (
+          <div 
+            className="absolute inset-0 bg-red-500 opacity-20"
+            style={{ opacity: Math.min(pollutionLevel / 100 * 0.4, 0.4) }}
+          />
+        )}
+      </div>
 
       {/* Control Panel */}
       <div className="absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
           <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
+          
+          {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setIsSimulationRunning(!isSimulationRunning)}
@@ -351,7 +361,7 @@ export default function Home() {
           <h3 className="text-sm font-semibold mb-2 text-gray-300">AI Model:</h3>
           <select
             value={selectedModel}
-            onChange={(e) => setSelectedModel(e.target.value)}
+            onChange={(e) => setSelectedModel('llama3.2:1b')}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white text-sm disabled:bg-gray-700"
           >
             {availableModels.map((model) => (
@@ -364,4 +374,4 @@ export default function Home() {
       </div>
     </div>
   )
-}
+} 
