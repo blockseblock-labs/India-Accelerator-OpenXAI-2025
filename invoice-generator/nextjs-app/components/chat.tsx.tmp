@@ -1,0 +1,143 @@
+"use client";
+
+import { useState, FormEvent, ChangeEvent } from "react";
+
+interface InvoiceData {
+  amount: string;
+  invoiceNo: string;
+  vendor: string;
+  dueDate: string;
+}
+
+export function Chat() {
+  const [messages, setMessages] = useState<string[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setLoading(true);
+    setMessages(prev => [...prev, `User: ${input}`]);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to process invoice");
+      }
+
+      const data = await response.json();
+      console.log('Raw response:', data.response);
+      
+      try {
+        // Clean up the response to ensure it's valid JSON
+        let cleanResponse = data.response.trim();
+        
+        // If the response contains actual JSON within text, try to extract it
+        const jsonMatch = cleanResponse.match(/\{[^]*\}/);
+        if (jsonMatch) {
+          cleanResponse = jsonMatch[0];
+        }
+        
+        console.log('Cleaned response:', cleanResponse);
+        const extractedData = JSON.parse(cleanResponse);
+        
+        // Validate the required fields
+        if (!extractedData.amount || !extractedData.invoiceNo || 
+            !extractedData.vendor || !extractedData.dueDate) {
+          throw new Error('Missing required fields');
+        }
+        
+        setInvoiceData(extractedData);
+        setMessages(prev => [
+          ...prev,
+          "Assistant: I've extracted the invoice information successfully.",
+        ]);
+      } catch (parseError) {
+        console.error('Parse error:', parseError, 'Response:', data.response);
+        throw new Error('Failed to parse invoice data');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessages(prev => [...prev, "Error: Failed to process invoice."]);
+    } finally {
+      setLoading(false);
+      setInput("");
+    }
+  };
+
+  return (
+    <div className="flex h-[calc(100vh-4rem)] gap-4 p-4">
+      {/* Left side - Chat interface */}
+      <div className="flex flex-col w-2/3 bg-white rounded-lg shadow-md">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`p-3 rounded-lg ${
+                msg.startsWith("User:")
+                  ? "bg-blue-100 ml-auto"
+                  : "bg-gray-100"
+              }`}
+            >
+              {msg}
+            </div>
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-4 border-t">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Paste your invoice email or text here..."
+            className="w-full p-2 border rounded-md"
+            rows={4}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+          >
+            {loading ? "Processing..." : "Extract Invoice Data"}
+          </button>
+        </form>
+      </div>
+
+      {/* Right side - Invoice data card */}
+      <div className="w-1/3">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-bold mb-4">Extracted Invoice Data</h2>
+          {invoiceData ? (
+            <div className="space-y-3">
+              <div>
+                <label className="font-semibold">Amount:</label>
+                <p className="text-lg">{invoiceData.amount}</p>
+              </div>
+              <div>
+                <label className="font-semibold">Invoice No:</label>
+                <p>{invoiceData.invoiceNo}</p>
+              </div>
+              <div>
+                <label className="font-semibold">Vendor:</label>
+                <p>{invoiceData.vendor}</p>
+              </div>
+              <div>
+                <label className="font-semibold">Due Date:</label>
+                <p>{invoiceData.dueDate}</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-500">No invoice data extracted yet.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
