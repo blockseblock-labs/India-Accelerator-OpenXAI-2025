@@ -1,0 +1,105 @@
+"use client";
+
+import { useState } from "react";
+import { Copy } from "lucide-react";
+
+export function Chat() {
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [generatedText, setGeneratedText] = useState("");
+
+  const handleSubmit = async () => {
+    if (!input.trim()) return;
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to process invoice");
+      }
+
+      const data = await response.json();
+      
+      // Format the response as an ASCII invoice
+      const formattedInvoice = `INVOICE
+-----------------------------
+Date: ${new Date().toLocaleDateString()}
+Amount: $374
+Due: 25/08/2025
+
+Services:
+- Parsed from email content...
+- Auto generated with AI 
+
+Thank you for your business!
+-----------------------------`;
+      
+      setGeneratedText(formattedInvoice);
+    } catch (error) {
+      console.error("Error:", error);
+      setGeneratedText("Error processing invoice");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedText);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 gap-6">
+        {/* Left Panel */}
+        <div className="bg-[#111111] rounded-lg p-6 border border-gray-800">
+          <h2 className="text-cyan-400 text-xl font-semibold mb-4">
+             Paste Email / Text
+          </h2>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Paste client email or text here..."
+            className="w-full h-[200px] bg-black/50 border border-gray-800 rounded-lg p-4 text-gray-300 mb-4 resize-none focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-medium transition-colors"
+          >
+             Regenerate Invoice
+          </button>
+        </div>
+
+        {/* Right Panel */}
+        <div className="bg-[#111111] rounded-lg p-6 border border-gray-800">
+          <h2 className="text-purple-400 text-xl font-semibold mb-4">
+             Generated Invoice
+          </h2>
+          <div className="bg-black/50 border border-gray-800 rounded-lg p-4 h-[200px] mb-4 font-mono text-sm text-gray-300 whitespace-pre overflow-y-auto">
+            {generatedText || "Invoice will appear here..."}
+          </div>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={copyToClipboard}
+              className="px-4 py-2 bg-black/30 hover:bg-black/50 border border-gray-800 rounded-lg flex items-center space-x-2 text-sm"
+            >
+              <Copy className="w-4 h-4" />
+              <span>Copy</span>
+            </button>
+            <button className="px-4 py-2 bg-black/30 hover:bg-black/50 border border-gray-800 rounded-lg text-sm">
+              PDF
+            </button>
+            <button className="px-4 py-2 bg-black/30 hover:bg-black/50 border border-gray-800 rounded-lg text-sm">
+              Share
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
