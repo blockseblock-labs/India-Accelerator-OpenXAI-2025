@@ -5,8 +5,8 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center text-white mb-12">
-          <h1 className="text-6xl font-bold mb-4">🎵 SoundWave Template</h1>
-          <p className="text-xl opacity-90">Build amazing audio experiences!</p>
+          <h1 className="text-6xl font-bold mb-4">🎵 RhythmGrid</h1>
+          <p className="text-xl opacity-90">Craft your Experience !</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
