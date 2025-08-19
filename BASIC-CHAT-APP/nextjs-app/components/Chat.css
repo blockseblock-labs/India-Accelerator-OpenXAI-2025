@@ -1,0 +1,119 @@
+/* Chat.css */
+
+/* General body styling for a clean look */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.chat-container {
+  display: flex;
+  justify-content: center;
+  /* Aligns the box to the bottom of the screen */
+  align-items: flex-end;
+  height: 100vh;
+  background-color: #ffe5b4; /* Light orange background */
+  padding: 20px; /* Adds some space so the box isn't stuck to the edge */
+  box-sizing: border-box; /* Ensures padding is included in the height/width */
+}
+
+.chat-box {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  /* Make it bigger */
+  width: 100%;
+  max-width: 700px; /* Set a max width for larger screens */
+  height: 80vh; /* Make the box taller */
+  /* Use flexbox to structure the content vertically */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title and Welcome Message Styling */
+.chat-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+  text-align: center;
+}
+
+.welcome-message {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+/* This is the new scrollable area for messages */
+.messages-area {
+  flex-grow: 1; /* This makes the area take up all available vertical space */
+  overflow-y: auto; /* Adds a scrollbar only when content overflows */
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 15px 10px;
+  margin-bottom: 15px;
+  text-align: left; /* Align text of responses to the left */
+}
+
+.error-text {
+  color: #D32F2F; /* A standard material red color */
+  background-color: #FFEBEE;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.response-text {
+  font-size: 16px;
+  color: #333;
+  /* This preserves newlines and spaces from the bot's response */
+  white-space: pre-wrap; 
+  line-height: 1.5;
+}
+
+/* Input area at the bottom */
+.input-area {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 25px; /* Pill shape */
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
+}
+
+.chat-input:focus {
+  border-color: #ff9800; /* orange highlight */
+  box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+}
+
+.chat-button {
+  padding: 12px 20px;
+  border: none;
+  background: #ff9800;
+  color: white;
+  border-radius: 25px; /* Pill shape */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.chat-button:hover:not(:disabled) {
+  background: #e68900;
+}
+
+.chat-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
