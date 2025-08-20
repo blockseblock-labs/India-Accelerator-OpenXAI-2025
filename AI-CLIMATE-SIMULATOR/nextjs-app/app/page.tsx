@@ -10,6 +10,7 @@ const MetricsPanel = dynamic(() => import('../components/MetricsPanel'), { ssr: 
 
 interface EarthMetrics {
   co2Level: number
+  so2level: number
   toxicityLevel: number
   temperature: number
   humanPopulation: number
