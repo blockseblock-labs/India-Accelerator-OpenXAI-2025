@@ -6,6 +6,8 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --accent-color: #4f46e5; /* Added custom accent color */
+  --border-radius: 12px;   /* Default border radius */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,6 +15,7 @@
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
+    --accent-color: #818cf8; /* Lighter accent in dark mode */
   }
 }
 
@@ -24,10 +27,13 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: 'Inter', sans-serif; /* Safe default font */
 }
 
 #gameCanvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+  border: 2px solid transparent; /* Extra safe default border */
+  border-radius: var(--border-radius);
+}
