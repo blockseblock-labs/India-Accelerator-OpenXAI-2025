@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'LearnAI - Educational AI Tools',
-  description: 'AI-powered learning tools: Flashcard Maker, Quiz Generator, and Study Buddy',
+  description: 'AI-Powered learning tools: Flashcard Maker, Quiz Generator, and Study Buddy',
 }
 
 export default function RootLayout({
