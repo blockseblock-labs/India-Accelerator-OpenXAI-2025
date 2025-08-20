@@ -28,7 +28,7 @@ Generate just the caption, no extra text or explanations.`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3',
+        model: 'llama3:latest',
         prompt: prompt,
         stream: false,
       }),
