@@ -1,6 +1,9 @@
 import { Metadata, Viewport } from "next";
-
+import { Inter } from "next/font/google";
+import "./globals.css";
 import { siteConfig } from "@/config/site";
+
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -16,10 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  themeColor: [{ color: "#0b0f14" }],
 };
 
 interface RootLayoutProps {
@@ -28,11 +28,22 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html>
-        <head />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en">
+      <head>
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#0b0f14" />
+      </head>
+      <body className={inter.className}>
+        <div className="app-container">
+          <header className="app-header">
+            <div>
+              <div className="app-title">{siteConfig.name}</div>
+              <div className="app-subtitle">{siteConfig.description}</div>
+            </div>
+          </header>
+          <main className="container">{children}</main>
+        </div>
+      </body>
+    </html>
   );
 }
