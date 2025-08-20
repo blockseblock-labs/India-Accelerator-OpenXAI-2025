@@ -105,7 +105,7 @@ export default function SocialNetwork() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600">
+    <div className="min-h-screen bg-gradient-to-br from-blue-950 to-black">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -278,4 +278,4 @@ export default function SocialNetwork() {
       </div>
     </div>
   )
-} 
+}

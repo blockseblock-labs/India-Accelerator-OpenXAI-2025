@@ -3,40 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* This controls the text color in light mode */
+  --foreground-rgb: 0, 0, 128; /* Deep Blue */
+  
+  /* These are not used for the body anymore, but are kept for other elements */
+  --background-start-rgb: 245, 245, 220; /* Beige */
+  --background-end-rgb: 255, 250, 205; /* Lemon Chiffon */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    /* This controls the text color in dark mode */
+    --foreground-rgb: 255, 255, 255; /* White */
+    
+    /* These are not used for the body anymore */
+    --background-start-rgb: 30, 0, 50; /* Deep Purple */
+    --background-end-rgb: 0, 0, 0; /* Black */
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  /* Changed the background to a blue and gray gradient */
+  background: linear-gradient(to right, #B0C4DE, #1e90ff);
 }
 
-/* Custom social media theme */
+/* Custom social media theme - Updated to a gold/orange gradient */
 .social-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
 }
 
+/* Instagram gradient - Updated to a hot pink/purple */
 .instagram-gradient {
-  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  background: linear-gradient(45deg, #FF69B4 0%,#8A2BE2 100%);
 }
 
+/* Twitter gradient - Updated to a cyan/teal gradient */
 .twitter-gradient {
-  background: linear-gradient(135deg, #1DA1F2 0%, #0d47a1 100%);
+  background: linear-gradient(135deg, #00CED1 0%, #008080 100%);
 }
 
 .social-card {
@@ -71,9 +75,10 @@ body {
   }
 }
 
+/* Hashtag tag - Updated to a subtle gray/blue gradient */
 .hashtag-tag {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #708090 0%, #B0C4DE 100%);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
@@ -97,7 +102,7 @@ body {
 }
 
 .copy-button.copied {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  background: linear-gradient(135deg, #32CD32 0%, #008000 100%); /* Green */
   transform: scale(0.95);
 }
 
@@ -114,4 +119,4 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-} 
+}
