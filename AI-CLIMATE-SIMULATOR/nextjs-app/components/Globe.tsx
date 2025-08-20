@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
 
 interface GlobeProps {
@@ -462,7 +462,8 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
       colorMap: textureLoader.load('/global-datacenter-visualization/src/00_earthmap1k.jpg'),
       bumpMap: textureLoader.load('/global-datacenter-visualization/src/01_earthbump1k.jpg'),
       specularMap: textureLoader.load('/global-datacenter-visualization/src/02_earthspec1k.jpg'),
-      lightsMap: textureLoader.load('/global-datacenter-visualization/src/03_earthlights1k.jpg')
+      lightsMap: textureLoader.load('/global-datacenter-visualization/src/03_earthlights1k.jpg'),
+      cloudsMap: textureLoader.load('/global-datacenter-visualization/src/04_earthclouds1k.jpg'),
     }
   }, [])
 
@@ -556,30 +557,43 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
 
   return (
     <>
-      {/* Stars background */}
+      {/* Enhanced space background with nebulas and better star distribution */}
       <group>
-        {Array.from({ length: 2000 }, (_, i) => (
+        {/* Distant stars - more realistic distribution */}
+        {Array.from({ length: 3000 }, (_, i) => (
           <mesh key={i} position={[
-            (Math.random() - 0.5) * 300,
-            (Math.random() - 0.5) * 300,
-            (Math.random() - 0.5) * 300
+            (Math.random() - 0.5) * 400,
+            (Math.random() - 0.5) * 400,
+            (Math.random() - 0.5) * 400
           ]}>
-            <sphereGeometry args={[0.05, 4, 4]} />
-            <meshBasicMaterial color={0xffffff} />
+            <sphereGeometry args={[0.02 + Math.random() * 0.08, 4, 4]} />
+            <meshStandardMaterial 
+              color={new THREE.Color().setHSL(0.6 + Math.random() * 0.1, 0.1, 0.8 + Math.random() * 0.2)}
+              emissive={new THREE.Color().setHSL(0.6 + Math.random() * 0.1, 0.1, 0.3)}
+              emissiveIntensity={0.5}
+            />
           </mesh>
         ))}
+        
+        
       </group>
       
-      {/* Earth with proper textures and population dots as children */}
-      <mesh ref={earthRef}>
-        <icosahedronGeometry args={[5, 16]} />
-        <meshStandardMaterial 
-          map={earthTextures.colorMap}
-          bumpMap={earthTextures.bumpMap}
-          bumpScale={0.1}
-          roughness={0.8}
-          metalness={0.1}
-        />
+        {/* Earth with high-res textures and emissive night lights */}
+        <mesh ref={earthRef}>
+          <sphereGeometry args={[5, 64, 64]} />
+          <meshPhysicalMaterial 
+            map={earthTextures.colorMap}
+            normalMap={earthTextures.bumpMap}
+            normalScale={new THREE.Vector2(0.6, 0.6)}
+            roughness={0.6}
+            metalness={0.0}
+            specularIntensity={0.8}
+            specularIntensityMap={earthTextures.specularMap}
+            specularColor={new THREE.Color(0xffffff)}
+            emissive={new THREE.Color(0xffffff)}
+            emissiveMap={earthTextures.lightsMap}
+            emissiveIntensity={0.45}
+          />
 
         {/* Population dots as children of Earth mesh - they will rotate with the Earth */}
         <group>
@@ -607,6 +621,31 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
             </mesh>
           ))}
         </group>
+      </mesh>
+
+      {/* Ocean pollution overlay */}
+      {metrics.oceanAcidity < 8.0 && (
+        <mesh>
+          <sphereGeometry args={[5.02, 64, 64]} />
+          <meshStandardMaterial 
+            color={0x8B0000}
+            transparent
+            opacity={0.3 * (1 - metrics.oceanAcidity / 8.0)}
+            side={THREE.FrontSide}
+          />
+        </mesh>
+      )}
+
+        {/* Clouds layer */}
+        <mesh>
+        <sphereGeometry args={[5.06, 64, 64]} />
+        <meshStandardMaterial
+          color={0xffffff}
+          alphaMap={earthTextures.cloudsMap}
+          transparent
+          opacity={0.9}
+          depthWrite={false}
+        />
       </mesh>
 
       {/* Ocean pollution overlay */}
@@ -872,10 +911,23 @@ export default function Globe({ pollutionLevel, metrics, specialEvent }: GlobePr
 
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 15], fov: 60 }}>
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[10, 10, 5]} intensity={0.8} />
-        <directionalLight position={[-5, 5, -5]} intensity={0.4} />
+      <Canvas 
+        camera={{ position: [0, 0, 15], fov: 60 }}
+        gl={{ 
+          antialias: true,
+          alpha: false,
+          powerPreference: "high-performance"
+        }}
+        style={{ background: 'radial-gradient(ellipse at center, #0a0a2a 0%, #000011 50%, #000000 100%)' }}
+      >
+        {/* Space lighting - dimmer, more atmospheric */}
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[10, 10, 5]} intensity={0.6} />
+        <directionalLight position={[-5, 5, -5]} intensity={0.3} />
+        
+        {/* Add subtle blue space glow */}
+        <pointLight position={[0, 0, 20]} intensity={0.1} color={0x4a90e2} />
+        <pointLight position={[0, 0, -20]} intensity={0.05} color={0x4a90e2} />
         
         <Earth 
           pollutionLevel={pollutionLevel} 
@@ -891,6 +943,7 @@ export default function Globe({ pollutionLevel, metrics, specialEvent }: GlobePr
           onStart={() => setIsAutoRotating(false)}
           onEnd={() => setIsAutoRotating(true)}
         />
+        <Environment preset="night" />
       </Canvas>
     </div>
   )
