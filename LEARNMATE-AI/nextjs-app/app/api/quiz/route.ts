@@ -11,62 +11,79 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `Create a quiz from the following text. Generate 4-6 multiple choice questions in JSON format with the following structure:
+    const openRouterApiKey = process.env.OPENROUTER_API_KEY
+    if (!openRouterApiKey) {
+      throw new Error('Missing OpenRouter API Key')
+    }
+
+    const prompt = `
+Create 10 multiple choice questions from the following text.
+Output should be only valid JSON in this exact format:
+
 {
   "quiz": [
     {
-      "question": "Question text here?",
+      "question": "Question text?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correct": 0,
-      "explanation": "Why this answer is correct"
+      "explanation": "Explanation for correct answer"
     }
   ]
 }
 
-Make questions challenging but fair, with plausible distractors for incorrect options.
+Text:
+${text}
+`
 
-Text: ${text}`
-
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${openRouterApiKey}`,
+        'HTTP-Referer': 'http://localhost:3000',
+        'X-Title': 'LearnMate AI',
       },
       body: JSON.stringify({
-        model: 'llama3:latest',
-        prompt: prompt,
-        stream: false,
+        model: "meta-llama/llama-3.2-3b-instruct:free",
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1024,
+        temperature: 0.7,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      const errorText = await response.text()
+      console.error('OpenRouter API error:', response.status, errorText)
+      throw new Error('Failed to get response from OpenRouter API')
     }
 
     const data = await response.json()
-    
-    try {
-      // Try to parse JSON from the response
-      const quizMatch = data.response.match(/\{[\s\S]*\}/)
-      if (quizMatch) {
-        const quizData = JSON.parse(quizMatch[0])
+
+    const completion = data.choices?.[0]?.message?.content || ""
+
+    const jsonMatch = completion.match(/\{[\s\S]*\}/)
+
+    if (jsonMatch) {
+      try {
+        const quizData = JSON.parse(jsonMatch)
         return NextResponse.json(quizData)
+      } catch {
+        console.log("Failed to parse JSON from AI response")
       }
-    } catch (parseError) {
-      console.log('Could not parse JSON, returning formatted response')
     }
 
-    // Fallback: create a simple quiz structure
+    // Fallback if parsing fails
     return NextResponse.json({
       quiz: [
         {
-          question: "What is the main topic of the provided text?",
-          options: ["Topic A", "Topic B", "Topic C", "Topic D"],
+          question: "Could not parse quiz from AI response",
+          options: ["Try again", "Check input", "Contact support", "Other"],
           correct: 0,
-          explanation: data.response || 'Generated from your text'
-        }
-      ]
+          explanation: completion || "No valid response received",
+        },
+      ],
     })
+
   } catch (error) {
     console.error('Quiz API error:', error)
     return NextResponse.json(
@@ -74,4 +91,4 @@ Text: ${text}`
       { status: 500 }
     )
   }
-} 
+}
