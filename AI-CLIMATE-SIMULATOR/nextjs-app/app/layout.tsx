@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     "climate change, environment, pollution, simulation, 3D globe, education",
 };
 
+
+
 export default function RootLayout({
   children,
 }: {
