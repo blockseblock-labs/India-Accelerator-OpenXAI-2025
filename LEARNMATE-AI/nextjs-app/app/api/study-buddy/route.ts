@@ -3,14 +3,14 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   try {
     const { question } = await req.json()
-
++
     if (!question) {
       return NextResponse.json(
         { error: 'Question is required' },
         { status: 400 }
       )
     }
-
++
     const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
 
 Question: ${question}`
