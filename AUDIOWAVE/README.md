@@ -113,4 +113,8 @@ The recorder uses these default settings:
 - Timer: 1-second intervals
 - Auto-stop: User controlled
 
-Build amazing audio experiences! 🎵 
+Build amazing audio experiences! 🎵
+
+## 👨‍💻 Contributor
+
+- Mayur Patil (Mini Task Submission)
