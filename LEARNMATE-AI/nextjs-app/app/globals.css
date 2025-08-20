@@ -28,7 +28,7 @@ body {
 
 /* Custom educational theme */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #42afaf 0%, #8aba4f 100%);
 }
 
 .flashcard {
@@ -63,12 +63,12 @@ body {
 
 .flashcard-front {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  color: rgb(218, 18, 18);
 }
 
 .flashcard-back {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  color: rgb(221, 209, 29);
   transform: rotateY(180deg);
 }
 
@@ -82,7 +82,7 @@ body {
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #070d11 0%, #091515 100%);
   color: white;
 }
 
