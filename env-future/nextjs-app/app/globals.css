@@ -2,192 +2,258 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =====================
-  THEME VARIABLES
-===================== */
+/* THEME VARIABLES */
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 18, 24, 45;   /* Deeper navy for more contrast */
+  --background-end-rgb: 27, 35, 65;
 
-  /* Globe specific colors */
-  --globe-land: #1e40af; /* Indigo */
-  --globe-water: #0c1445; /* Deep navy */
-  --marker-color: #facc15; /* Amber */
-  --marker-hover: #f87171; /* Red on hover */
-  --tooltip-bg: rgba(0, 0, 0, 0.85);
+  --globe-land: #296cff;
+  --globe-water: #162359;
+  --marker-default: #facc15;     /* Amber */
+  --marker-hover: #f87171;       /* Red on hover */
+  --marker-low: #4ade80;         /* Green: low/positive metric */
+  --marker-medium: #fbbf24;      /* Yellow: caution */
+  --marker-high: #f87171;        /* Red: high/bad metric */
+  --tooltip-bg: rgba(0,0,0,0.92);
   --tooltip-text: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
+    --foreground-rgb: 235, 235, 235;
+    --background-start-rgb: 8, 14, 24;
     --background-end-rgb: 0, 0, 0;
   }
 }
 
-/* =====================
-  BODY & SCROLL
-===================== */
+/* BODY & BACKGROUND */
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: radial-gradient(ellipse at center, #11193b 0%, #01000a 100%);
   overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar across panels */
 ::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  width: 10px;
 }
 ::-webkit-scrollbar-thumb {
   background: #888;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
-/* =====================
-  GLOBE CONTAINER
-===================== */
+/* FLEXIBLE GLOBE LAYOUT */
 .globe-container {
-  position: relative;
-  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100vw;
   height: 100vh;
-  background: radial-gradient(ellipse at center, #0c1445 0%, #000000 100%);
+  position: relative;
+  background: radial-gradient(ellipse at center, #162359 20%, #11193b 100%);
   overflow: hidden;
 }
-
-/* Keep globe always visible */
-.globe-container > div:first-child {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.globe-canvas-area {
+  /* For globe. Place markers absolute within here. */
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
   z-index: 1;
+  background: transparent;
 }
 
-/* Pollution overlay */
-.pollution-overlay {
+/* Metrics Panels (left/right, adaptable) */
+.metrics-panel,
+.metrics-panel-right {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* =====================
-  METRICS PANEL
-===================== */
-.metrics-panel {
-  backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  max-width: 400px;
-  max-height: 80vh;
-  overflow-y: auto;
-  border-radius: 12px;
-  padding: 1rem;
+  top: 2.5rem;
+  max-height: 82vh;
+  min-width: 305px;
+  padding: 1.25rem 1.5rem;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.85);
   color: white;
-  font-size: 0.9rem;
-  z-index: 20;
+  z-index: 30;
+  box-shadow: 0 6px 32px rgba(30,50,80,0.24);
+  font-size: 1rem;
+  line-height: 1.55;
+  overflow-y: auto;
+  backdrop-filter: blur(14px);
+}
+.metrics-panel { left: 2.5rem; }
+.metrics-panel-right { right: 2.5rem; }
+@media (max-width: 900px) {
+  .metrics-panel,
+  .metrics-panel-right {
+     position: static;
+     max-width: 97vw;
+     left: unset; right: unset; top: unset;
+     margin: 0.75rem auto;
+  }
 }
 
-/* =====================
-  COUNTRY MARKERS
-===================== */
+/* -- GLOBE MARKERS -- */
 .country-marker {
-  width: 12px;
-  height: 12px;
-  background-color: var(--marker-color);
+  position: absolute;   /* Use for overlaying in React on top of 3D globe */
+  left: 0; top: 0;
+  width: 18px; height: 18px;
+  background-color: var(--marker-default);
+  border: 2px solid #f4f4f4;
   border-radius: 50%;
-  border: 1px solid #fff;
-  transform: scale(1);
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.country-marker:hover {
-  transform: scale(1.5);
-  background-color: var(--marker-hover);
+  box-shadow: 0 0 8px 2px #333c;
+  display: flex; align-items: center; justify-content: center;
+  color: #1a1f2b;
+  font-weight: 700; font-size: 11px;
+  transition: 
+    transform 0.21s cubic-bezier(.4,2,.14,.97),
+    background 0.16s,
+    box-shadow 0.16s;
   cursor: pointer;
-  z-index: 15;
+  user-select: none;
+  z-index: 3;
+}
+.country-marker.low { background-color: var(--marker-low);}
+.country-marker.medium { background-color: var(--marker-medium);}
+.country-marker.high { background-color: var(--marker-high);}
+.country-marker:hover {
+  background: var(--marker-hover);
+  color: #fff;
+  transform: scale(1.4);
+  z-index: 6;
+  box-shadow: 0 4px 28px 7px #f8717144;
 }
 
-/* =====================
-  TOOLTIP (country info)
-===================== */
-.tooltip {
+/* NUMERIC BADGE (flexible placement, appears on hover/always as needed) */
+.marker-badge {
   position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2.5px 7px;
+  background: #111e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 7px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s;
+  white-space: nowrap;
+  border: 1.5px solid #babaff;
+  z-index: 4;
+}
+.country-marker:hover .marker-badge, 
+.country-marker:focus .marker-badge,
+.marker-badge.always { opacity: 1; }
+
+/* TOOLTIP POPUP */
+.globe-tooltip, .tooltip {
+  position: absolute;
+  left: 50%; bottom: 120%;
   background: var(--tooltip-bg);
   color: var(--tooltip-text);
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  padding: 9px 16px;
+  border-radius: 9px;
+  font-size: 0.96rem;
+  line-height: 1.45;
+  font-weight: 600;
+  box-shadow: 0 0 16px 3px #0007;
   pointer-events: none;
-  white-space: nowrap;
-  z-index: 25;
   opacity: 0;
-  transform: translate(-50%, -120%);
-  transition: opacity 0.2s ease-in-out;
+  transform: translate(-50%, -7px) scale(0.96);
+  transition: opacity 0.22s, transform 0.22s;
+  z-index: 12;
+  white-space: pre-line;
+  max-width: 220px;
+  text-shadow: 1px 2px 3px #2229;
 }
-
-.country-marker:hover + .tooltip {
+.country-marker:hover + .globe-tooltip,
+.country-marker:focus + .globe-tooltip {
   opacity: 1;
+  transform: translate(-50%, -13px) scale(1);
 }
 
-/* =====================
-  LEGEND STYLES
-===================== */
+/* Arrow for tooltip */
+.globe-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border-width: 7px 7px 0 7px;
+  border-style: solid;
+  border-color: var(--tooltip-bg) transparent transparent transparent;
+}
+
+/* LEGEND */
 .legend {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  z-index: 20;
+  bottom: 22px; left: 22px;
+  background: rgba(0,0,0,0.7);
+  color: #f3f3f3;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  z-index: 30;
+  box-shadow: 0 2px 10px #0006;
+  max-width: 280px;
+  user-select: none;
 }
 .legend h4 {
-  margin: 0 0 5px;
-  font-weight: bold;
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin: 0 0 7px;
+  border-bottom: 1px solid #fff2;
+  padding-bottom: 4px;
 }
 .legend-item {
-  display: flex;
-  align-items: center;
-  margin: 3px 0;
+  display: flex; align-items: center;
+  gap: 7px; margin: 5px 0;
 }
 .legend-color {
-  width: 12px;
-  height: 12px;
-  margin-right: 6px;
-  border-radius: 2px;
+  width: 18px; height: 18px;
+  border-radius: 4px; border: 1px solid #fff9;
 }
+.legend-color.low    { background-color: var(--marker-low);}
+.legend-color.medium { background-color: var(--marker-medium);}
+.legend-color.high   { background-color: var(--marker-high);}
+.legend-color.default{ background-color: var(--marker-default);}
+.legend-color.alert  { background-color: var(--marker-hover);}
+.legend-color.land   { background-color: var(--globe-land);}
+.legend-color.water  { background-color: var(--globe-water);}
 
-/* =====================
-  BACKGROUND ANIMATION
-===================== */
+/* ANIMATED BACKGROUND */
 .animated-bg {
   background: linear-gradient(-45deg, #0c1445, #1e3a8a, #1e40af, #3b82f6);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background-size: 360% 360%;
+  animation: gradientShift 14s ease-in-out infinite;
 }
-
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  50% { background-position: 98% 54%; }
   100% { background-position: 0% 50%; }
 }
+
+/* RESPONSIVE OVERRIDES */
+@media (max-width: 720px) {
+  .metrics-panel, .metrics-panel-right {
+    max-width: 97vw;
+    min-width: 0;
+    font-size: .89rem;
+    padding: 0.75rem 0.6rem;
+    border-radius: 10px;
+  }
+  .legend { 
+    left: 8px; right: 8px; bottom: 14px; max-width: 88vw; font-size: 0.77rem;
+    padding: 8px 5px; border-radius: 7px;
+  }
+  .country-marker { width: 14px; height: 14px; font-size: 8.5px; }
+  .marker-badge { padding: 1px 4px; font-size: 8.5px;}
+}
+
+/* Z-Index for clickable map UIs, overlays */
+.metrics-panel, .metrics-panel-right, .legend, .globe-tooltip { z-index: 40 !important; }

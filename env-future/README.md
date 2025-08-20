@@ -2,7 +2,7 @@ ENV Future 🌍
 OpenxAI Global AI Accelerator - ENVIRO-TRACK Submission
 Project Overview
 ENV Future is an interactive, AI-powered climate and energy simulator that brings global environmental actions to life. Users input real household energy needs, green solutions, or climate-impact ideas in natural language. The system’s advanced AI engine analyzes each scenario in real time, performing realistic environmental calculations. It instantly updates both a live, 3D globe and a comprehensive metrics dashboard to visually demonstrate the planetary effects—from CO₂ emissions to population and climate stats. The platform also provides actionable solar energy recommendations, component sizing, flowcharts, payback analysis, and downloadable reports.
-Dead-Earth is designed as an educational and decision-support tool, empowering everyone to explore the real-world impact of renewable energy and sustainability solutions, all through an intuitive and engaging simulation.
+
 
 🌟 Features
 3D Interactive Globe: Explore environmental changes visually with real-time, immersive 3D graphics (Three.js, React Three Fiber).
