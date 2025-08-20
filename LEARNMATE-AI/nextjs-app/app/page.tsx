@@ -141,12 +141,13 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold mb-4 text-outline-purple">📚 LearnAI</h1>
+          <p className="text-outline-purple text-lg">AI-Powered Educational Tools</p>
         </div>
 
         {/* Tabs */}
@@ -163,7 +164,7 @@ export default function LearnAI() {
                 className={`px-6 py-3 rounded-lg transition-all ${
                   activeTab === tab.id
                     ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                    : 'text-outline-purple hover:bg-white/10'
                 }`}
               >
                 <div className="text-sm font-medium">{tab.label}</div>
@@ -178,7 +179,7 @@ export default function LearnAI() {
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+              <h2 className="text-2xl font-bold mb-4 text-outline-purple">🃏 Flashcard Maker</h2>
               
               {flashcards.length === 0 ? (
                 <div>
@@ -198,7 +199,8 @@ export default function LearnAI() {
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-outline-purple">
+
                     Card {currentCard + 1} of {flashcards.length}
                   </div>
                   
@@ -246,8 +248,7 @@ export default function LearnAI() {
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
-              
+              <h2 className="text-2xl font-bold mb-4 text-outline-purple">📝 Quiz Maker</h2>
               {quiz.length === 0 && !showResults ? (
                 <div>
                   <textarea
@@ -266,8 +267,9 @@ export default function LearnAI() {
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
+                   <h3 className="text-3xl font-bold mb-4 text-outline-purple">Quiz Complete!</h3>
+
+                 <p className="text-xl mb-6 text-outline-purple">
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
                   <button
@@ -283,12 +285,12 @@ export default function LearnAI() {
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-outline-purple">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
                   
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
+                    <h3 className="text-xl font-bold mb-4 text-outline-purple">
                       {quiz[currentQuestion]?.question}
                     </h3>
                     
@@ -317,8 +319,8 @@ export default function LearnAI() {
                     
                     {selectedAnswer !== null && (
                       <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                        <p className="font-medium text-outline-purple">Explanation:</p>
+                        <p className="text-outline-purple">{quiz[currentQuestion]?.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -330,7 +332,7 @@ export default function LearnAI() {
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+              <h2 className="text-2xl font-bold mb-4 text-outline-purple">🤖 Ask-Me Study Buddy</h2>
               
               <div className="mb-6">
                 <div className="flex space-x-2">
