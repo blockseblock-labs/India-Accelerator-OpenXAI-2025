@@ -2,43 +2,64 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData()
-    const imageFile = formData.get('image') as File
+    const body = await req.json()
+    const imageDataUrl = body.image
 
-    if (!imageFile) {
-      return NextResponse.json({ error: 'No image file provided' }, { status: 400 })
+    if (!imageDataUrl) {
+      return NextResponse.json({ error: 'No image data provided' }, { status: 400 })
     }
 
-    // For now, return a mock analysis
-    // In a real implementation, you would:
-    // 1. Process the image using computer vision APIs
-    // 2. Extract features or descriptions
-    // 3. Send the description to Ollama for further analysis
+    const groqApiKey = process.env.GROQ_API_KEY
+    if (!groqApiKey) {
+      return NextResponse.json({ error: 'GROQ_API_KEY environment variable is required' }, { status: 500 })
+    }
 
-    const mockDescription = "This image appears to contain various objects and elements that could be analyzed further."
+    // Converting image into base64 for transfering the data
+    const [header, base64Data] = imageDataUrl.split(',')
+    const mimeType = header.match(/data:([^;]+)/)?.[1] || 'image/jpeg'
 
-    // Send description to Ollama for analysis
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${groqApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
-        prompt: `Please provide a detailed analysis of this image description: "${mockDescription}"`,
-        stream: false,
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: 'Please provide a detailed analysis of this image. Describe what you see, identify any objects, people, or activities, and provide insights about the context or setting.'
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Data}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      const errorData = await response.text()
+      console.error('Groq API error:', errorData)
+      throw new Error(`Failed to get response from Groq: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
+    const analysis = data.choices?.[0]?.message?.content || 'No analysis available'
     
     return NextResponse.json({ 
-      description: mockDescription,
-      analysis: data.response || 'No analysis available',
+      analysis: analysis,
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
       confidence: 0.85
     })
   } catch (error) {
