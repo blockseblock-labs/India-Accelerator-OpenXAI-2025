@@ -1,5 +1,4 @@
 import { Metadata, Viewport } from "next";
-
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -28,11 +27,9 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html>
-        <head />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en">
+      <head />
+      <body>{children}</body>
+    </html>
   );
 }
