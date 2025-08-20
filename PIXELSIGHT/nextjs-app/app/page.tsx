@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Camera, Upload, Eye } from 'lucide-react'
 
 export default function Home() {
