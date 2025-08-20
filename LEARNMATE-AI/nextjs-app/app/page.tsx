@@ -141,8 +141,13 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-      <div className="container mx-auto px-4 py-8">
+ <div className="min-h-screen relative overflow-hidden radial-gradient-bg pattern-bg">
+  {/* Glowing blobs */}
+  <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse"></div>
+  <div className="absolute -bottom-32 -right-32 w-[28rem] h-[28rem] bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse"></div>
+  <div className="absolute top-1/3 -right-20 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+  
+    <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
