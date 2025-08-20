@@ -1,46 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  try {
-    const { question } = await req.json()
+export async function POST(req: Request) {
+  const { question } = await req.json();
 
-    if (!question) {
-      return NextResponse.json(
-        { error: 'Question is required' },
-        { status: 400 }
-      )
-    }
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "system",
+          content: "You are a friendly study buddy. Give helpful, clear, and simple explanations."
+        },
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+      temperature: 0.7,
+    }),
+  });
 
-    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
+  const data = await response.json();
+  const answer = data.choices[0].message.content;
 
-Question: ${question}`
-
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
-    }
-
-    const data = await response.json()
-    
-    return NextResponse.json({ 
-      answer: data.response || 'I could not process your question. Please try again!' 
-    })
-  } catch (error) {
-    console.error('Study Buddy API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get study buddy response' },
-      { status: 500 }
-    )
-  }
-} 
+  return NextResponse.json({ answer });
+}

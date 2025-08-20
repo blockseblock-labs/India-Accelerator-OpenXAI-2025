@@ -1,18 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 34, 34, 34;  /* Dark text */
+  --background-start-rgb: 245, 240, 230; /* Light beige */
+  --background-end-rgb: 210, 180, 140;   /* Tan */
+  --accent-1: #b08968; /* Warm brown */
+  --accent-2: #5a3e2b; /* Deep brown */
+  --accent-3: #1e1e1e; /* Black */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 245, 240, 230; 
+    --background-start-rgb: 30, 30, 30;
+    --background-end-rgb: 60, 45, 35;
   }
 }
 
@@ -20,43 +19,61 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
-      transparent,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    );
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+
+  /* 👇 This centers all children */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem;
 }
 
-/* Custom social media theme */
+/* --- Aesthetic Social Media Theme --- */
 .social-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
 }
 
 .instagram-gradient {
-  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  background: linear-gradient(45deg, #d6a47e 0%, #c08552 25%, #8d5524 50%, #5a3e2b 75%, #3e2723 100%);
 }
 
 .twitter-gradient {
-  background: linear-gradient(135deg, #1DA1F2 0%, #0d47a1 100%);
+  background: linear-gradient(135deg, #8d6e63 0%, #3e2723 100%);
 }
 
+/* --- Cards --- */
 .social-card {
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(250, 245, 235, 0.8);
+  border: 1px solid rgba(90, 62, 43, 0.3);
+  border-radius: 12px;
   transition: all 0.3s ease;
+  padding: 2rem;
+  margin: 1rem auto;
+  max-width: 400px;
 }
 
 .social-card:hover {
   backdrop-filter: blur(15px);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(250, 245, 235, 0.9);
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(90, 62, 43, 0.25);
 }
 
+/* --- Mood Indicator --- */
 .mood-indicator {
   display: inline-block;
   font-size: 2rem;
   animation: bounce 2s infinite;
+  color: var(--accent-2);
+  margin-top: 1rem;
 }
 
 @keyframes bounce {
@@ -71,36 +88,47 @@ body {
   }
 }
 
+/* --- Hashtags --- */
 .hashtag-tag {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   color: white;
-  padding: 0.25rem 0.5rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 9999px;
-  margin: 0.125rem;
-  font-size: 0.875rem;
+  margin: 0.25rem;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
 .hashtag-tag:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(90, 62, 43, 0.4);
 }
 
+/* --- Copy Button --- */
 .copy-button {
   transition: all 0.3s ease;
+  background: var(--accent-1);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
 }
 
 .copy-button:hover {
   transform: scale(1.05);
+  background: var(--accent-2);
 }
 
 .copy-button.copied {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
   transform: scale(0.95);
 }
 
+/* --- Tab Content Animation --- */
 .tab-content {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -114,4 +142,4 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-} 
+}
