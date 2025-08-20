@@ -161,4 +161,15 @@ npm run lint
 
 ---
 
+## Contributing 🤝
+
+We welcome contributions from the community!  
+
+### How to Contribute
+
+1. **Fork** the repository  
+2. **Create a new branch** for your feature or fix:  
+   ```bash
+   git checkout -b feature-name
+
 **Enjoy analyzing images! 🔥**
