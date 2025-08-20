@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255; /* text color */
+  --bg1: #1e1b2e;   /* dark purple/navy */
+  --bg2: #2a2345;   /* slightly lighter */
+  --bg3: #0d0b1a;   /* almost black */
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 70%),
+    linear-gradient(270deg, var(--bg1), var(--bg2), var(--bg3));
+  background-size: 600% 600%;
+  background-blend-mode: overlay;
+  animation: gradientAnimation 30s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom educational theme */
+.learn-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+}
+
+.flashcard {
+  perspective: 1000px;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.flashcard-gradient .flashcard-front {
+  background: radial-gradient(circle at top left, #6a0dad, #1a0f2c);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.flashcard-gradient .flashcard-back {
+  background: radial-gradient(circle at bottom right, #4000ff, #2c0030);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.quiz-option {
+  transition: all 0.3s ease;
+}
+
+.quiz-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.quiz-option.correct {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.quiz-option.incorrect {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+} 
+
+/* === Flashcard Flip Animation === */
+.flashcard {
+  perspective: 1000px; /* adds depth for 3D effect */
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease-in-out; /* smooth rotation */
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* hides back when facing front */
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: rgba(255, 255, 255, 0.3);
+}
