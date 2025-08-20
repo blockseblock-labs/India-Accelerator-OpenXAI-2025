@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+//  install the module of lucide-react first
 import { Send, Bot, User } from 'lucide-react'
 
 interface Message {

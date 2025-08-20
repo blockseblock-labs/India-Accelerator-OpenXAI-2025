@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
+        model: 'llama3:latest',
         prompt: `Please provide a detailed analysis of this image description: "${mockDescription}"`,
         stream: false,
       }),
