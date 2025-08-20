@@ -3,31 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 17, 24, 39; /* Slate-900 */
+  --background-start-rgb: 236, 253, 245; /* Emerald-50 */
+  --background-end-rgb: 219, 234, 254;   /* Blue-100 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 243, 244, 246; /* Gray-100 */
+    --background-start-rgb: 30, 27, 75; /* Indigo-950 */
+    --background-end-rgb: 17, 24, 39;   /* Slate-900 */
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
+      to bottom right,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    );
+  min-height: 100vh;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 #gameCanvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+}
