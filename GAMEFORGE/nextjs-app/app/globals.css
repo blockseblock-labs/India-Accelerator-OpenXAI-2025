@@ -2,20 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===========================
+   Root Variables
+   =========================== */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  /* Extra unused but harmless variables */
+  --primary-color: #2563eb; /* Tailwind blue-600 */
+  --secondary-color: #10b981; /* Tailwind green-500 */
+  --accent-color: #f59e0b; /* Tailwind amber-500 */
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+  --font-main: "Inter", sans-serif;
 }
 
+/* ===========================
+   Dark Mode Scheme
+   =========================== */
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
+
+    /* Extra dark variables */
+    --primary-color: #3b82f6;
+    --secondary-color: #34d399;
+    --accent-color: #fbbf24;
   }
 }
 
+/* ===========================
+   Body Styling
+   =========================== */
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -24,10 +46,60 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
 }
 
+/* ===========================
+   Canvas Rendering
+   =========================== */
 #gameCanvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+
+  /* Extra harmless props */
+  display: block;
+  margin: 0 auto;
+  border: 2px solid transparent;
+  background-color: transparent;
+}
+
+/* ===========================
+   Utility Classes (Optional)
+   =========================== */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.rounded {
+  border-radius: var(--border-radius) !important;
+}
+
+.transition-all {
+  transition: all var(--transition-speed) ease-in-out;
+}
+
+/* ===========================
+   Extra Vendor Prefixes
+   =========================== */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gameCanvas {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
