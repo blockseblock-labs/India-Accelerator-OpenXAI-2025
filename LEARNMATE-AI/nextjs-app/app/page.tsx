@@ -2,238 +2,241 @@
 
 import { useState } from 'react'
 
-interface Flashcard {
+// Type definitions for our learning modules
+interface MemoryPalette {
   front: string
   back: string
 }
 
-interface QuizQuestion {
+interface AssessmentProtocol {
   question: string
   options: string[]
   correct: number
   explanation: string
 }
 
-export default function LearnAI() {
-  const [activeTab, setActiveTab] = useState('flashcards')
-  const [loading, setLoading] = useState(false)
+export default function CyberMindTutor() {
+  const [activeModule, setActiveModule] = useState('palettes')
+  const [isProcessing, setIsProcessing] = useState(false)
   
-  // Flashcard states
-  const [notes, setNotes] = useState('')
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([])
-  const [currentCard, setCurrentCard] = useState(0)
-  const [flipped, setFlipped] = useState(false)
+  // States for Memory Palettes (formerly Flashcards)
+  const [knowledgeInput, setKnowledgeInput] = useState('')
+  const [memoryPalettes, setMemoryPalettes] = useState<MemoryPalette[]>([])
+  const [currentPaletteIndex, setCurrentPaletteIndex] = useState(0)
+  const [isRevealed, setIsRevealed] = useState(false)
   
-  // Quiz states
-  const [quizText, setQuizText] = useState('')
-  const [quiz, setQuiz] = useState<QuizQuestion[]>([])
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
-  const [showResults, setShowResults] = useState(false)
-  const [score, setScore] = useState(0)
+  // States for Assessment Protocol (formerly Quiz)
+  const [assessmentMaterial, setAssessmentMaterial] = useState('')
+  const [assessmentProtocols, setAssessmentProtocols] = useState<AssessmentProtocol[]>([])
+  const [currentProtocolIndex, setCurrentProtocolIndex] = useState(0)
+  const [chosenResponse, setChosenResponse] = useState<number | null>(null)
+  const [displayOutcome, setDisplayOutcome] = useState(false)
+  const [performanceMetric, setPerformanceMetric] = useState(0)
   
-  // Study Buddy states
-  const [question, setQuestion] = useState('')
-  const [answer, setAnswer] = useState('')
-  const [chatHistory, setChatHistory] = useState<{question: string, answer: string}[]>([])
+  // States for Digital Mentor (formerly Study Buddy)
+  const [userInquiry, setUserInquiry] = useState('')
+  const [mentorResponse, setMentorResponse] = useState('')
+  const [dialogueLog, setDialogueLog] = useState<{question: string, answer: string}[]>([])
 
-  const generateFlashcards = async () => {
-    if (!notes.trim()) return
+  const createMemoryPalettes = async () => {
+    if (!knowledgeInput.trim()) return
     
-    setLoading(true)
+    setIsProcessing(true)
     try {
       const response = await fetch('/api/flashcards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notes })
+        body: JSON.stringify({ notes: knowledgeInput })
       })
       
       const data = await response.json()
       if (data.flashcards) {
-        setFlashcards(data.flashcards)
-        setCurrentCard(0)
-        setFlipped(false)
+        setMemoryPalettes(data.flashcards)
+        setCurrentPaletteIndex(0)
+        setIsRevealed(false)
       }
     } catch (error) {
-      console.error('Error generating flashcards:', error)
+      console.error('Error creating memory palettes:', error)
     }
-    setLoading(false)
+    setIsProcessing(false)
   }
 
-  const generateQuiz = async () => {
-    if (!quizText.trim()) return
+  const initiateAssessmentProtocol = async () => {
+    if (!assessmentMaterial.trim()) return
     
-    setLoading(true)
+    setIsProcessing(true)
     try {
       const response = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: quizText })
+        body: JSON.stringify({ text: assessmentMaterial })
       })
       
       const data = await response.json()
       if (data.quiz) {
-        setQuiz(data.quiz)
-        setCurrentQuestion(0)
-        setSelectedAnswer(null)
-        setShowResults(false)
-        setScore(0)
+        setAssessmentProtocols(data.quiz)
+        setCurrentProtocolIndex(0)
+        setChosenResponse(null)
+        setDisplayOutcome(false)
+        setPerformanceMetric(0)
       }
     } catch (error) {
-      console.error('Error generating quiz:', error)
+      console.error('Error initiating assessment protocol:', error)
     }
-    setLoading(false)
+    setIsProcessing(false)
   }
 
-  const askStudyBuddy = async () => {
-    if (!question.trim()) return
+  const queryDigitalMentor = async () => {
+    if (!userInquiry.trim()) return
     
-    setLoading(true)
+    setIsProcessing(true)
     try {
       const response = await fetch('/api/study-buddy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({ question: userInquiry })
       })
       
       const data = await response.json()
       if (data.answer) {
-        const newChat = { question, answer: data.answer }
-        setChatHistory(prev => [...prev, newChat])
-        setAnswer(data.answer)
-        setQuestion('')
+        const newDialogue = { question: userInquiry, answer: data.answer }
+        setDialogueLog(prev => [...prev, newDialogue])
+        setMentorResponse(data.answer)
+        setUserInquiry('')
       }
     } catch (error) {
-      console.error('Error asking study buddy:', error)
+      console.error('Error querying digital mentor:', error)
     }
-    setLoading(false)
+    setIsProcessing(false)
   }
 
-  const nextCard = () => {
-    if (currentCard < flashcards.length - 1) {
-      setCurrentCard(currentCard + 1)
-      setFlipped(false)
-    }
-  }
-
-  const prevCard = () => {
-    if (currentCard > 0) {
-      setCurrentCard(currentCard - 1)
-      setFlipped(false)
+  const advanceToNextPalette = () => {
+    if (currentPaletteIndex < memoryPalettes.length - 1) {
+      setCurrentPaletteIndex(currentPaletteIndex + 1)
+      setIsRevealed(false)
     }
   }
 
-  const selectAnswer = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex)
+  const returnToPreviousPalette = () => {
+    if (currentPaletteIndex > 0) {
+      setCurrentPaletteIndex(currentPaletteIndex - 1)
+      setIsRevealed(false)
+    }
+  }
+
+  const processResponse = (responseIndex: number) => {
+    setChosenResponse(responseIndex)
     
-    if (answerIndex === quiz[currentQuestion].correct) {
-      setScore(score + 1)
+    if (responseIndex === assessmentProtocols[currentProtocolIndex].correct) {
+      setPerformanceMetric(performanceMetric + 1)
     }
     
     setTimeout(() => {
-      if (currentQuestion < quiz.length - 1) {
-        setCurrentQuestion(currentQuestion + 1)
-        setSelectedAnswer(null)
+      if (currentProtocolIndex < assessmentProtocols.length - 1) {
+        setCurrentProtocolIndex(currentProtocolIndex + 1)
+        setChosenResponse(null)
       } else {
-        setShowResults(true)
+        setDisplayOutcome(true)
       }
-    }, 1500)
+    }, 2000)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen p-4 sm:p-8">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
-        </div>
+        {/* Header Section */}
+        <header className="text-center mb-10">
+          <h1 className="text-5xl font-bold text-white mb-4 learn-gradient bg-clip-text text-transparent animate-pulse">
+            CyberMind Tutor
+          </h1>
+          <p className="text-cyan-200/80 text-lg">AI-Enhanced Knowledge Assimilation</p>
+        </header>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+        {/* Module Selection Tabs */}
+        <nav className="flex justify-center mb-8">
+          <div className="bg-[rgba(18,18,18,0.5)] backdrop-blur-xl border border-cyan-500/20 rounded-lg p-2 flex space-x-2">
             {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
-            ].map(tab => (
+              { id: 'palettes', label: 'Memory Palettes', desc: 'Construct Knowledge Cards' },
+              { id: 'assessment', label: 'Assessment', desc: 'Initiate Knowledge Test' },
+              { id: 'mentor', label: 'Digital Mentor', desc: 'Query the AI' }
+            ].map(module => (
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                key={module.id}
+                onClick={() => setActiveModule(module.id)}
+                className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-all duration-300 text-white focus:outline-none ${
+                  activeModule === module.id
+                    ? 'bg-cyan-500/80 shadow-[0_0_15px_var(--primary-glow)]'
+                    : 'bg-transparent hover:bg-cyan-500/20'
                 }`}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                <div className="text-sm font-semibold">{module.label}</div>
+                <div className="text-xs opacity-75 hidden sm:block">{module.desc}</div>
               </button>
             ))}
           </div>
-        </div>
+        </nav>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto">
-          {/* Flashcards Tab */}
-          {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+        {/* Content Display Area */}
+        <main className="max-w-4xl mx-auto">
+          {/* Memory Palettes Module */}
+          {activeModule === 'palettes' && (
+            <div className="bg-[rgba(18,18,18,0.5)] backdrop-blur-xl border border-cyan-500/20 rounded-xl p-6">
+              <h2 className="text-3xl font-bold text-cyan-300 mb-4">Memory Palette Constructor</h2>
               
-              {flashcards.length === 0 ? (
+              {memoryPalettes.length === 0 ? (
                 <div>
                   <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    value={knowledgeInput}
+                    onChange={(e) => setKnowledgeInput(e.target.value)}
+                    placeholder="Input raw data here. I will construct memory palettes for optimal retention..."
+                    className="w-full h-48 p-4 rounded-lg border border-cyan-500/30 bg-black/30 text-white placeholder-white/50 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
                   />
                   <button
-                    onClick={generateFlashcards}
-                    disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={createMemoryPalettes}
+                    disabled={isProcessing || !knowledgeInput.trim()}
+                    className="mt-4 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-black rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
-                    {loading ? 'Generating...' : 'Generate Flashcards'}
+                    {isProcessing ? 'Constructing...' : 'Construct Palettes'}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Card {currentCard + 1} of {flashcards.length}
+                  <div className="mb-4 text-cyan-300">
+                    Palette {currentPaletteIndex + 1} of {memoryPalettes.length}
                   </div>
                   
                   <div 
-                    className={`flashcard ${flipped ? 'flipped' : ''} mb-6 cursor-pointer`}
-                    onClick={() => setFlipped(!flipped)}
+                    className={`flashcard ${isRevealed ? 'flipped' : ''} mb-6 cursor-pointer h-[200px]`}
+                    onClick={() => setIsRevealed(!isRevealed)}
                   >
                     <div className="flashcard-inner">
                       <div className="flashcard-front">
-                        <p className="text-lg font-medium">{flashcards[currentCard]?.front}</p>
+                        <p className="text-xl font-semibold">{memoryPalettes[currentPaletteIndex]?.front}</p>
                       </div>
                       <div className="flashcard-back">
-                        <p className="text-lg">{flashcards[currentCard]?.back}</p>
+                        <p className="text-lg">{memoryPalettes[currentPaletteIndex]?.back}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <button
-                      onClick={prevCard}
-                      disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      onClick={returnToPreviousPalette}
+                      disabled={currentPaletteIndex === 0}
+                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-30"
                     >
                       Previous
                     </button>
                     <button
-                      onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      onClick={() => setMemoryPalettes([])}
+                      className="px-4 py-2 bg-red-500/80 text-white rounded-lg hover:bg-red-600"
                     >
-                      New Flashcards
+                      New Set
                     </button>
                     <button
-                      onClick={nextCard}
-                      disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      onClick={advanceToNextPalette}
+                      disabled={currentPaletteIndex === memoryPalettes.length - 1}
+                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-30"
                     >
                       Next
                     </button>
@@ -243,71 +246,71 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Quiz Tab */}
-          {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+          {/* Assessment Module */}
+          {activeModule === 'assessment' && (
+             <div className="bg-[rgba(18,18,18,0.5)] backdrop-blur-xl border border-green-500/20 rounded-xl p-6">
+              <h2 className="text-3xl font-bold text-green-300 mb-4">Assessment Protocol</h2>
               
-              {quiz.length === 0 && !showResults ? (
+              {assessmentProtocols.length === 0 && !displayOutcome ? (
                 <div>
                   <textarea
-                    value={quizText}
-                    onChange={(e) => setQuizText(e.target.value)}
-                    placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    value={assessmentMaterial}
+                    onChange={(e) => setAssessmentMaterial(e.target.value)}
+                    placeholder="Provide the subject material for assessment..."
+                    className="w-full h-48 p-4 rounded-lg border border-green-500/30 bg-black/30 text-white placeholder-white/50 focus:ring-2 focus:ring-green-400 focus:outline-none"
                   />
                   <button
-                    onClick={generateQuiz}
-                    disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={initiateAssessmentProtocol}
+                    disabled={isProcessing || !assessmentMaterial.trim()}
+                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-black rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
-                    {loading ? 'Creating Quiz...' : 'Create Quiz'}
+                    {isProcessing ? 'Initiating...' : 'Initiate Protocol'}
                   </button>
                 </div>
-              ) : showResults ? (
+              ) : displayOutcome ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
-                    You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
+                  <h3 className="text-4xl font-bold text-white mb-4">Assessment Complete</h3>
+                  <p className="text-2xl text-green-300 mb-6">
+                    Performance Metric: {performanceMetric} / {assessmentProtocols.length} ({Math.round((performanceMetric / assessmentProtocols.length) * 100)}%)
                   </p>
                   <button
                     onClick={() => {
-                      setQuiz([])
-                      setShowResults(false)
-                      setScore(0)
+                      setAssessmentProtocols([])
+                      setDisplayOutcome(false)
+                      setPerformanceMetric(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="px-6 py-3 bg-cyan-500 text-black font-bold rounded-lg"
                   >
-                    Take Another Quiz
+                    Run New Assessment
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Question {currentQuestion + 1} of {quiz.length}
+                  <div className="mb-4 text-green-300">
+                    Query {currentProtocolIndex + 1} of {assessmentProtocols.length}
                   </div>
                   
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
-                      {quiz[currentQuestion]?.question}
+                    <h3 className="text-2xl font-bold text-white mb-6 p-4 bg-black/20 rounded-lg border border-green-500/20">
+                      {assessmentProtocols[currentProtocolIndex]?.question}
                     </h3>
                     
                     <div className="space-y-3">
-                      {quiz[currentQuestion]?.options.map((option, index) => (
+                      {assessmentProtocols[currentProtocolIndex]?.options.map((option, index) => (
                         <button
                           key={index}
-                          onClick={() => selectAnswer(index)}
-                          disabled={selectedAnswer !== null}
-                          className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
-                            selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
-                              : selectedAnswer === index
-                              ? index === quiz[currentQuestion].correct
+                          onClick={() => processResponse(index)}
+                          disabled={chosenResponse !== null}
+                          className={`w-full p-4 text-left rounded-lg transition-all duration-300 quiz-option ${
+                            chosenResponse === null
+                              ? 'text-white'
+                              : chosenResponse === index
+                              ? index === assessmentProtocols[currentProtocolIndex].correct
                                 ? 'correct'
                                 : 'incorrect'
-                              : index === quiz[currentQuestion].correct
+                              : index === assessmentProtocols[currentProtocolIndex].correct
                               ? 'correct'
-                              : 'bg-white/10 text-white/60'
+                              : 'bg-white/5 text-white/50'
                           }`}
                         >
                           {option}
@@ -315,10 +318,10 @@ export default function LearnAI() {
                       ))}
                     </div>
                     
-                    {selectedAnswer !== null && (
-                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                    {chosenResponse !== null && (
+                      <div className="mt-6 p-4 bg-black/30 rounded-lg border border-green-500/30">
+                        <p className="text-green-300 font-semibold text-lg">Debrief:</p>
+                        <p className="text-white/90">{assessmentProtocols[currentProtocolIndex]?.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -327,55 +330,56 @@ export default function LearnAI() {
             </div>
           )}
 
-          {/* Study Buddy Tab */}
-          {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+          {/* Digital Mentor Module */}
+          {activeModule === 'mentor' && (
+            <div className="bg-[rgba(18,18,18,0.5)] backdrop-blur-xl border border-purple-500/20 rounded-xl p-6">
+              <h2 className="text-3xl font-bold text-purple-300 mb-4">Digital Mentor Interface</h2>
               
               <div className="mb-6">
                 <div className="flex space-x-2">
                   <input
                     type="text"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
-                    onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
+                    value={userInquiry}
+                    onChange={(e) => setUserInquiry(e.target.value)}
+                    placeholder="Pose your query..."
+                    className="flex-1 p-4 rounded-lg border border-purple-500/30 bg-black/30 text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                    onKeyDown={(e) => e.key === 'Enter' && queryDigitalMentor()}
                   />
                   <button
-                    onClick={askStudyBuddy}
-                    disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={queryDigitalMentor}
+                    disabled={isProcessing || !userInquiry.trim()}
+                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
-                    {loading ? 'Thinking...' : 'Ask'}
+                    {isProcessing ? 'Processing...' : 'Query'}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {chatHistory.map((chat, index) => (
+              <div className="space-y-6 max-h-[50vh] overflow-y-auto p-4 rounded-lg bg-black/20">
+                {dialogueLog.map((dialogue, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                    <div className="bg-cyan-500/10 p-4 rounded-lg border border-cyan-500/20">
+                      <p className="text-cyan-300 font-semibold">Your Query:</p>
+                      <p className="text-white/90">{dialogue.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                    <div className="bg-purple-500/10 p-4 rounded-lg border border-purple-500/20">
+                      <p className="text-purple-300 font-semibold">Mentor's Response:</p>
+                      <p className="text-white/90">{dialogue.answer}</p>
                     </div>
                   </div>
                 ))}
                 
-                {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
-                    Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
+                {dialogueLog.length === 0 && (
+                  <div className="text-center text-white/60 py-12">
+                    <p className="text-lg">The Digital Mentor is online.</p>
+                    <p>I can clarify concepts, generate examples, and elaborate on any subject.</p>
                   </div>
                 )}
               </div>
             </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   )
-} 
+}
