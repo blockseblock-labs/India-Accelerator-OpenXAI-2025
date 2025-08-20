@@ -1,47 +1,217 @@
+/* File: app/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --neon-blue: #00e7ff;
+  --neon-purple: #bf00ff;
+  --neon-green: #39ff14; /* New accent color */
+  --dark-grey: #030a13; /* Even darker background */
+  --mid-grey: #1a202c;
+  --light-grey: #b3b3b3;
+  --extra-dark-grey: #010408;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--dark-grey);
+  color: var(--light-grey);
+  font-family: 'Share Tech Mono', monospace; /* More techy font */
+  overflow-x: hidden; /* Prevent horizontal scroll on some animations */
+  position: relative;
+  /* Complex techy background */
+  background-image:
+    linear-gradient(to right, rgba(0, 231, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 231, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px; /* Finer grid */
+  background-position: -1px -1px;
+  animation: background-pan 40s linear infinite; /* Slightly faster pan */
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Subtle scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.1;
 }
 
+/* Subtle animation for background grid */
+@keyframes background-pan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 3000px 3000px;
+  }
+}
+
+/* Base styles for cards/containers */
+.card {
+  background-color: rgba(26, 32, 44, 0.8); /* Darker, slightly more opaque */
+  backdrop-filter: blur(12px); /* Stronger blur */
+  border: 1px solid rgba(0, 231, 255, 0.3); /* More visible neon blue border */
+  box-shadow: 0 0 20px rgba(0, 231, 255, 0.15), 0 0 40px rgba(191, 0, 255, 0.1); /* Stronger dual color glow */
+  transition: all 0.4s ease-in-out;
+  transform-style: preserve-3d; /* For 3D tilt */
+  position: relative;
+  overflow: hidden; /* For glowing border effect */
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent 0deg,
+    transparent 180deg,
+    var(--neon-blue) 180deg,
+    var(--neon-purple) 270deg,
+    var(--neon-green) 360deg
+  );
+  animation: rotateBorder 4s linear infinite;
+  z-index: -1;
+  opacity: 0.3;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.card:hover::before {
+  opacity: 0.6;
+}
+
+.card:hover {
+  border-color: rgba(0, 231, 255, 0.7);
+  box-shadow: 0 0 30px rgba(0, 231, 255, 0.4), 0 0 60px rgba(191, 0, 255, 0.25);
+  transform: translateY(-5px) scale(1.01) rotateX(2deg) rotateY(2deg); /* More pronounced 3D tilt */
+}
+
+@keyframes rotateBorder {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Input and textarea styles */
+input, textarea {
+  background-color: var(--extra-dark-grey); /* Even darker input background */
+  border: 1px solid rgba(0, 231, 255, 0.4);
+  color: var(--light-grey);
+  padding: 1rem;
+  border-radius: 0.75rem; /* Slightly more rounded */
+  transition: all 0.3s ease-in-out;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--neon-green); /* Green glow on focus */
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.6); /* Green glow */
+}
+
+/* Button styles */
+button {
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); /* Gradient button */
+  color: var(--dark-grey);
+  font-weight: bold;
+  padding: 0.75rem 1.75rem; /* Slightly larger padding */
+  border-radius: 0.75rem; /* More rounded */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 231, 255, 0.4);
+  text-transform: uppercase; /* Uppercase text */
+  letter-spacing: 0.05em; /* Spaced out letters */
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2); /* Light streak effect */
+  transform: skewX(-30deg);
+  transition: all 0.7s ease;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:hover {
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue)); /* Reverse gradient on hover */
+  box-shadow: 0 0 30px rgba(0, 231, 255, 0.7), 0 0 50px rgba(191, 0, 255, 0.4);
+  transform: translateY(-2px) scale(1.02);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  background: var(--mid-grey);
+}
+
+/* Specific styles for quiz options */
+.quiz-option {
+  border: 1px solid rgba(0, 231, 255, 0.3);
+  background-color: rgba(26, 32, 44, 0.6);
+  color: var(--light-grey);
+  transition: all 0.3s ease-in-out;
+}
+
+.quiz-option:hover:not(:disabled) {
+  background-color: rgba(0, 231, 255, 0.15);
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 10px rgba(0, 231, 255, 0.3);
+}
+
+.quiz-option.correct {
+  background-color: rgba(57, 255, 20, 0.2); /* Green */
+  border-color: var(--neon-green);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+}
+
+.quiz-option.incorrect {
+  background-color: rgba(255, 0, 60, 0.2);
+  border-color: #ff003c;
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.5);
+}
+
+/* Flashcard specific styles */
 .flashcard {
   perspective: 1000px;
+  width: 100%;
+  height: 250px; /* Slightly taller flashcards */
 }
 
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 100%;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.8s; /* Slower flip animation */
   transform-style: preserve-3d;
+  background-color: rgba(26, 32, 44, 0.8);
+  border: 1px solid rgba(0, 231, 255, 0.3);
+  border-radius: 0.75rem;
+  box-shadow: 0 0 20px rgba(0, 231, 255, 0.15), 0 0 40px rgba(191, 0, 255, 0.1);
 }
 
 .flashcard.flipped .flashcard-inner {
@@ -52,41 +222,47 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  padding: 2rem; /* More padding */
+  color: var(--light-grey);
+  font-size: 1.25rem; /* Larger text */
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
   transform: rotateY(180deg);
 }
 
-.quiz-option {
-  transition: all 0.3s ease;
+/* New: Extraordinary Element Class */
+.extraordinary-element {
+  position: relative;
+  overflow: hidden;
+  /* Add more styles here as needed for specific extraordinary elements */
 }
 
-.quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.extraordinary-element::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(0,231,255,0.3) 0%, transparent 70%);
+  animation: pulseGlow 2s infinite alternate;
+  z-index: -1;
+  opacity: 0.5;
 }
 
-.quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+@keyframes pulseGlow {
+  from {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
 }
-
-.quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 

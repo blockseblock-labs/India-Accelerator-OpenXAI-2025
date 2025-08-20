@@ -141,44 +141,43 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-5xl font-extrabold text-neon-blue drop-shadow-neon mb-4 tracking-tighter">LEARNMATE <span className="text-neon-purple">AI</span></h1>
+          <p className="text-light-grey text-xl font-mono">Your <span className="text-neon-blue">AI-Powered</span> Educational Assistant</p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="card p-1 flex space-x-1">
             {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Generate & Practice' },
+              { id: 'quiz', label: '📝 Quiz', desc: 'Test Your Knowledge' },
+              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask & Learn' }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
+                className={`button px-6 py-3 transition-all duration-300 ${activeTab === tab.id
+                    ? 'bg-neon-blue text-dark-grey shadow-neon-blue-lg opacity-100' // Active tab uses button gradient and is fully opaque
+                    : 'bg-transparent text-light-grey hover:bg-mid-grey hover:text-neon-blue hover:shadow-neon-blue-sm opacity-80' // Inactive tabs are transparent and less opaque, hover effect
+                } flex flex-col items-center border-none focus:outline-none`}
               >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                <div className="text-xl font-bold">{tab.label}</div>
+                <div className="text-xs opacity-80 mt-1">{tab.desc}</div>
               </button>
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto extraordinary-element">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+            <div className="card p-6">
+              <h2 className="text-3xl font-bold text-neon-blue mb-6 border-b-2 border-neon-blue/50 pb-2">🃏 Flashcard Maker</h2>
               
               {flashcards.length === 0 ? (
                 <div>
@@ -186,20 +185,29 @@ export default function LearnAI() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input w-full h-40"
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="button mt-4 w-full"
                   >
-                    {loading ? 'Generating...' : 'Generate Flashcards'}
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <span className="animate-pulse">GENERATING</span>
+                        <span className="ml-2 text-neon-green">.</span>
+                        <span className="animate-pulse delay-100">.</span>
+                        <span className="animate-pulse delay-200">.</span>
+                      </span>
+                    ) : (
+                      'GENERATE FLASHCARDS'
+                    )}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Card {currentCard + 1} of {flashcards.length}
+                  <div className="mb-4 text-light-grey text-center">
+                    <span className="text-neon-blue">Card {currentCard + 1}</span> of {flashcards.length}
                   </div>
                   
                   <div 
@@ -208,34 +216,34 @@ export default function LearnAI() {
                   >
                     <div className="flashcard-inner">
                       <div className="flashcard-front">
-                        <p className="text-lg font-medium">{flashcards[currentCard]?.front}</p>
+                        <p className="text-xl font-medium">{flashcards[currentCard]?.front}</p>
                       </div>
                       <div className="flashcard-back">
-                        <p className="text-lg">{flashcards[currentCard]?.back}</p>
+                        <p className="text-xl">{flashcards[currentCard]?.back}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between">
+                  <div className="flex justify-between mt-6">
                     <button
                       onClick={prevCard}
                       disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="button px-4 py-2 opacity-80 disabled:opacity-40"
                     >
-                      Previous
+                      <span className="text-light-grey">&#9664; PREVIOUS</span>
                     </button>
                     <button
                       onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      className="button px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
                     >
-                      New Flashcards
+                      NEW SET
                     </button>
                     <button
                       onClick={nextCard}
                       disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="button px-4 py-2 opacity-80 disabled:opacity-40"
                     >
-                      Next
+                      <span className="text-light-grey">NEXT &#9654;</span>
                     </button>
                   </div>
                 </div>
@@ -245,8 +253,8 @@ export default function LearnAI() {
 
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+            <div className="card p-6">
+              <h2 className="text-3xl font-bold text-neon-blue mb-6 border-b-2 border-neon-blue/50 pb-2">📝 Quiz Maker</h2>
               
               {quiz.length === 0 && !showResults ? (
                 <div>
@@ -254,21 +262,30 @@ export default function LearnAI() {
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
                     placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input w-full h-40"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="button mt-4 w-full"
                   >
-                    {loading ? 'Creating Quiz...' : 'Create Quiz'}
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <span className="animate-pulse">CREATING QUIZ</span>
+                        <span className="ml-2 text-neon-green">.</span>
+                        <span className="animate-pulse delay-100">.</span>
+                        <span className="animate-pulse delay-200">.</span>
+                      </span>
+                    ) : (
+                      'CREATE QUIZ'
+                    )}
                   </button>
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
-                    You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
+                  <h3 className="text-4xl font-bold text-neon-blue mb-4">Quiz Complete!</h3>
+                  <p className="text-2xl text-light-grey mb-6">
+                    You scored <span className="text-neon-blue">{score}</span> out of <span className="text-neon-blue">{quiz.length}</span> (<span className="text-neon-purple">{Math.round((score / quiz.length) * 100)}%</span>)
                   </p>
                   <button
                     onClick={() => {
@@ -276,19 +293,19 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="button mt-4 px-6 py-3"
                   >
-                    Take Another Quiz
+                    TAKE ANOTHER QUIZ
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
-                    Question {currentQuestion + 1} of {quiz.length}
+                  <div className="mb-4 text-light-grey text-center">
+                    <span className="text-neon-blue">Question {currentQuestion + 1}</span> of {quiz.length}
                   </div>
                   
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4">
+                  <div className="mb-6 card p-5">
+                    <h3 className="text-xl font-bold text-light-grey mb-4">
                       {quiz[currentQuestion]?.question}
                     </h3>
                     
@@ -298,16 +315,15 @@ export default function LearnAI() {
                           key={index}
                           onClick={() => selectAnswer(index)}
                           disabled={selectedAnswer !== null}
-                          className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
-                            selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
+                          className={`button w-full p-4 text-left quiz-option ${selectedAnswer === null
+                              ? ''
                               : selectedAnswer === index
                               ? index === quiz[currentQuestion].correct
                                 ? 'correct'
                                 : 'incorrect'
                               : index === quiz[currentQuestion].correct
                               ? 'correct'
-                              : 'bg-white/10 text-white/60'
+                              : 'opacity-60' // Dim unselected incorrect options
                           }`}
                         >
                           {option}
@@ -329,8 +345,8 @@ export default function LearnAI() {
 
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
+            <div className="card p-6">
+              <h2 className="text-3xl font-bold text-neon-blue mb-6 border-b-2 border-neon-blue/50 pb-2">🤖 Ask-Me Study Buddy</h2>
               
               <div className="mb-6">
                 <div className="flex space-x-2">
@@ -339,15 +355,24 @@ export default function LearnAI() {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input flex-1"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="button px-6 py-3"
                   >
-                    {loading ? 'Thinking...' : 'Ask'}
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <span className="animate-pulse">THINKING</span>
+                        <span className="ml-2 text-neon-green">.</span>
+                        <span className="animate-pulse delay-100">.</span>
+                        <span className="animate-pulse delay-200">.</span>
+                      </span>
+                    ) : (
+                      'ASK'
+                    )}
                   </button>
                 </div>
               </div>
@@ -355,19 +380,19 @@ export default function LearnAI() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                    <div className="card p-4">
+                      <p className="text-neon-blue font-medium">You:</p>
+                      <p className="text-light-grey">{chat.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                    <div className="card p-4">
+                      <p className="text-neon-purple font-medium">Study Buddy:</p>
+                      <p className="text-light-grey">{chat.answer}</p>
                     </div>
                   </div>
                 ))}
                 
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
+                  <div className="text-center text-light-grey/60 py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
                   </div>
                 )}
