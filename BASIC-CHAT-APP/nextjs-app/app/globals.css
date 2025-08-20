@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--background: #f8f5e6; /* warm cream */
+	--foreground: #1f2937; /* slate-800 */
+}
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+	font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+		Helvetica, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji",
+		"Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Scrollbar - subtle */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #cbd5e1 transparent;
+}
+
+*::-webkit-scrollbar {
+	width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #cbd5e1;
+	border-radius: 8px;
+}
+
+
