@@ -1,22 +1,31 @@
+// File: app/layout.js
+
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { ReactNode } from 'react'
+import { Roboto_Mono } from 'next/font/google' // Import the font
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Configure the font
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono', // Create a CSS variable
+});
 
 export const metadata: Metadata = {
-  title: 'LearnAI - Educational AI Tools',
-  description: 'AI-powered learning tools: Flashcard Maker, Quiz Generator, and Study Buddy',
+  title: 'LearnMate AI',
+  description: 'Your AI-Powered Learning Assistant',
+};
+
+interface RootLayoutProps {
+  children: ReactNode
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      {/* Apply the font class to the body */}
+      <body className={robotoMono.className}>{children}</body>
     </html>
-  )
-} 
+  );
+}
