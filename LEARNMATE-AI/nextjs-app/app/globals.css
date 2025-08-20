@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 30, 30, 60;             /* text → dark navy */
+  --background-start-rgb: 230, 240, 255;    /* top gradient → soft light blue */
+  --background-end-rgb: 255, 255, 255;      /* bottom gradient → white */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 240, 240, 255;        /* text → off-white */
+    --background-start-rgb: 30, 20, 60;     /* top gradient → deep purple/blue */
+    --background-end-rgb: 15, 10, 40;       /* bottom gradient → darker navy */
   }
 }
 
@@ -45,7 +45,7 @@ body {
 }
 
 .flashcard.flipped .flashcard-inner {
-  transform: rotateY(180deg);
+  transform: rotateZ(180deg) rotateY(180deg);
 }
 
 .flashcard-front, .flashcard-back {
@@ -69,7 +69,7 @@ body {
 .flashcard-back {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
   color: white;
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) rotateZ(180deg);
 }
 
 .quiz-option {
