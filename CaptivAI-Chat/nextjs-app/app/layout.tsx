@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'InsightStream AI - Social Media Tools',
-  description: 'Turning text streams into insights, Smart Caption AI ✍️s, and viral ideas 💡: Smart Caption AI ✍️ Generator, emotion Checker, and Hashtag Suggestor',
+  title: 'TextStream Template',
+  description: 'A template for building text streaming applications',
 }
 
 export default function RootLayout({
