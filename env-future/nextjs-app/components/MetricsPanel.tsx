@@ -1,7 +1,24 @@
 import React, { useState } from "react";
 import jsPDF from "jspdf";
 
-const initialMetrics = {
+interface Metrics {
+  co2Level: number;
+  toxicityLevel: number;
+  temperature: number;
+  humanPopulation: number;
+  animalPopulation: number;
+  plantPopulation: number;
+  oceanAcidity: number;
+  iceCapMelting: number;
+}
+
+interface ComponentItem {
+  type: string;
+  quantity: number;
+  spec?: string;
+}
+
+const initialMetrics: Metrics = {
   co2Level: 415,
   toxicityLevel: 5,
   temperature: 30,
@@ -15,11 +32,12 @@ const initialMetrics = {
 const initialPollutionLevel = 10;
 
 const MetricsPanel: React.FC = () => {
-  const [idea, setIdea] = useState("");
+  const [search, setSearch] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
-  const [metrics, setMetrics] = useState<any>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [components, setComponents] = useState<ComponentItem[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,13 +45,14 @@ const MetricsPanel: React.FC = () => {
     setSubmitted(false);
     setAnalysis(null);
     setMetrics(null);
+    setComponents([]);
 
     try {
       const res = await fetch("/api/process-command", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          command: idea,
+          command: search,
           currentMetrics: initialMetrics,
           pollutionLevel: initialPollutionLevel,
         }),
@@ -41,14 +60,20 @@ const MetricsPanel: React.FC = () => {
       const data = await res.json();
       setAnalysis(data.analysis);
       setMetrics(data.metrics);
+      setComponents(data.components || []);
       setSubmitted(true);
     } catch (err) {
-      setAnalysis("Error processing your idea. Please try again.");
+      setAnalysis("Error processing your search. Please try again.");
       setMetrics(null);
+      setComponents([]);
       setSubmitted(true);
     }
     setLoading(false);
-    setIdea("");
+  };
+
+  const handleSell = (type: string) => {
+    alert(`You have chosen to sell: ${type}.`);
+    // Add more logic here if needed
   };
 
   const handleDownloadPDF = () => {
@@ -56,23 +81,44 @@ const MetricsPanel: React.FC = () => {
     doc.setFontSize(16);
     doc.text("🌱 Solve for Energy & Pollution", 10, 15);
     doc.setFontSize(12);
-    doc.text(`Your Idea: ${idea}`, 10, 25);
+    doc.text(`Search Query: ${search}`, 10, 25);
     doc.text("Analysis:", 10, 35);
-    doc.text(analysis || "", 10, 45);
 
-    if (metrics) {
-      doc.text("Metrics:", 10, 55);
-      doc.text(`CO₂ Level: ${metrics.co2Level} ppm`, 10, 65);
-      doc.text(`Toxicity Level: ${metrics.toxicityLevel} %`, 10, 72);
-      doc.text(`Temperature: ${metrics.temperature} °C`, 10, 79);
-      doc.text(`Human Population: ${metrics.humanPopulation.toLocaleString()}`, 10, 86);
-      doc.text(`Animal Population: ${metrics.animalPopulation.toLocaleString()}`, 10, 93);
-      doc.text(`Plant Population: ${metrics.plantPopulation.toLocaleString()}`, 10, 100);
-      doc.text(`Ocean Acidity: ${metrics.oceanAcidity}`, 10, 107);
-      doc.text(`Ice Cap Melting: ${metrics.iceCapMelting} %`, 10, 114);
+    if (analysis) {
+      const lines = doc.splitTextToSize(analysis, 180);
+      doc.text(lines, 10, 45);
     }
 
-    doc.save("energy-pollution-analysis.pdf");
+    let y = 55 + (analysis ? (jsPDF.prototype.splitTextToSize.call(doc, analysis, 180).length * 7) : 0);
+
+    if (metrics) {
+      doc.text("Metrics:", 10, y);
+      y += 10;
+      doc.text(`CO₂ Level: ${metrics.co2Level} ppm`, 10, y); y += 7;
+      doc.text(`Toxicity Level: ${metrics.toxicityLevel} %`, 10, y); y += 7;
+      doc.text(`Temperature: ${metrics.temperature} °C`, 10, y); y += 7;
+      doc.text(`Human Population: ${metrics.humanPopulation.toLocaleString()}`, 10, y); y += 7;
+      doc.text(`Animal Population: ${metrics.animalPopulation.toLocaleString()}`, 10, y); y += 7;
+      doc.text(`Plant Population: ${metrics.plantPopulation.toLocaleString()}`, 10, y); y += 7;
+      doc.text(`Ocean Acidity: ${metrics.oceanAcidity}`, 10, y); y += 7;
+      doc.text(`Ice Cap Melting: ${metrics.iceCapMelting} %`, 10, y);
+    }
+
+    if (components.length > 0) {
+      y += 10;
+      doc.text("Recommended Components:", 10, y);
+      y += 8;
+      components.forEach((comp) => {
+        doc.text(
+          `${comp.type}: ${comp.quantity} ${comp.spec ? `(${comp.spec})` : ""}`,
+          10,
+          y
+        );
+        y += 7;
+      });
+    }
+
+    doc.save("search-result-analysis.pdf");
   };
 
   return (
@@ -86,30 +132,23 @@ const MetricsPanel: React.FC = () => {
         background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)",
         margin: "32px auto",
       }}
+      aria-label="Metrics Panel"
     >
       <h2 style={{ color: "#2e7d32", marginBottom: "16px" }}>
         🌱 Solve for Energy & Pollution
       </h2>
       <p style={{ color: "#333", fontSize: "1.1em" }}>
-        Tackling energy efficiency and pollution is critical for a sustainable future.
-        Innovative solutions can help reduce carbon emissions, optimize energy usage, and improve air quality.
+        Search for your energy or pollution solution. Enter your requirement (e.g. "I need 10kWh per day for my house") and get instant recommendations for solar panels, batteries, inverters, and see how much CO₂ you can save!
       </p>
-      <ul style={{ margin: "18px 0", paddingLeft: "20px", color: "#1565c0" }}>
-        <li><strong>Renewable Energy:</strong> Promote solar, wind, and hydro power adoption.</li>
-        <li><strong>Smart Grids:</strong> Use technology to optimize energy distribution and reduce waste.</li>
-        <li><strong>Pollution Monitoring:</strong> Deploy sensors to track air and water quality in real time.</li>
-        <li><strong>Green Transportation:</strong> Encourage electric vehicles and public transit.</li>
-        <li><strong>Waste Reduction:</strong> Support recycling and circular economy initiatives.</li>
-      </ul>
       <form onSubmit={handleSubmit} style={{ marginTop: "28px" }}>
-        <label htmlFor="idea" style={{ fontWeight: "bold", color: "#1976d2" }}>
-          Share your idea or solution:
+        <label htmlFor="search" style={{ fontWeight: "bold", color: "#1976d2" }}>
+          Search your energy requirement or idea:
         </label>
-        <textarea
-          id="idea"
-          value={idea}
-          onChange={(e) => setIdea(e.target.value)}
-          rows={3}
+        <input
+          id="search"
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           style={{
             width: "100%",
             marginTop: "8px",
@@ -117,10 +156,10 @@ const MetricsPanel: React.FC = () => {
             borderRadius: "8px",
             border: "1px solid #90caf9",
             fontSize: "1em",
-            resize: "vertical",
           }}
-          placeholder="Describe your idea here..."
+          placeholder="E.g. I need 10kWh per day for my house"
           required
+          aria-required="true"
         />
         <button
           type="submit"
@@ -136,14 +175,31 @@ const MetricsPanel: React.FC = () => {
             cursor: loading ? "not-allowed" : "pointer",
             boxShadow: "0 2px 8px rgba(25,118,210,0.08)",
             transition: "background 0.2s",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
           }}
+          aria-busy={loading}
         >
-          {loading ? "Submitting..." : "Submit"}
+          {loading && (
+            <span
+              style={{
+                width: "18px",
+                height: "18px",
+                border: "2px solid #fff",
+                borderTop: "2px solid #94eb57ff",
+                borderRadius: "50%",
+                display: "inline-block",
+                animation: "spin 1s linear infinite",
+              }}
+            />
+          )}
+          {loading ? "Searching..." : "Search"}
         </button>
       </form>
       {submitted && (
         <div style={{ marginTop: "24px" }}>
-          <div style={{ color: "#388e3c", fontWeight: "bold", marginBottom: "12px" }}>
+          <div style={{ color: "#54ec5cff", fontWeight: "bold", marginBottom: "12px" }}>
             {analysis}
           </div>
           {metrics && (
@@ -153,9 +209,10 @@ const MetricsPanel: React.FC = () => {
                 borderRadius: "8px",
                 padding: "16px",
                 boxShadow: "0 2px 8px rgba(98,137,245,0.08)",
-                color: "#1976d2",
+                color: "#47f380ff",
                 fontSize: "1em",
               }}
+              aria-live="polite"
             >
               <div><strong>CO₂ Level:</strong> {metrics.co2Level} ppm</div>
               <div><strong>Toxicity Level:</strong> {metrics.toxicityLevel} %</div>
@@ -165,6 +222,33 @@ const MetricsPanel: React.FC = () => {
               <div><strong>Plant Population:</strong> {metrics.plantPopulation.toLocaleString()}</div>
               <div><strong>Ocean Acidity:</strong> {metrics.oceanAcidity}</div>
               <div><strong>Ice Cap Melting:</strong> {metrics.iceCapMelting} %</div>
+            </div>
+          )}
+          {components.length > 0 && (
+            <div style={{ marginTop: "18px", background: "#fffde7", borderRadius: "8px", padding: "16px", boxShadow: "0 2px 8px rgba(255,235,59,0.08)" }}>
+              <h3 style={{ color: "#fbc02d", marginBottom: "10px" }}>Recommended Components for Sale</h3>
+              {components.map((comp, idx) => (
+                <div key={idx} style={{ marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span>
+                    <strong>{comp.type}</strong> — {comp.quantity} {comp.spec ? `(${comp.spec})` : ""}
+                  </span>
+                  <button
+                    onClick={() => handleSell(comp.type)}
+                    style={{
+                      background: "#fbc02d",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "6px 16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      marginLeft: "16px"
+                    }}
+                  >
+                    Sell
+                  </button>
+                </div>
+              ))}
             </div>
           )}
           <button
@@ -186,8 +270,15 @@ const MetricsPanel: React.FC = () => {
           </button>
         </div>
       )}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+          }
+        `}
+      </style>
     </div>
   );
-};
-
+}
 export default MetricsPanel;
