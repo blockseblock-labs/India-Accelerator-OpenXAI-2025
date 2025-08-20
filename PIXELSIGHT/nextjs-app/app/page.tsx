@@ -69,7 +69,7 @@ export default function Home() {
                     <>
                       <Upload className="w-10 h-10 mb-3 text-white/70" />
                       <p className="mb-2 text-sm text-white/70">
-                        <span className="font-semibold">Click to upload</span> or drag and drop
+                        <span className="font-semibold">Click to upload</span> or drag and drop the image
                       </p>
                       <p className="text-xs text-white/50">PNG, JPG or JPEG</p>
                     </>
