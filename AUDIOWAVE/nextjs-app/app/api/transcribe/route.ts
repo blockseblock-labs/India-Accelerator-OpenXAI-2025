@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
+        model: 'llama3',
         prompt: `Please analyze this transcription and provide insights: "${mockTranscription}"`,
         stream: false,
       }),

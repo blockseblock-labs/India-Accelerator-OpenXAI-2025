@@ -105,12 +105,12 @@ export default function SocialNetwork() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600">
+    <div className="min-h-screen bg-gradient-to-br from-black via-red to-indigo-600">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">💬 Social Network AI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Social Media Tools</p>
+          <p className="text-red/500 text-lg">AI-Powered Social Media Tools</p>
         </div>
 
         {/* Tabs */}
