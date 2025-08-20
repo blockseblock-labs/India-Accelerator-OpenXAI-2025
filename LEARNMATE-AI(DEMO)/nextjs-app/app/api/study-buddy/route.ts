@@ -15,26 +15,30 @@ export async function POST(req: NextRequest) {
 
 Question: ${question}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'http://localhost:3000',
+        'X-Title': 'LearnMate AI',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
-        stream: false,
+        model: "meta-llama/llama-3.2-3b-instruct:free",
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1024,
+        temperature: 0.7,
       }),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
+      throw new Error('Failed to get response from OpenRouter API')
     }
 
     const data = await response.json()
-    
-    return NextResponse.json({ 
-      answer: data.response || 'I could not process your question. Please try again!' 
+
+    return NextResponse.json({
+      answer: data.choices?.[0]?.message?.content || 'I could not process your question. Please try again!',
     })
   } catch (error) {
     console.error('Study Buddy API error:', error)
@@ -43,4 +47,4 @@ Question: ${question}`
       { status: 500 }
     )
   }
-} 
+}

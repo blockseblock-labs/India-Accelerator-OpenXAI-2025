@@ -1,76 +1,74 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { notes } = await req.json();
+    const { notes } = await req.json()
 
     if (!notes) {
-      return NextResponse.json({ error: 'Notes are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Notes are required' },
+        { status: 400 }
+      )
     }
 
-    const openRouterApiKey = process.env.OPENROUTER_API_KEY;
-    console.log('OpenRouter API Key:', openRouterApiKey);
-    if (!openRouterApiKey) {
-      throw new Error('Missing OpenRouter API Key');
-    }
-
-    const prompt = `Create 5-8 flashcards in pure JSON only, with no extra commentary. 
-    Output should match this format exactly:
-
+    const prompt = `Create flashcards from the following notes. Generate 5-8 flashcards in JSON format with the following structure:
+{
+  "flashcards": [
     {
-      "flashcards": [
-        { "front": "...", "back": "..." },
-        ...
-      ]
+      "front": "Question or term",
+      "back": "Answer or definition"
     }
+  ]
+}
 
-    Flashcards should cover these notes:
-    ${notes}
-    `;
+Focus on key concepts, definitions, and important facts. Make questions clear and answers concise.
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+Notes: ${notes}`
+
+    const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openRouterApiKey}`,
-        'HTTP-Referer': 'http://localhost:3000',   
-        'X-Title': 'LearnMate AI',                
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.2-3b-instruct:free",
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1024,
-        temperature: 0.7,
+        model: 'llama3.2:1b',
+        prompt: prompt,
+        stream: false,
       }),
-    });
+    })
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenRouter API error response:', response.status, errorText);
-      return NextResponse.json({ error: errorText }, { status: response.status });
+      throw new Error('Failed to get response from Ollama')
     }
 
-    const data = await response.json();
-    const togetherResponse = data.choices?.[0]?.message?.content || '';
-
+    const data = await response.json()
+    
     try {
-      const flashcardsMatch = togetherResponse.match(/\{[\s\S]*\}/);
+      // Try to parse JSON from the response
+      const flashcardsMatch = data.response.match(/\{[\s\S]*\}/)
       if (flashcardsMatch) {
-        const flashcardsData = JSON.parse(flashcardsMatch);
-        return NextResponse.json(flashcardsData);
+        const flashcardsData = JSON.parse(flashcardsMatch[0])
+        return NextResponse.json(flashcardsData)
       }
-    } catch {
-      console.log('Could not parse JSON, returning plain response');
+    } catch (parseError) {
+      // If JSON parsing fails, return a structured response
+      console.log('Could not parse JSON, returning formatted response')
     }
 
+    // Fallback: create a simple structure from the response
     return NextResponse.json({
       flashcards: [
-        { front: 'Generated from your notes', back: togetherResponse || 'No response' },
-      ],
-    });
-
+        {
+          front: "Generated from your notes",
+          back: data.response || 'No response from model'
+        }
+      ]
+    })
   } catch (error) {
-    console.error('Flashcards API error:', error);
-    return NextResponse.json({ error: 'Failed to generate flashcards' }, { status: 500 });
+    console.error('Flashcards API error:', error)
+    return NextResponse.json(
+      { error: 'Failed to generate flashcards' },
+      { status: 500 }
+    )
   }
-}
+} 
