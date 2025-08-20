@@ -38,7 +38,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
   return (
     <div className="metrics-panel rounded-lg p-4 max-w-sm">
       <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-        <AlertTriangle size={20} className="text-red-400" />
+        <AlertTriangle size={20} className="text-pink-400" /> {/* Changed from red-400 */}
         Earth Metrics
       </h2>
       
@@ -57,7 +57,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Air Toxicity */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
+            <AlertTriangle size={16} className="text-pink-400" /> {/* Changed from red-400 */}
             <span className="text-sm text-gray-300">Air Toxicity:</span>
           </div>
           <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel, 100)}`}>
@@ -79,7 +79,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Human Population */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users size={16} className="text-blue-400" />
+            <Users size={16} className="text-purple-400" /> {/* Changed from blue-400 */}
             <span className="text-sm text-gray-300">Humans:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
@@ -90,7 +90,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Animal Population */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-green-400" />
+            <Leaf size={16} className="text-teal-400" /> {/* Changed from green-400 */}
             <span className="text-sm text-gray-300">Animals:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
@@ -101,7 +101,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Plant Population */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-emerald-400" />
+            <Leaf size={16} className="text-teal-400" /> {/* Changed from emerald-400 */}
             <span className="text-sm text-gray-300">Plants:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
@@ -112,7 +112,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Ocean Acidity */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Droplets size={16} className="text-blue-400" />
+            <Droplets size={16} className="text-sky-400" /> {/* Changed from blue-400 */}
             <span className="text-sm text-gray-300">Ocean pH:</span>
           </div>
           <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity, 9.0, true)}`}>
@@ -134,7 +134,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Overall Pollution */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-600">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
+            <AlertTriangle size={16} className="text-pink-400" /> {/* Changed from red-400 */}
             <span className="text-sm text-gray-300">Pollution:</span>
           </div>
           <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
@@ -144,4 +144,4 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
       </div>
     </div>
   )
-} 
+}
