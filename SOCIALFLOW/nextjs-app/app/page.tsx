@@ -105,7 +105,7 @@ export default function SocialNetwork() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-green-600 to-yellow-200">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -115,7 +115,7 @@ export default function SocialNetwork() {
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="bg-white/20 backdrop-blur-lg rounded-lg p-2 flex space-x-2">
             {[
               { id: 'caption', label: '📸 Caption', desc: 'Generate Captions', gradient: 'instagram-gradient' },
               { id: 'mood', label: '😊 Mood', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
