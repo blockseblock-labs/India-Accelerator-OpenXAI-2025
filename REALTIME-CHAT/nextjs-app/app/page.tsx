@@ -78,18 +78,18 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600">
-      <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+    <main className="chat-app-wrapper flex items-center justify-center">
+      <div className="container chat-app-container">
         <div className="text-center text-white mb-8">
-          <h1 className="text-6xl font-bold mb-4">💬 TextStream Template</h1>
-          <p className="text-xl opacity-90">Real-time AI chat with streaming responses!</p>
+          <h1 className="chat-title">💬 TextStream Template</h1>
+          <p className="chat-subtitle">Real-time AI chat with streaming responses!</p>
         </div>
         
-        <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col">
+        <div className="chat-main-box">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+          <div className="chat-messages-area">
             {messages.length === 0 ? (
-              <div className="text-center text-white/60 py-12">
+              <div className="chat-placeholder-text">
                 <Bot size={48} className="mx-auto mb-4" />
                 <p>Start a conversation! Type a message below.</p>
               </div>
@@ -97,26 +97,26 @@ export default function Home() {
               messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex items-start space-x-3 ${
+                  className={`message-bubble-wrapper ${
                     message.role === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="avatar-wrapper avatar-bot">
                       <Bot size={16} className="text-white" />
                     </div>
                   )}
                   <div
-                    className={`max-w-xs lg:max-w-2xl px-4 py-2 rounded-lg ${
+                    className={
                       message.role === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-700 text-white'
-                    }`}
+                        ? 'chat-bubble bubble-user'
+                        : 'chat-bubble bubble-bot'
+                    }
                   >
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div className="avatar-wrapper avatar-user">
                       <User size={16} className="text-white" />
                     </div>
                   )}
@@ -124,11 +124,11 @@ export default function Home() {
               ))
             )}
             {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <div className="message-bubble-wrapper">
+                <div className="avatar-wrapper avatar-bot">
                   <Bot size={16} className="text-white" />
                 </div>
-                <div className="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                <div className="chat-bubble bubble-bot">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                     <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -140,20 +140,20 @@ export default function Home() {
           </div>
           
           {/* Input */}
-          <div className="flex space-x-4">
+          <div className="chat-input-area">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message here..."
-              className="flex-1 bg-white/20 text-white placeholder-white/60 px-4 py-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="chat-input-field"
               rows={1}
               disabled={isLoading}
             />
             <button
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              className="send-button"
             >
               <Send size={20} />
               <span>Send</span>
@@ -163,4 +163,4 @@ export default function Home() {
       </div>
     </main>
   )
-} 
+}

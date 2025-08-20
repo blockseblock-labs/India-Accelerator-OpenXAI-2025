@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
+        model: 'llama3:latest',
         prompt: message,
         stream: false,
       }),
