@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+:root {
+  
+  --color-bg: #f6f5f4;
+  --color-surface: #ffffff;
+  --color-border: #d2d2d2;
+  --color-text: #2e3436;
+  --color-muted: #5e5c64;
+  --color-accent: #1a5fb4;
+  --color-accent-muted: #cbe3ff;
+
+  
+  --gradient-blue: linear-gradient(to right, #dceeff, #e7f3ff);
+  --gradient-muted: linear-gradient(to right, #f3f3f3, #e8e8e8);
+  --gradient-surface: linear-gradient(to bottom, #ffffff, #f9f9f9);
+
+  
+  --radius-default: 6px;
+  --font-sans: 'Inter', 'Cantarell', system-ui, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+}
+
+
+
+
+
+button {
+  border-radius: var(--radius-default);
+}
+
+
+
+
+.button-gradient {
+  
+  background: linear-gradient(to right, #1a5fb4, #3a7ee1);
+}
+
+.button-gradient-muted {
+  background: var(--gradient-muted);
+  color: #444;
+}
+
+
+
+
+
+
+.surface {
+  background: var(--gradient-surface);
+}
+
+
+.gradient-header {
+  background: var(--gradient-blue);
+  @apply rounded-md py-6 px-4;
+}
+
+
+
+
+
+
+
+
