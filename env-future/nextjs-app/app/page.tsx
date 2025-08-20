@@ -234,9 +234,9 @@ export default function Home() {
       </div>
 
       {/* Control Panel */}
-      <div className="bg-gray absolute top-4 left-4 z-20">
+      <div className="absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
+          <h2 className="text-xl font-bold mb-2">ENV Future</h2>
           
           {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
