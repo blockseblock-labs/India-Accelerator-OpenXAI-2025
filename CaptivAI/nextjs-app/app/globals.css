@@ -53,7 +53,7 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.mood-indicator {
+.emotion-indicator {
   display: inline-block;
   font-size: 2rem;
   animation: bounce 2s infinite;

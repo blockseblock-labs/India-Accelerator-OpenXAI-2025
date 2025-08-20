@@ -11,16 +11,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `Create an engaging Instagram caption for an image with the following description: "${imageDescription}"
+    const prompt = `Create an engaging Instagram Smart Caption AI ✍️ for an image with the following description: "${imageDescription}"
 
-The caption should be:
+The Smart Caption AI ✍️ should be:
 - Fun and engaging
 - Include relevant emojis
 - Be 1-2 sentences long
 - Perfect for social media sharing
 - Creative and attention-grabbing
 
-Generate just the caption, no extra text or explanations.`
+Generate just the Smart Caption AI ✍️, no extra text or explanations.`
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -41,12 +41,12 @@ Generate just the caption, no extra text or explanations.`
     const data = await response.json()
     
     return NextResponse.json({ 
-      caption: data.response || 'Unable to generate caption' 
+      Smart Caption AI ✍️: data.response || 'Unable to generate Smart Caption AI ✍️' 
     })
   } catch (error) {
-    console.error('Caption Generator API error:', error)
+    console.error('Smart Caption AI ✍️ Generator API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate caption' },
+      { error: 'Failed to generate Smart Caption AI ✍️' },
       { status: 500 }
     )
   }

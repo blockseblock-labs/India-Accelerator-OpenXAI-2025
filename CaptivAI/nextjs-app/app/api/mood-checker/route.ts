@@ -11,11 +11,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `Analyze the mood and sentiment of the following text: "${text}"
+    const prompt = `Analyze the emotion and sentiment of the following text: "${text}"
 
-Classify the mood as one of these options: happy, sad, angry, excited, neutral, anxious, love, frustrated
+Classify the emotion as one of these options: happy, sad, angry, excited, neutral, anxious, love, frustrated
 
-Respond with ONLY the mood word, nothing else. Pick the best single word that describes the overall sentiment.`
+Respond with ONLY the emotion word, nothing else. Pick the best single word that describes the overall sentiment.`
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -35,14 +35,14 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
 
     const data = await response.json()
     
-    // Clean up the response to get just the mood
-    let mood = data.response?.toLowerCase().trim() || 'neutral'
+    // Clean up the response to get just the emotion
+    let emotion = data.response?.toLowerCase().trim() || 'neutral'
     
     // Extract just the first word if there are multiple words
-    mood = mood.split(' ')[0]
+    emotion = emotion.split(' ')[0]
     
     // Map to emoji
-    const moodEmojis: { [key: string]: string } = {
+    const emotionEmojis: { [key: string]: string } = {
       'happy': '😊',
       'sad': '😢',
       'angry': '😠',
@@ -53,18 +53,18 @@ Respond with ONLY the mood word, nothing else. Pick the best single word that de
       'frustrated': '😤'
     }
     
-    const emoji = moodEmojis[mood] || '😐'
+    const emoji = emotionEmojis[emotion] || '😐'
     
     return NextResponse.json({ 
-      mood: mood,
+      emotion: emotion,
       emoji: emoji,
       confidence: 'high'
     })
   } catch (error) {
-    console.error('Mood Checker API error:', error)
+    console.error('Emotion Checker API error:', error)
     return NextResponse.json(
-      { error: 'Failed to analyze mood' },
+      { error: 'Failed to analyze emotion' },
       { status: 500 }
     )
   }
-} 
+}

@@ -2,68 +2,68 @@
 
 import { useState } from 'react'
 
-interface MoodResult {
-  mood: string
+interface emotionResult {
+  emotion: string
   emoji: string
   confidence: string
 }
 
 export default function SocialNetwork() {
-  const [activeTab, setActiveTab] = useState('caption')
+  const [activeTab, setActiveTab] = useState('Smart Caption AI ✍️')
   const [loading, setLoading] = useState(false)
   
-  // Caption Generator states
+  // Smart Caption AI ✍️ Generator states
   const [imageDescription, setImageDescription] = useState('')
-  const [generatedCaption, setGeneratedCaption] = useState('')
-  const [captionCopied, setCaptionCopied] = useState(false)
+  const [generatedSmart Caption AI ✍️, setGeneratedSmart Caption AI ✍️] = useState('')
+  const [Smart Caption AI ✍️Copied, setSmart Caption AI ✍️Copied] = useState(false)
   
-  // Mood Checker states
+  // emotion Checker states
   const [textToAnalyze, setTextToAnalyze] = useState('')
-  const [moodResult, setMoodResult] = useState<MoodResult | null>(null)
+  const [emotionResult, setemotionResult] = useState<emotionResult | null>(null)
   
   // Hashtag Suggestor states
   const [keywords, setKeywords] = useState('')
   const [hashtags, setHashtags] = useState<string[]>([])
   const [hashtagsCopied, setHashtagsCopied] = useState(false)
 
-  const generateCaption = async () => {
+  const generateSmart Caption AI ✍️ = async () => {
     if (!imageDescription.trim()) return
     
     setLoading(true)
     try {
-      const response = await fetch('/api/caption-generator', {
+      const response = await fetch('/api/Smart Caption AI ✍️-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageDescription })
       })
       
       const data = await response.json()
-      if (data.caption) {
-        setGeneratedCaption(data.caption)
+      if (data.Smart Caption AI ✍️) {
+        setGeneratedSmart Caption AI ✍️(data.Smart Caption AI ✍️)
       }
     } catch (error) {
-      console.error('Error generating caption:', error)
+      console.error('Error generating Smart Caption AI ✍️:', error)
     }
     setLoading(false)
   }
 
-  const checkMood = async () => {
+  const checkemotion = async () => {
     if (!textToAnalyze.trim()) return
     
     setLoading(true)
     try {
-      const response = await fetch('/api/mood-checker', {
+      const response = await fetch('/api/emotion-checker', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: textToAnalyze })
       })
       
       const data = await response.json()
-      if (data.mood) {
-        setMoodResult(data)
+      if (data.emotion) {
+        setemotionResult(data)
       }
     } catch (error) {
-      console.error('Error checking mood:', error)
+      console.error('Error checking emotion:', error)
     }
     setLoading(false)
   }
@@ -89,12 +89,12 @@ export default function SocialNetwork() {
     setLoading(false)
   }
 
-  const copyToClipboard = async (text: string, type: 'caption' | 'hashtags') => {
+  const copyToClipboard = async (text: string, type: 'Smart Caption AI ✍️' | 'hashtags') => {
     try {
       await navigator.clipboard.writeText(text)
-      if (type === 'caption') {
-        setCaptionCopied(true)
-        setTimeout(() => setCaptionCopied(false), 2000)
+      if (type === 'Smart Caption AI ✍️') {
+        setSmart Caption AI ✍️Copied(true)
+        setTimeout(() => setSmart Caption AI ✍️Copied(false), 2000)
       } else {
         setHashtagsCopied(true)
         setTimeout(() => setHashtagsCopied(false), 2000)
@@ -109,16 +109,16 @@ export default function SocialNetwork() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">💬 Social Network AI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Social Media Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-4">💬 InsightStream AI</h1>
+          <p className="text-white/80 text-lg">Turning text streams into insights, Smart Caption AI ✍️s, and viral ideas 💡</p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
             {[
-              { id: 'caption', label: '📸 Caption', desc: 'Generate Captions', gradient: 'instagram-gradient' },
-              { id: 'mood', label: '😊 Mood', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
+              { id: 'Smart Caption AI ✍️', label: '📸 Smart Caption AI ✍️', desc: 'Generate Smart Caption AI ✍️s', gradient: 'instagram-gradient' },
+              { id: 'emotion', label: '😊 emotion', desc: 'Check Sentiment', gradient: 'twitter-gradient' },
               { id: 'hashtags', label: '#️⃣ Hashtags', desc: 'Suggest Tags', gradient: 'social-gradient' }
             ].map(tab => (
               <button
@@ -139,12 +139,12 @@ export default function SocialNetwork() {
 
         {/* Content */}
         <div className="max-w-4xl mx-auto">
-          {/* Caption Generator Tab */}
-          {activeTab === 'caption' && (
+          {/* Smart Caption AI ✍️ Generator Tab */}
+          {activeTab === 'Smart Caption AI ✍️' && (
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">📸 Caption Generator</h2>
-                <p className="text-white/80 mb-6">Describe your image and get an Instagram-ready caption!</p>
+                <h2 className="text-2xl font-bold text-white mb-4">📸 Smart Caption AI ✍️ Generator</h2>
+                <p className="text-white/80 mb-6">Describe your image and get an Instagram-ready Smart Caption AI ✍️!</p>
                 
                 <div className="space-y-4">
                   <textarea
@@ -155,24 +155,24 @@ export default function SocialNetwork() {
                   />
                   
                   <button
-                    onClick={generateCaption}
+                    onClick={generateSmart Caption AI ✍️}
                     disabled={loading || !imageDescription.trim()}
                     className="w-full px-6 py-3 instagram-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Generating Caption...' : 'Generate Caption ✨'}
+                    {loading ? 'Generating Smart Caption AI ✍️...' : 'Generate Smart Caption AI ✍️ ✨'}
                   </button>
 
-                  {generatedCaption && (
+                  {generatedSmart Caption AI ✍️ && (
                     <div className="bg-white/20 rounded-lg p-4 space-y-3">
-                      <h3 className="font-semibold text-white">Your Caption:</h3>
-                      <p className="text-white/90 text-lg leading-relaxed">{generatedCaption}</p>
+                      <h3 className="font-semibold text-white">Your Smart Caption AI ✍️:</h3>
+                      <p className="text-white/90 text-lg leading-relaxed">{generatedSmart Caption AI ✍️}</p>
                       <button
-                        onClick={() => copyToClipboard(generatedCaption, 'caption')}
+                        onClick={() => copyToClipboard(generatedSmart Caption AI ✍️, 'Smart Caption AI ✍️')}
                         className={`copy-button px-4 py-2 rounded-lg font-medium ${
-                          captionCopied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
+                          Smart Caption AI ✍️Copied ? 'copied' : 'bg-white/20 hover:bg-white/30 text-white'
                         }`}
                       >
-                        {captionCopied ? 'Copied! ✓' : 'Copy Caption 📋'}
+                        {Smart Caption AI ✍️Copied ? 'Copied! ✓' : 'Copy Smart Caption AI ✍️ 📋'}
                       </button>
                     </div>
                   )}
@@ -181,11 +181,11 @@ export default function SocialNetwork() {
             </div>
           )}
 
-          {/* Mood Checker Tab */}
-          {activeTab === 'mood' && (
+          {/* emotion Checker Tab */}
+          {activeTab === 'emotion' && (
             <div className="tab-content">
               <div className="social-card rounded-xl p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">😊 Mood Checker</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">😊 emotion Checker</h2>
                 <p className="text-white/80 mb-6">Paste any text to analyze its emotional sentiment!</p>
                 
                 <div className="space-y-4">
@@ -197,19 +197,19 @@ export default function SocialNetwork() {
                   />
                   
                   <button
-                    onClick={checkMood}
+                    onClick={checkemotion}
                     disabled={loading || !textToAnalyze.trim()}
                     className="w-full px-6 py-3 twitter-gradient text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {loading ? 'Analyzing Mood...' : 'Check Mood 🔍'}
+                    {loading ? 'Analyzing emotion...' : 'Check emotion 🔍'}
                   </button>
 
-                  {moodResult && (
+                  {emotionResult && (
                     <div className="bg-white/20 rounded-lg p-6 text-center space-y-4">
-                      <div className="mood-indicator text-6xl">{moodResult.emoji}</div>
+                      <div className="emotion-indicator text-6xl">{emotionResult.emoji}</div>
                       <div>
-                        <h3 className="text-2xl font-bold text-white capitalize">{moodResult.mood}</h3>
-                        <p className="text-white/80">Detected sentiment with {moodResult.confidence} confidence</p>
+                        <h3 className="text-2xl font-bold text-white capitalize">{emotionResult.emotion}</h3>
+                        <p className="text-white/80">Detected sentiment with {emotionResult.confidence} confidence</p>
                       </div>
                     </div>
                   )}
