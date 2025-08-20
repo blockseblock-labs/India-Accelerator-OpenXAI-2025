@@ -141,7 +141,7 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-400 via-teal-500 to-emerald-500">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -162,7 +162,7 @@ export default function LearnAI() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg transition-all ${
                   activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
+                    ? 'bg-white text-teal-600 shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
               >
@@ -191,7 +191,7 @@ export default function LearnAI() {
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
@@ -226,7 +226,7 @@ export default function LearnAI() {
                     </button>
                     <button
                       onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      className="px-4 py-2 bg-rose-500 text-white rounded-lg"
                     >
                       New Flashcards
                     </button>
@@ -259,7 +259,7 @@ export default function LearnAI() {
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
@@ -276,7 +276,7 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="px-6 py-3 bg-cyan-500 text-white rounded-lg"
                   >
                     Take Another Quiz
                   </button>
@@ -345,7 +345,7 @@ export default function LearnAI() {
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
@@ -355,11 +355,11 @@ export default function LearnAI() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
+                    <div className="bg-cyan-500/20 p-4 rounded-lg">
                       <p className="text-white font-medium">You:</p>
                       <p className="text-white/90">{chat.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
+                    <div className="bg-emerald-500/20 p-4 rounded-lg">
                       <p className="text-white font-medium">Study Buddy:</p>
                       <p className="text-white/90">{chat.answer}</p>
                     </div>
@@ -378,4 +378,4 @@ export default function LearnAI() {
       </div>
     </div>
   )
-} 
+}
