@@ -90,3 +90,17 @@ body {
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   color: white;
 } 
+
+/* Radial animated background */
+.radial-gradient-bg {
+  background: radial-gradient(circle at center, #764ba2, #667eea, #ff758c, #ff7eb3);
+  background-size: 200% 200%;
+  animation: radialMove 20s ease infinite;
+}
+
+@keyframes radialMove {
+  0% { background-position: 50% 50%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 50% 50%; }
+}
+
