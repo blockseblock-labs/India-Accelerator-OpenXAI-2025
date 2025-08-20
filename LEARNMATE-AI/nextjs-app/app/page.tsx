@@ -141,44 +141,44 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-emeraldDeep text-beige">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
+          <h1 className="text-4xl font-bold text-[200,200,200] mb-4">📚 LearnAI</h1>
           <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
-            {[
-              { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
-              { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
-              { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
-                }`}
-              >
-                <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
+        
+        <div className="flex justify-center mb-8 space-x-4">
+        {[
+          { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
+          { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
+          { id: 'study-buddy', label: '🤖 Study Buddy', desc: 'Ask Questions' }
+         ].map(tab => (
+         <button
+         key={tab.id}
+         onClick={() => setActiveTab(tab.id)}
+         className={`px-6 py-3 rounded-lg transition-all glow-border ${
+          activeTab === tab.id
+           ? 'bg-beige text-emeraldDeep shadow-glow glow-text'
+           : 'bg-emeraldDeep text-beige hover:bg-emeraldDeep/80'
+          }`}>
+
+      <div className="text-sm font-medium">{tab.label}</div>
+      <div className="text-xs opacity-75">{tab.desc}</div>
+    </button>
+  ))}
+</div>
 
         {/* Content */}
+
         <div className="max-w-4xl mx-auto">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+              <h2 className="text-2xl font-bold text-[#f5f0e6]">🃏 Flashcard Maker</h2>
               
               {flashcards.length === 0 ? (
                 <div>
@@ -186,12 +186,13 @@ export default function LearnAI() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="w-full h-40 p-4 rounded-lg border-0 bg-beige/20 text-beige placeholder-beige/50 focus:ring-2 focus:ring-beige/40"
+
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-green-700 hover:bg-beige-600 text-beige rounded-lg font-medium disabled:opacity-80 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
