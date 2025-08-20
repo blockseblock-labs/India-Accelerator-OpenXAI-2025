@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Orbitron, Rajdhani } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
+const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-orbitron' })
+const rajdhani = Rajdhani({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-rajdhani' })
 
 export const metadata: Metadata = {
-  title: 'Game Jam Template',
-  description: 'A template for building amazing games',
+  title: 'GAMEFORGE',
+  description: 'Forge your destiny, pixel by pixel. An epic adventure awaits!',
 }
 
 export default function RootLayout({
@@ -16,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} ${orbitron.variable} ${rajdhani.variable}`}>{children}</body>
     </html>
   )
 } 
