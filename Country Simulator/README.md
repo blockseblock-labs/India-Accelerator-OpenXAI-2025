@@ -91,22 +91,25 @@ This project demonstrates:
 
 #### Project Structure
 ```
-demo-app-ENVIRO-TRACK/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   │   └── process-command/ # AI command processing
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Main page
-├── components/            # React components
-│   ├── Globe.tsx          # 3D Earth component
-│   └── CountryInfoPanel.tsx  # Country info display
-├── nix/                   # Nix configuration
-│   ├── package.nix        # Package definition
-│   └── nixos-module.nix   # NixOS module
-├── flake.nix             # Nix flake
-├── ollama-model.txt      # AI model specification
-└── package.json          # Dependencies
+/Country Simulator/
+├── app/
+│   ├── api/
+│   │   └── process-command/
+│   │       └── route.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── Globe.tsx
+│   ├── CountryInfoPanel.tsx
+│   └── CountryChat.tsx
+├── nix/
+│   ├── package.nix
+│   └── nixos-module.nix
+├── flake.nix
+├── ollama-model.txt
+└── package.json
+
 ```
 
 #### Available Scripts

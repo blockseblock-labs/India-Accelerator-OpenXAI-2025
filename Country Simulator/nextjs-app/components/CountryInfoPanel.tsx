@@ -10,6 +10,7 @@ const exo2 = Exo_2({ subsets: ["latin"], weight: ["400", "500"] });
 
 type CountryInfo = {
   name: string;
+  capital: string;   // ✅ added capital
   currency: string;
   flag: string;
 } | null;
@@ -51,7 +52,7 @@ export default function CountryInfoPanel({
       className="px-5 py-4 rounded-2xl border border-cyan-400/50 
                  bg-black/30 backdrop-blur-md text-white 
                  shadow-[0_0_20px_rgba(0,255,255,0.4)] flex flex-col 
-                 items-center animate-fadeIn min-w-[150px]"
+                 items-center animate-fadeIn min-w-[160px]"
     >
       {/* Flag */}
       <div
@@ -67,11 +68,18 @@ export default function CountryInfoPanel({
         {country.name}
       </div>
 
+      {/* Capital */}
+      <div
+        className={`${exo2.className} text-sm text-pink-400 mt-1 text-center`}
+      >
+        Capital: {country.capital}
+      </div>
+
       {/* Currency */}
       <div
         className={`${exo2.className} text-sm text-white/70 mt-1 text-center`}
       >
-        {country.currency}
+        Currency: {country.currency}
       </div>
     </div>
   );

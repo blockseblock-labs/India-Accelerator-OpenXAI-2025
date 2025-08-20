@@ -9,6 +9,7 @@ import CountryInfoPanel from "./CountryInfoPanel";
 
 type Country = {
   name: string;
+  capital: string;
   currency: string;
   flag: string;
   lat: number;
@@ -17,11 +18,16 @@ type Country = {
 };
 
 const COUNTRIES: Country[] = [
-  { name: "India", currency: "INR", flag: "🇮🇳", lat: 20.5937, lon: 78.9629 },
-  { name: "USA", currency: "USD", flag: "🇺🇸", lat: 37.0902, lon: -95.7129 },
-  { name: "China", currency: "CNY", flag: "🇨🇳", lat: 35.8617, lon: 104.1954 },
-  { name: "Russia", currency: "RUB", flag: "🇷🇺", lat: 61.524, lon: 105.3188 },
-  { name: "Japan", currency: "JPY", flag: "🇯🇵", lat: 36.2048, lon: 138.2529 },
+  { name: "India", capital: "New Delhi", currency: "INR", flag: "🇮🇳", lat: 20.5937, lon: 78.9629 },
+  { name: "USA", capital: "Washington, D.C.", currency: "USD", flag: "🇺🇸", lat: 37.0902, lon: -95.7129 },
+  { name: "China", capital: "Beijing", currency: "CNY", flag: "🇨🇳", lat: 35.8617, lon: 104.1954 },
+  { name: "Russia", capital: "Moscow", currency: "RUB", flag: "🇷🇺", lat: 61.524, lon: 105.3188 },
+  { name: "Japan", capital: "Tokyo", currency: "JPY", flag: "🇯🇵", lat: 36.2048, lon: 138.2529 },
+  { name: "United Kingdom", capital: "London", currency: "GBP", flag: "🇬🇧", lat: 55.3781, lon: -3.4360 },
+  { name: "Germany", capital: "Berlin", currency: "EUR", flag: "🇩🇪", lat: 51.1657, lon: 10.4515 },
+  { name: "France", capital: "Paris", currency: "EUR", flag: "🇫🇷", lat: 46.6034, lon: 1.8883 },
+  { name: "Brazil", capital: "Brasília", currency: "BRL", flag: "🇧🇷", lat: -14.2350, lon: -51.9253 },
+  { name: "Australia", capital: "Canberra", currency: "AUD", flag: "🇦🇺", lat: -25.2744, lon: 133.7751 },
 ];
 
 const latLonToVec3 = (lat: number, lon: number, radius: number) => {
@@ -171,6 +177,7 @@ export default function Globe() {
           hoveredCountry
             ? {
                 name: hoveredCountry.name,
+                capital: hoveredCountry.capital,
                 currency: hoveredCountry.currency,
                 flag: hoveredCountry.flag,
               }
