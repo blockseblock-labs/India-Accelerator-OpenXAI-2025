@@ -88,5 +88,5 @@ body {
 
 .quiz-option.incorrect {
   background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
-  color: white;
+  color: rgb(171, 139, 139);
 } 

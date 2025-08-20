@@ -248,7 +248,7 @@ export default function LearnAI() {
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold mb-4 text-outline-purple">📝 Quiz Maker</h2>
+              <h2 className="text-2xl font-bold mb-4 text-outline-purple">📝 QUIZ MAKER</h2>
               {quiz.length === 0 && !showResults ? (
                 <div>
                   <textarea
@@ -340,7 +340,8 @@ export default function LearnAI() {
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask me anything you want to learn about..."
+                    placeholder="Ask me anything you want to learn about...enter here"
+                  
                     className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
