@@ -112,7 +112,7 @@ export default function Home() {
           command,
           currentMetrics: metrics,
           pollutionLevel,
-          model: 'llama3.2:1b', // Always use llama3.2:1b
+          model: 'llama3:latest', // Always use llama3.2:1b
         }),
       })
 
