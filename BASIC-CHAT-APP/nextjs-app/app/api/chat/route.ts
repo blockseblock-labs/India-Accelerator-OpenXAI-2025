@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import ollama from "ollama";
 
-const model = "llama3";
+const model = "llama3.1:8b";
 
 export async function POST(request: NextRequest) {
   try {
