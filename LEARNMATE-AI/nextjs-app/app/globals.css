@@ -2,91 +2,166 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ====== Theme Vars (Blue / Light Blue) ====== */
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 26, 64, 147; /* blue-700 */
+  --background-end-rgb: 12, 34, 88;    /* blue-900 */
+  --panel-bg: 255, 255, 255;           /* white for glass */
+  --panel-tint: 59, 130, 246;          /* blue-500 */
+  --panel-tint-2: 191, 219, 254;       /* blue-200 */
+  --soft-blue: 219, 234, 254;          /* blue-100/200 mix */
+  --text-on-dark: 255, 255, 255;
+  --text-on-light: 0, 0, 0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-start-rgb: 10, 25, 61; /* deeper blue */
+    --background-end-rgb: 5, 16, 40;
   }
 }
 
+/* ====== Body Background (deep blue gradient) ====== */
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    135deg,
+    rgb(var(--background-start-rgb)) 0%,
+    rgb(var(--background-end-rgb)) 100%
+  );
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* ====== Glass / Glow Utilities (used in page) ====== */
+.tab-bar {
+  background: rgba(var(--panel-bg), 0.18);
+  border: 1px solid rgba(var(--panel-tint), 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 6px 22px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.25);
 }
 
+.tab-bar button {
+  color: rgba(255,255,255,.95);
+}
+
+.tab-active {
+  background: rgba(255,255,255,0.9);
+  color: rgb(29, 78, 216) !important; /* blue-700 */
+  border-radius: 10px;
+  box-shadow:
+    0 8px 24px rgba(59,130,246,.35),
+    0 0 0 1px rgba(59,130,246,.15);
+}
+
+/* Panel with light blue glass feel */
+.panel-blue {
+  background: rgba(var(--panel-bg), 0.14);
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid rgba(var(--panel-tint), 0.28);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.25),
+    0 0 0 1px rgba(255,255,255,.15);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.panel-blue:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 28px rgba(96, 165, 250, .75),
+    0 12px 36px rgba(0,0,0,.25);
+}
+
+/* Inputs with soft light-blue glass */
+.input-blue {
+  background: rgba(var(--soft-blue), 0.65);
+  color: rgb(var(--text-on-light));
+  border: 1px solid rgba(var(--panel-tint), .35);
+  outline: none;
+}
+
+.input-blue::placeholder {
+  color: rgba(0,0,0,.55);
+}
+
+/* ====== Flashcard Flip (KEY: class names must match page.tsx) ====== */
 .flashcard {
   perspective: 1000px;
+  height: 220px;
 }
 
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
-  text-align: center;
-  transition: transform 0.6s;
+  height: 100%;
   transform-style: preserve-3d;
+  transition: transform .6s ease;
 }
 
 .flashcard.flipped .flashcard-inner {
   transform: rotateY(180deg);
 }
 
-.flashcard-front, .flashcard-back {
+.flashcard-front,
+.flashcard-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  border-radius: 14px;
   backface-visibility: hidden;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 18px;
+  box-shadow: 0 12px 26px rgba(0,0,0,.28);
+  border: 1px solid rgba(var(--panel-tint), .35);
 }
 
+/* Front: dark blue gradient with white text */
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0b2658 100%);
+  color: #fff;
 }
 
+/* Back: light blue gradient with dark text */
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
   transform: rotateY(180deg);
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+  color: #0b2658;
 }
 
+/* ====== Quiz Option states (blue theme) ====== */
 .quiz-option {
-  transition: all 0.3s ease;
+  background: rgba(219, 234, 254, .65); /* blue-100 glass */
+  color: #0b2658;
+  border: 1px solid rgba(59, 130, 246, .35);
 }
 
 .quiz-option:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 16px rgba(59,130,246,.25);
 }
 
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: rgba(255,255,255,.7);
+  color: #fff;
 }
 
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+  background: linear-gradient(135deg, #93c5fd 0%, #bfdbfe 100%);
+  border-color: rgba(59,130,246,.5);
+  color: #0b2658;
+}
+
+/* Small helper for thin white text */
+.text-soft {
+  color: rgba(255,255,255,.85);
+}
