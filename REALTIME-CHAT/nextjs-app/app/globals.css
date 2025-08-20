@@ -2,26 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Define our pastel color palette and font */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --font-geist-sans: 'Geist Sans', sans-serif;
+  --bg-color: #f0f2f5; /* A standard, cool chat app background */
+  --text-color: #4b5563; /* Soft, dark gray for text */
+  --user-bubble: #dcf8c6;  /* A WhatsApp-like light green */
+  --assistant-bubble: #ffffff; /* Simple white for the assistant */
+  --accent-color: #007bff; /* A standard, strong blue for accents */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    /* Subtle background pattern like WhatsApp */
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4d4d8' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} 
+.font-sans {
+  font-family: var(--font-geist-sans);
+}
+
+/* Custom scrollbar for the light theme */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }

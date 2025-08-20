@@ -13,5 +13,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'), // Plugin for styling Markdown
+  ],
 } 
