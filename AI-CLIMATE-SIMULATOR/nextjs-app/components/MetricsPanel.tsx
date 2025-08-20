@@ -45,6 +45,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
       <div className="space-y-3">
         {/* CO2 Levels */}
         <div className="flex items-center justify-between">
+          <div></div>
           <div className="flex items-center gap-2">
             <Zap size={16} className="text-yellow-400" />
             <span className="text-sm text-gray-300">CO₂ Level:</span>
@@ -77,7 +78,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         </div>
 
         {/* Human Population */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">          <div></div>
+
           <div className="flex items-center gap-2">
             <Users size={16} className="text-blue-400" />
             <span className="text-sm text-gray-300">Humans:</span>
@@ -88,7 +90,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         </div>
 
         {/* Animal Population */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">          <div></div>
+
           <div className="flex items-center gap-2">
             <Leaf size={16} className="text-green-400" />
             <span className="text-sm text-gray-300">Animals:</span>
