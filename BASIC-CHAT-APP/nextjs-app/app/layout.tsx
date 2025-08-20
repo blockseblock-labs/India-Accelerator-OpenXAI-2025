@@ -1,38 +1,26 @@
-import { Metadata, Viewport } from "next";
+import "./globals.css";
+import { Inter } from "next/font/google";
 
-import { siteConfig } from "@/config/site";
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
-  },
+export const metadata = {
+  title: "Chat App",
+  description: "Mini Task Chat App UI",
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
-interface RootLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <html>
-        <head />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en">
+      <body className={`${inter.className} bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen`}>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="bg-white shadow-2xl rounded-2xl w-full max-w-2xl p-6">
+            <h1 className="text-3xl font-bold text-center text-indigo-600 mb-4">
+              💬 Chat App
+            </h1>
+            {children}
+          </div>
+        </div>
+      </body>
+    </html>
   );
 }
