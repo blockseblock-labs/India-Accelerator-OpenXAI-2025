@@ -1,5 +1,7 @@
 # 🎵 SoundWave Template
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+
 A Next.js template for building amazing audio experiences! This template provides voice recording, playback, and transcription capabilities with a beautiful modern interface.
 
 ## Features
@@ -8,7 +10,7 @@ A Next.js template for building amazing audio experiences! This template provide
 - **Audio Playback**: Built-in audio controls with play/pause functionality
 - **Recording Timer**: Live timer display during recording
 - **Visual Feedback**: Animated recording indicator and controls
-- **Transcription Ready**: API endpoint for voice-to-text conversion
+- **Transcription Ready**: A pre-built API endpoint and structured components ready for easy integration with a speech-to-text service (e.g., OpenAI's Whisper API)
 - **Modern UI**: Beautiful gradient background with glassmorphism effects
 
 ## 🚀 Getting Started
@@ -112,5 +114,9 @@ The recorder uses these default settings:
 - Quality: Browser default
 - Timer: 1-second intervals
 - Auto-stop: User controlled
+
+## 🤝 Contribution
+
+Contributions are welcome! If you have suggestions or find a bug, please open an issue or submit a pull request.
 
 Build amazing audio experiences! 🎵 
