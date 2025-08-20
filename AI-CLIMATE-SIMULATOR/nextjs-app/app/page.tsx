@@ -234,7 +234,7 @@ export default function Home() {
       </div>
 
       {/* Control Panel */}
-      <div className="absolute top-4 left-4 z-20">
+      <div className="bg-gray absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
           <h2 className="text-xl font-bold mb-2">AI Earth Controller</h2>
           
