@@ -36,7 +36,7 @@ body {
 
 .audio-bar {
   width: 3px;
-  background: linear-gradient(to top, #8b5cf6, #06b6d4);
+  background: linear-gradient(to top, #7755c8, #68b0bd);
   border-radius: 2px;
   animation: audioWave 1s ease-in-out infinite alternate;
 }
