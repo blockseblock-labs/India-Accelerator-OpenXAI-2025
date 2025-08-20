@@ -1,6 +1,7 @@
 # 🎵 SoundWave Template
 
-A Next.js template for building amazing audio experiences! This template provides voice recording, playback, and transcription capabilities with a beautiful modern interface.
+What is SoundWave? 🔊
+This is a Next.js template for building modern audio apps. SoundWave provides all the essential features you need out of the box: voice recording, playback, and speech-to-text transcription. Whether you're building a voice memo app, an audio journaling tool, or a voice command interface, this template gives you a solid foundation.
 
 ## Features
 
