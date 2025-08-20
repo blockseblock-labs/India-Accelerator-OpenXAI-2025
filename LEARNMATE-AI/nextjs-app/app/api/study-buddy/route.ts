@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 export async function POST(req: NextRequest) {
   try {
     const { question } = await req.json()
@@ -11,23 +13,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
+    const prompt = `You are a helpful study buddy AI. 
+Answer the following question in a clear, educational way. 
+Provide explanations, examples, and encourage learning. 
+Be friendly and supportive.
 
 Question: ${question}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('http://127.0.0.1:11434/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
+        model: 'llama3',
+        prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
+      const text = await response.text()
+      console.error('Ollama error:', text)
       throw new Error('Failed to get response from Ollama')
     }
 
@@ -43,4 +50,4 @@ Question: ${question}`
       { status: 500 }
     )
   }
-} 
+}

@@ -39,7 +39,6 @@ export default function LearnAI() {
 
   const generateFlashcards = async () => {
     if (!notes.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/flashcards', {
@@ -47,7 +46,6 @@ export default function LearnAI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes })
       })
-      
       const data = await response.json()
       if (data.flashcards) {
         setFlashcards(data.flashcards)
@@ -62,7 +60,6 @@ export default function LearnAI() {
 
   const generateQuiz = async () => {
     if (!quizText.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/quiz', {
@@ -70,7 +67,6 @@ export default function LearnAI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: quizText })
       })
-      
       const data = await response.json()
       if (data.quiz) {
         setQuiz(data.quiz)
@@ -87,7 +83,6 @@ export default function LearnAI() {
 
   const askStudyBuddy = async () => {
     if (!question.trim()) return
-    
     setLoading(true)
     try {
       const response = await fetch('/api/study-buddy', {
@@ -95,7 +90,6 @@ export default function LearnAI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question })
       })
-      
       const data = await response.json()
       if (data.answer) {
         const newChat = { question, answer: data.answer }
@@ -125,11 +119,9 @@ export default function LearnAI() {
 
   const selectAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
-    
     if (answerIndex === quiz[currentQuestion].correct) {
       setScore(score + 1)
     }
-    
     setTimeout(() => {
       if (currentQuestion < quiz.length - 1) {
         setCurrentQuestion(currentQuestion + 1)
@@ -137,21 +129,21 @@ export default function LearnAI() {
       } else {
         setShowResults(true)
       }
-    }, 1500)
+    }, 5000)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-2">📚 LearnAI</h1>
+          <p className="text-soft text-lg">AI-Powered Educational Tools</p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 flex space-x-2">
+          <div className="tab-bar rounded-lg p-2 flex space-x-2">
             {[
               { id: 'flashcards', label: '🃏 Flashcards', desc: 'Make Flashcards' },
               { id: 'quiz', label: '📝 Quiz', desc: 'Create Quiz' },
@@ -161,13 +153,11 @@ export default function LearnAI() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-purple-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                  activeTab === tab.id ? 'tab-active' : 'hover:bg-white/10'
                 }`}
               >
                 <div className="text-sm font-medium">{tab.label}</div>
-                <div className="text-xs opacity-75">{tab.desc}</div>
+                <div className="text-xs opacity-80">{tab.desc}</div>
               </button>
             ))}
           </div>
@@ -177,7 +167,7 @@ export default function LearnAI() {
         <div className="max-w-4xl mx-auto">
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <div className="panel-blue">
               <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
               
               {flashcards.length === 0 ? (
@@ -186,12 +176,12 @@ export default function LearnAI() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Paste your study notes here and I'll create flashcards for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input-blue w-full h-40 p-4 rounded-lg focus:ring-2 focus:ring-blue-300"
                   />
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
@@ -208,10 +198,10 @@ export default function LearnAI() {
                   >
                     <div className="flashcard-inner">
                       <div className="flashcard-front">
-                        <p className="text-lg font-medium">{flashcards[currentCard]?.front}</p>
+                        <p className="text-lg font-semibold">{flashcards[currentCard]?.front}</p>
                       </div>
                       <div className="flashcard-back">
-                        <p className="text-lg">{flashcards[currentCard]?.back}</p>
+                        <p className="text-lg font-medium">{flashcards[currentCard]?.back}</p>
                       </div>
                     </div>
                   </div>
@@ -220,20 +210,20 @@ export default function LearnAI() {
                     <button
                       onClick={prevCard}
                       disabled={currentCard === 0}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 bg-white/10 text-white rounded-lg disabled:opacity-50 border border-white/20"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setFlashcards([])}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
                     >
                       New Flashcards
                     </button>
                     <button
                       onClick={nextCard}
                       disabled={currentCard === flashcards.length - 1}
-                      className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50"
+                      className="px-4 py-2 bg-white/10 text-white rounded-lg disabled:opacity-50 border border-white/20"
                     >
                       Next
                     </button>
@@ -245,7 +235,7 @@ export default function LearnAI() {
 
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <div className="panel-blue">
               <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
               
               {quiz.length === 0 && !showResults ? (
@@ -254,12 +244,12 @@ export default function LearnAI() {
                     value={quizText}
                     onChange={(e) => setQuizText(e.target.value)}
                     placeholder="Paste text here and I'll create a quiz for you..."
-                    className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input-blue w-full h-40 p-4 rounded-lg focus:ring-2 focus:ring-blue-300"
                   />
                   <button
                     onClick={generateQuiz}
                     disabled={loading || !quizText.trim()}
-                    className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Creating Quiz...' : 'Create Quiz'}
                   </button>
@@ -267,7 +257,7 @@ export default function LearnAI() {
               ) : showResults ? (
                 <div className="text-center">
                   <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
-                  <p className="text-xl text-white mb-6">
+                  <p className="text-xl text-soft mb-6">
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
                   <button
@@ -276,14 +266,14 @@ export default function LearnAI() {
                       setShowResults(false)
                       setScore(0)
                     }}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                   >
                     Take Another Quiz
                   </button>
                 </div>
               ) : (
                 <div>
-                  <div className="mb-4 text-white">
+                  <div className="mb-4 text-soft">
                     Question {currentQuestion + 1} of {quiz.length}
                   </div>
                   
@@ -300,14 +290,14 @@ export default function LearnAI() {
                           disabled={selectedAnswer !== null}
                           className={`w-full p-4 text-left rounded-lg transition-all quiz-option ${
                             selectedAnswer === null
-                              ? 'bg-white/20 text-white hover:bg-white/30'
+                              ? ''
                               : selectedAnswer === index
                               ? index === quiz[currentQuestion].correct
                                 ? 'correct'
                                 : 'incorrect'
                               : index === quiz[currentQuestion].correct
                               ? 'correct'
-                              : 'bg-white/10 text-white/60'
+                              : ''
                           }`}
                         >
                           {option}
@@ -316,9 +306,9 @@ export default function LearnAI() {
                     </div>
                     
                     {selectedAnswer !== null && (
-                      <div className="mt-4 p-4 bg-white/20 rounded-lg">
-                        <p className="text-white font-medium">Explanation:</p>
-                        <p className="text-white/90">{quiz[currentQuestion]?.explanation}</p>
+                      <div className="mt-4 p-4 rounded-lg input-blue">
+                        <p className="text-blue-900 font-semibold">Explanation:</p>
+                        <p className="text-blue-900/90">{quiz[currentQuestion]?.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -329,7 +319,7 @@ export default function LearnAI() {
 
           {/* Study Buddy Tab */}
           {activeTab === 'study-buddy' && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <div className="panel-blue">
               <h2 className="text-2xl font-bold text-white mb-4">🤖 Ask-Me Study Buddy</h2>
               
               <div className="mb-6">
@@ -339,13 +329,13 @@ export default function LearnAI() {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Ask me anything you want to learn about..."
-                    className="flex-1 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
+                    className="input-blue flex-1 p-4 rounded-lg focus:ring-2 focus:ring-blue-300"
                     onKeyDown={(e) => e.key === 'Enter' && askStudyBuddy()}
                   />
                   <button
                     onClick={askStudyBuddy}
                     disabled={loading || !question.trim()}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Thinking...' : 'Ask'}
                   </button>
@@ -355,19 +345,19 @@ export default function LearnAI() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="bg-blue-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">You:</p>
-                      <p className="text-white/90">{chat.question}</p>
+                    <div className="p-4 rounded-lg" style={{background:'rgba(191,219,254,.45)', border:'1px solid rgba(59,130,246,.35)'}}>
+                      <p className="text-blue-900 font-semibold">You:</p>
+                      <p className="text-blue-900/90">{chat.question}</p>
                     </div>
-                    <div className="bg-green-500/20 p-4 rounded-lg">
-                      <p className="text-white font-medium">Study Buddy:</p>
-                      <p className="text-white/90">{chat.answer}</p>
+                    <div className="p-4 rounded-lg" style={{background:'rgba(219,234,254,.6)', border:'1px solid rgba(59,130,246,.35)'}}>
+                      <p className="text-blue-900 font-semibold">Study Buddy:</p>
+                      <p className="text-blue-900/90">{chat.answer}</p>
                     </div>
                   </div>
                 ))}
                 
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-white/60 py-8">
+                  <div className="text-center text-soft py-8">
                     Ask me anything and I'll help you learn! I can explain concepts, provide examples, and answer your questions.
                   </div>
                 )}
@@ -378,4 +368,4 @@ export default function LearnAI() {
       </div>
     </div>
   )
-} 
+}

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
     const { notes } = await req.json()
@@ -25,44 +27,43 @@ Focus on key concepts, definitions, and important facts. Make questions clear an
 
 Notes: ${notes}`
 
-    const response = await fetch('http://localhost:11434/api/generate', {
+    const response = await fetch('http://127.0.0.1:11434/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
-        prompt: prompt,
+        model: 'llama3',
+        prompt,
         stream: false,
       }),
     })
 
     if (!response.ok) {
+      const text = await response.text()
+      console.error('Ollama error:', text)
       throw new Error('Failed to get response from Ollama')
     }
 
     const data = await response.json()
-    
+
     try {
-      // Try to parse JSON from the response
       const flashcardsMatch = data.response.match(/\{[\s\S]*\}/)
       if (flashcardsMatch) {
         const flashcardsData = JSON.parse(flashcardsMatch[0])
         return NextResponse.json(flashcardsData)
       }
     } catch (parseError) {
-      // If JSON parsing fails, return a structured response
-      console.log('Could not parse JSON, returning formatted response')
+      console.log('Could not parse JSON, returning fallback format')
     }
 
-    // Fallback: create a simple structure from the response
     return NextResponse.json({
       flashcards: [
         {
           front: "Generated from your notes",
-          back: data.response || 'No response from model'
-        }
-      ]
+          back: data.response || 'No response from model',
+        },
+      ],
     })
   } catch (error) {
     console.error('Flashcards API error:', error)
@@ -71,4 +72,4 @@ Notes: ${notes}`
       { status: 500 }
     )
   }
-} 
+}

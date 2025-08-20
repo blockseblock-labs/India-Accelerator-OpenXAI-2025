@@ -16,7 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      {/* keep Inter + deep blue gradient from globals; no code removed */}
+      <body className={inter.className}>
+        {children}
+      </body>
     </html>
   )
-} 
+}
