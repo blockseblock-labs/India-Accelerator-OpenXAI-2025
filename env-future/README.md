@@ -1,121 +1,133 @@
-# ENV Future 🌍
+ENV Future 🌍
+OpenxAI Global AI Accelerator - ENVIRO-TRACK Submission
+Project Overview
+ENV Future is an interactive, AI-powered climate and energy simulator that brings global environmental actions to life. Users input real household energy needs, green solutions, or climate-impact ideas in natural language. The system’s advanced AI engine analyzes each scenario in real time, performing realistic environmental calculations. It instantly updates both a live, 3D globe and a comprehensive metrics dashboard to visually demonstrate the planetary effects—from CO₂ emissions to population and climate stats. The platform also provides actionable solar energy recommendations, component sizing, flowcharts, payback analysis, and downloadable reports.
+Dead-Earth is designed as an educational and decision-support tool, empowering everyone to explore the real-world impact of renewable energy and sustainability solutions, all through an intuitive and engaging simulation.
 
-## OpenxAI Global AI Accelerator - ENVIRO-TRACK Submission
+🌟 Features
+3D Interactive Globe: Explore environmental changes visually with real-time, immersive 3D graphics (Three.js, React Three Fiber).
 
-### Project Overview
-**Dead-Earth** is an AI-powered 3D globe simulation that demonstrates the effects of pollution and climate change. Users submit natural language ideas or commands, and the AI calculates realistic environmental impacts, updating Earth's metrics in real-time.
+AI-Driven Simulation: Enter ideas like “My home uses 10kWh per day...” and receive in-depth analysis and actionable recommendations, powered by deepseek-r1:8b via Ollama.
 
-### 🌟 Features
-- **3D Interactive Globe**: Immersive visualization using Three.js and React Three Fiber
-- **AI-Controlled Simulation**: Natural language ideas processed by deepseek-r1:8b via Ollama
-- **Realistic Environmental Calculations**: AI computes CO₂, toxicity, temperature, and population changes
-- **Live Metrics Panel**: Displays CO₂, toxicity, temperature, population, ocean acidity, and ice cap melting
-- **PDF Export**: Download analysis and metrics as a PDF report
-- **Command History**: Track all environmental actions and their impacts
-- **Educational Impact**: Visual demonstration of climate change effects
-- **Reset Functionality**: Restore Earth to healthy state
+Live Metrics Panel: Dynamic, intuitive dashboard displaying CO₂ level, toxicity, global temperature, population stats, ocean acidity, and ice cap melting.
 
-### 🛠️ Tech Stack
-- **Frontend**: Next.js 14 with TypeScript
-- **3D Graphics**: Three.js with React Three Fiber
-- **AI Integration**: Ollama (deepseek-r1:8b model)
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Animations**: Framer Motion
-- **PDF Export**: jsPDF
-- **Deployment**: Nix for reproducible builds
+Solar Solution & Payback Analysis: Instantly receive solar system sizing, components, installation flow, environmental benefits, and payback period.
 
-### 🚀 Quick Start
+PDF Export: Download all analysis and recommendations as a formatted PDF report.
 
-#### Prerequisites
-- Node.js 18+
-- Ollama (for AI analysis)
-- Git
+Command History: View a timeline of your recent simulations and analyses.
 
-#### Installation
+Educational Utility: Helps users understand the chain-reaction consequences of climate actions and solutions through natural language.
 
-1. **Install Dependencies**
-   ```bash
-   cd AI-CLIMATE-SIMULATOR/nextjs-app
-   npm install
-   ```
+Full Reset: Instantly restore Earth’s health for comparative simulations.
 
-2. **Start Ollama**
-   ```bash
-   curl -fsSL https://ollama.ai/install.sh | sh
-   ollama pull deepseek-r1:8b
-   ```
+🛠️ Tech Stack
+Frontend: Next.js 14, TypeScript
 
-3. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
+3D Graphics: Three.js, React Three Fiber
 
-4. **Open Browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+AI Integration: Ollama (deepseek-r1:8b)
 
-### 🎮 How to Use
+Styling: Tailwind CSS
 
-#### Submit Your Idea
-- Enter your energy or pollution solution in the Metrics Panel.
-- Click **Submit** to analyze its environmental impact.
+Icons: Lucide React
 
-#### AI Analysis Process
-1. **Idea Input**: Type your solution or environmental action
-2. **AI Calculation**: deepseek-r1:8b analyzes the impact
-3. **Real-time Effects**: Metrics and globe visualization update instantly
-4. **Population Changes**: See human, animal, and plant populations affected
-5. **PDF Export**: Download the result and analysis
+Animations: Framer Motion
 
-#### Real-time Metrics
-Metrics update live:
-- **CO₂ Level** (ppm)
-- **Toxicity Level** (%)
-- **Temperature** (°C)
-- **Human Population**
-- **Animal Population**
-- **Plant Population**
-- **Ocean Acidity** (pH)
-- **Ice Cap Melting** (%)
+PDF: jsPDF, jspdf-autotable
 
-### 🤖 AI Integration
+DevOps: Nix for stable, reproducible builds
 
-The project uses **Ollama** with the **deepseek-r1:8b** model for environmental impact analysis. The AI:
-- Parses natural language ideas and commands
-- Calculates realistic effects on all metrics
-- Controls simulation and provides detailed analysis
+🚀 Quick Start
+Prerequisites
+Node.js 18+
 
-### 🎨 Customization
+Ollama (for AI analysis)
 
-#### Adding New Command Types
-1. Edit the prompt in [`app/api/process-command/route.ts`](nextjs-app/app/api/process-command/route.ts)
-2. Adjust effect calculations and validation logic
-3. Update the UI in [`components/MetricsPanel.tsx`](nextjs-app/components/MetricsPanel.tsx) for new metrics
+Git
 
-#### Modifying Visual Effects
-- Edit [`components/Globe.tsx`](nextjs-app/components/Globe.tsx) for 3D changes
-- Update [`components/MetricsPanel.tsx`](nextjs-app/components/MetricsPanel.tsx) for UI changes
-- Modify [`app/globals.css`](nextjs-app/app/globals.css) for styling
+Installation
+bash
+cd AI-CLIMATE-SIMULATOR/nextjs-app
+npm install
+Start Ollama
+bash
+# Install Ollama (if not already)
+curl -fsSL https://ollama.ai/install.sh | sh
 
-#### AI Analysis Customization
-- Change the prompt in [`app/api/process-command/route.ts`](nextjs-app/app/api/process-command/route.ts)
-- Update the model in [`ollama-model.txt`](AI-CLIMATE-SIMULATOR/ollama-model.txt)
-- Adjust effect validation and ranges
+# Pull the model
+ollama pull deepseek-r1:8b
+Start Development Server
+bash
+npm run dev
+Open Your Browser
+Go to http://localhost:3000
 
-### 📊 Educational Impact
+🎮 How to Use
+1. Enter Your Scenario
+Use the input panel to specify energy needs or pollution/solution ideas (example: “My home uses 10kWh per day...”).
 
-This project demonstrates:
-- **Cause and Effect**: How human actions affect environmental systems
-- **Interconnected Systems**: Climate, population, and environment relationships
-- **Visual Learning**: Abstract concepts made tangible through 3D visualization
-- **Immediate Feedback**: Real-time consequences of environmental actions
-- **AI Insights**: Intelligent analysis of complex environmental impacts
-- **Natural Language**: Intuitive interaction with environmental simulation
+Submit your query.
 
-### 🔧 Development
+2. AI Analysis
+The deepseek-r1:8b model processes and simulates your scenario.
 
-#### Project Structure
-```
+All environmental metrics and the AI’s recommendation are instantly updated and visualized.
+
+3. Explore & Export
+Scroll through detailed results and component recommendations in the Metrics Panel.
+
+Download a full PDF summary.
+
+Use Command History to quickly review your recent simulations.
+
+Hit "Reset All" to clear and start a new scenario.
+
+📊 Real-Time Metrics
+The following indicators update live with your actions:
+
+CO₂ Level (ppm)
+
+Toxicity Level (%)
+
+Temperature (°C)
+
+Human Population
+
+Animal Population
+
+Plant Population
+
+Ocean Acidity (pH)
+
+Ice Cap Melting (%)
+
+🤖 AI Integration
+Uses Ollama and the deepseek-r1:8b model to:
+
+Parse natural-language requests for energy and environmental actions.
+
+Calculate and recommend solar system requirements, battery size, inverter need, CO₂ savings, and payback period.
+
+Update Earth model and metrics with environmental cause and effect.
+
+🎨 Customization
+Adding New Actions or Metrics
+Prompts & Calculation: Edit the logic in app/api/process-command/route.ts.
+
+UI Display: Add or adjust displays in components/MetricsPanel.tsx.
+
+3D Visualization: Change globe effects in components/Globe.tsx.
+
+Styling: Modify app/globals.css.
+
+Tweaking AI/Models
+Adjust initial prompts in app/api/process-command/route.ts.
+
+Change Ollama’s model in ollama-model.txt.
+
+📦 Project Structure
+text
 AI-CLIMATE-SIMULATOR/
 ├── nextjs-app/
 │   ├── app/
@@ -133,37 +145,39 @@ AI-CLIMATE-SIMULATOR/
 │   ├── flake.nix
 │   ├── ollama-model.txt
 │   └── package.json
-```
+Scripts
+npm run dev  — Start development server
 
-#### Available Scripts
-- `npm run dev`: Start development server
-- `npm run build`: Build for production
-- `npm run start`: Start production server
-- `npm run lint`: Run ESLint
+npm run build — Production build
 
-#### Nix Commands
-- `nix build`: Build the project
-- `nix run`: Run the project with Ollama
-- `nix develop`: Enter development environment
+npm run start — Start production server
 
-### 🌍 Environmental Impact
+npm run lint  — Lint code
 
-This project raises awareness about climate change through AI-powered interactive visualization, making complex environmental concepts tangible and impactful via natural language interaction.
+Nix
+nix build    — Build project
 
-### 🤝 Contributing
+nix run      — Run app with Ollama model
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+nix develop  — Enter reproducible dev environment
 
-### 📄 License
+📚 Educational Value
+Demonstrates interconnected systems: how human activity, energy needs, or environmental solutions impact global health.
 
+Makes cause and effect relationships tangible.
+
+Provides instant, visual feedback for learning and experimentation.
+
+Leverages AI for deep, realistic environmental reasoning.
+
+🤝 Contributing
+Fork the repository.
+
+Create a new feature branch.
+
+Make your changes and test thoroughly.
+
+Submit a pull request.
+
+📄 License
 This project is part of the OpenxAI Global AI Accelerator.
-
----
-
-*"The best time to plant a tree was 20 years ago. The second best time is now."*
-
-**🌍 Dead-Earth Project - AI-Controlled Climate Change Simulation**
