@@ -3,90 +3,118 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 241, 245, 249;
   --background-end-rgb: 255, 255, 255;
+
+  --primary-start-rgb: 107, 33, 168;
+  --primary-mid-rgb: 219, 39, 119;
+  --primary-end-rgb: 239, 68, 68;
+
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 248, 250, 252;
+    --background-start-rgb: 17, 24, 39;
+    --background-end-rgb: 17, 24, 39;
+
+    --primary-start-rgb: 126, 34, 206;
+    --primary-mid-rgb: 225, 29, 72;
+    --primary-end-rgb: 244, 63, 94;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
+      to bottom right,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    );
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
 }
 
-/* Custom educational theme */
-.learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+html {
+  scroll-behavior: smooth;
+}
+
+.container {
+  @apply max-w-6xl mx-auto px-4;
+}
+
+.card {
+  @apply bg-white/10 backdrop-blur-sm rounded-xl shadow-lg p-6 transition-all hover:shadow-xl;
+}
+
+.btn {
+  @apply px-6 py-3 rounded-lg font-medium transition-all;
+}
+.btn-primary {
+  @apply bg-purple-600 hover:bg-purple-700 text-white shadow;
+}
+.btn-secondary {
+  @apply bg-white/20 text-white hover:bg-white/30;
+}
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-600 text-white;
 }
 
 .flashcard {
   perspective: 1000px;
 }
-
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 220px;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.7s ease;
   transform-style: preserve-3d;
 }
-
 .flashcard.flipped .flashcard-inner {
   transform: rotateY(180deg);
 }
-
-.flashcard-front, .flashcard-back {
+.flashcard-front,
+.flashcard-back {
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
-
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #6366f1, #a855f7);
   color: white;
 }
-
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  color: #073422;
   transform: rotateY(180deg);
 }
 
+/* Quiz options */
 .quiz-option {
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  border-radius: var(--radius-lg);
 }
-
 .quiz-option:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #10b981, #34d399);
   color: white;
 }
-
 .quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
   color: white;
-} 
+}
