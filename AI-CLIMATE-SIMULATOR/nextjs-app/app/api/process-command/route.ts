@@ -182,7 +182,7 @@ ${
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: model,
+        model: 'llama3:latest',
         prompt: prompt,
         stream: false,
       }),
