@@ -1,27 +1,126 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import React from 'react';
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+const GlorifiedUI = () => {
+  return (
+    <div className="min-h-screen gradient-bg text-white">
+      <div className="container mx-auto px-4 py-12">
+        {/* Header */}
+        <header className="glass-effect rounded-2xl p-8 mb-12 animate-glow">
+          <h1 className="text-5xl font-bold text-center mb-4 text-shadow">GLORIFIED UI</h1>
+          <p className="text-xl text-center opacity-90">A stunning transformation with modern design elements</p>
+        </header>
+        
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          {/* Card 1 */}
+          <div className="glass-effect rounded-2xl p-6 animate-float">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-semibold text-center mb-3 text-shadow">Lightning Fast</h2>
+            <p className="text-center opacity-80">Optimized performance with smooth animations and transitions for a premium experience.</p>
+          </div>
+          
+          {/* Card 2 */}
+          <div className="glass-effect rounded-2xl p-6 animate-float" style={{animationDelay: '1s'}}>
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-semibold text-center mb-3 text-shadow">Beautiful Design</h2>
+            <p className="text-center opacity-80">Elegant UI with glass morphism effects and carefully crafted visual elements.</p>
+          </div>
+          
+          {/* Card 3 */}
+          <div className="glass-effect rounded-2xl p-6 animate-float" style={{animationDelay: '2s'}}>
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-semibold text-center mb-3 text-shadow">Secure</h2>
+            <p className="text-center opacity-80">Enterprise-grade security with modern encryption and protection protocols.</p>
+          </div>
+        </div>
+        
+        {/* CTA Section */}
+        <div className="glass-effect rounded-2xl p-10 text-center mb-12">
+          <h2 className="text-4xl font-bold mb-6 text-shadow-md">Ready to Experience Glory?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">Join thousands of satisfied users who have transformed their experience with our glorified UI.</p>
+          <button className="bg-white text-blue-600 font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transform transition duration-300 animate-glow">
+            Get Started Now
+          </button>
+        </div>
+        
+        {/* Footer */}
+        <footer className="text-center text-sm opacity-75">
+          <p>© 2023 Glorified UI. All rights reserved.</p>
+        </footer>
+      </div>
+      
+      {/* Inline Styles */}
+      <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+          font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-bg {
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: gradient 15s ease infinite;
+        }
+        
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        .glass-effect {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .text-shadow {
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-shadow-md {
+          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes glow {
+          0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6; }
+          100% { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6; }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+        }
+        
+        .animate-glow {
+          animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
+  );
+};
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} 
+export default GlorifiedUI;
