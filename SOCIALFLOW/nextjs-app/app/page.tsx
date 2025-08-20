@@ -109,7 +109,7 @@ export default function SocialNetwork() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">💬 Social Network AI</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">💬 InstaGenie - Social Network AI</h1>
           <p className="text-white/80 text-lg">AI-Powered Social Media Tools</p>
         </div>
 
