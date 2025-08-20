@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 17, 24, 39; /* Slate-900 */
+  --background-start-rgb: 240, 249, 255; /* sky-50 */
+  --background-end-rgb: 224, 231, 255;   /* indigo-50 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 243, 244, 246; /* Gray-100 */
+    --background-start-rgb: 15, 23, 42; /* Slate-900 */
+    --background-end-rgb: 30, 41, 59;   /* Slate-800 */
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: radial-gradient(
+      circle at top left,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+  font-family: 'Inter', sans-serif;
+  @apply antialiased;
+}
+
+/* Glassmorphism container style */
+.glass-container {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+
+/* Audio visualizer bars */
+.audio-visualizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+}
+
+.audio-bar {
+  width: 4px;
+  background: linear-gradient(180deg, #06b6d4, #3b82f6, #8b5cf6);
+  border-radius: 4px;
+  animation: audioWave 1s ease-in-out infinite;
+}
+
+.audio-bar:nth-child(1) { animation-delay: 0s; }
+.audio-bar:nth-child(2) { animation-delay: 0.15s; }
+.audio-bar:nth-child(3) { animation-delay: 0.3s; }
+.audio-bar:nth-child(4) { animation-delay: 0.45s; }
+.audio-bar:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes audioWave {
+  0%, 100% { height: 8px; }
+  50% { height: 40px; }
+}
+
+/* Animated gradient background waves */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.hero-bg span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: move 20s linear infinite;
+}
+
+.hero-bg span:nth-child(1) {
+  width: 400px; height: 400px;
+  background: #8b5cf6;
+  top: -150px; left: -150px;
+}
+.hero-bg span:nth-child(2) {
+  width: 300px; height: 300px;
+  background: #06b6d4;
+  bottom: -100px; right: -120px;
+}
+.hero-bg span:nth-child(3) {
+  width: 250px; height: 250px;
+  background: #f472b6;
+  top: 50%; left: 40%;
+}
+
+@keyframes move {
+  0% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(50px, -50px) scale(1.1); }
+  100% { transform: translate(0,0) scale(1); }
+}
