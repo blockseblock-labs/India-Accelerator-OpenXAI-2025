@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
 
     if (!audioFile) {
       return NextResponse.json({ error: 'No audio file provided' }, { status: 400 })
+    
     }
 
     // For now, return a mock transcription
@@ -39,7 +40,8 @@ export async function POST(req: NextRequest) {
       transcription: mockTranscription,
       analysis: data.response || 'No analysis available'
     })
-  } catch (error) {
+  }
+    catch (error) {
     console.error('Transcribe API error:', error)
     return NextResponse.json(
       { error: 'Failed to process audio transcription' },
