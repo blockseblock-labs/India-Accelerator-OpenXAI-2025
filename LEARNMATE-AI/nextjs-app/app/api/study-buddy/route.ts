@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,7 +22,7 @@ Question: ${question}`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2:1b',
+        model: 'llama3:8b',
         prompt: prompt,
         stream: false,
       }),
