@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'TextStream Template',
-  description: 'A template for building text streaming applications',
+  title: 'Prompt Playgrounde',
+  description: 'Real-time AI prompt testing with Next.js + Ollama',
 }
 
 export default function RootLayout({
