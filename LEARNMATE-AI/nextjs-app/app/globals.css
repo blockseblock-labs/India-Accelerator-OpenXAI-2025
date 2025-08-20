@@ -2,91 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* -- Theme variables (light/dark aware) */
+:root{
+  --fg: 255, 255, 255;
+  --glass: rgba(255,255,255,0.08);
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@media (prefers-color-scheme: light){
+  :root{
+    --fg: 10, 10, 10;
+    --glass: rgba(0,0,0,0.04);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-/* Custom educational theme */
+/* Page background gradient for LearnMate */
 .learn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 40%, #ec4899 100%);
 }
 
+/* base body (keeps Tailwind defaults for fonts) */
+body {
+  background: transparent;
+  color: rgb(var(--fg));
+}
+
+/* Flashcard 3D flip */
 .flashcard {
-  perspective: 1000px;
+  perspective: 1200px;
+  width: 100%;
+  max-width: 640px;
 }
-
 .flashcard-inner {
   position: relative;
   width: 100%;
-  height: 200px;
-  text-align: center;
-  transition: transform 0.6s;
+  height: 220px;
   transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
 }
-
-.flashcard.flipped .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-.flashcard-front, .flashcard-back {
+.flashcard-inner .flashcard-front,
+.flashcard-inner .flashcard-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  border-radius: 14px;
   backface-visibility: hidden;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.18);
 }
-
 .flashcard-front {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg,#06b6d4 0%, #3b82f6 100%);
   color: white;
 }
-
 .flashcard-back {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg,#10b981 0%, #06b6d4 100%);
   color: white;
   transform: rotateY(180deg);
 }
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
 
+/* quiz option hover + states */
 .quiz-option {
-  transition: all 0.3s ease;
+  transition: all 0.28s ease;
 }
-
 .quiz-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.12);
 }
-
 .quiz-option.correct {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  background: linear-gradient(135deg,#06b6d4 0%, #3b82f6 100%) !important;
+  color: white !important;
+}
+.quiz-option.incorrect {
+  background: linear-gradient(135deg,#fb7185 0%, #f59e0b 100%) !important;
+  color: white !important;
 }
 
-.quiz-option.incorrect {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
-} 
+/* small utilities */
+.bg-white\/5 { background-color: rgba(255,255,255,0.05); }
+.bg-white\/10 { background-color: rgba(255,255,255,0.10); }
+.bg-white\/20 { background-color: rgba(255,255,255,0.18); }
