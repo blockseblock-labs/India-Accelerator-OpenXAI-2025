@@ -1,108 +1,74 @@
-# 📚 LearnAI Template
+# LearnMate AI
 
-A Next.js template for building educational AI applications! This template provides three powerful learning tools: Flashcard Maker, Quiz Generator, and Ask-Me Study Buddy.
+## Overview
+LearnMate AI is an AI-powered educational assistant designed to help students learn effectively through interactive flashcards, quizzes, and a conversational study buddy. It leverages large language models to generate study materials from raw notes and provide real-time answers to academic questions.
 
-## Features
+## UI Redesign: Classic Techy Vibe with Extraordinary Elements
+This version of LearnMate AI features a completely redesigned user interface, focusing on an elegant, classic techy aesthetic. Key UI enhancements include:
 
-### 🃏 Flashcard Maker
-- **Smart Flashcards**: Paste your notes and AI creates interactive flashcards
-- **Review Mode**: Flip cards to test your knowledge
-- **Bulk Creation**: Generate multiple flashcards from large text blocks
+*   **Revamped Color Palette:** Utilizes a dark, futuristic background with vibrant neon blue, purple, and green accents to create a high-tech feel.
+*   **Dynamic Backgrounds:** Features a subtle animated grid pattern and a soft scanline overlay for an immersive, data-flow ambiance.
+*   **Enhanced Component Styling:**
+    *   **Cards/Containers:** Improved "glassmorphism" effect with stronger blur, pulsating neon borders, and a subtle 3D tilt on hover.
+    *   **Inputs & Textareas:** Designed for a "holographic" data entry feel with glowing borders on focus.
+    *   **Buttons:** Interactive gradient buttons with light streak animations on hover and a subtle glitch-like effect on click, providing a tactile, futuristic experience.
+*   **Extraordinary Elements:** Key interactive areas incorporate a custom pulsing glow effect, adding a layer of sophisticated visual engagement.
+*   **Responsive and Intuitive Design:** Ensures a seamless user experience across various devices.
 
-### 📝 Quiz Maker  
-- **Auto Quiz Generation**: Paste text and get a complete quiz
-- **Multiple Choice**: AI generates questions with multiple choice answers
-- **Instant Feedback**: Get immediate results and explanations
+## Getting Started
 
-### 🤖 Ask-Me Study Buddy
-- **AI Study Partner**: Ask any question and get helpful explanations
-- **Interactive Learning**: Follow-up questions and clarifications
-- **Subject Agnostic**: Works for any topic or subject
+Follow these steps to set up and run the LearnMate AI project locally.
 
-## 🚀 Getting Started
+### Prerequisites
 
-### Installation
+*   Node.js (LTS version recommended)
+*   npm (comes with Node.js)
+*   Git
 
-1. Navigate to the nextjs-app directory:
-```bash
-cd nextjs-app
-```
+### Setup Instructions
 
-2. Install dependencies:
-```bash
-npm install
-```
+1.  **Clone the Repository (if you haven't already):**
+    If you haven't cloned the main `India-Accelerator-OpenXAI-2025` repository, do so first:
+    ```bash
+    git clone https://github.com/blockseblock-labs/India-Accelerator-OpenXAI-2025.git
+    cd India-Accelerator-OpenXAI-2025
+    ```
 
-3. Run the development server:
-```bash
-npm run dev
-```
+2.  **Navigate to the LearnMate AI Project:**
+    Move into the specific Next.js application directory for LearnMate AI:
+    ```bash
+    cd LEARNMATE-AI/nextjs-app
+    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3.  **Install Dependencies:**
+    Install all required Node.js packages:
+    ```bash
+    npm install
+    ```
 
-## 📁 Project Structure
+4.  **Run the Development Server:**
+    Start the Next.js development server:
+    ```bash
+    npm run dev
+    ```
 
-```
-nextjs-app/
-├── app/
-│   ├── api/
-│   │   ├── flashcards/
-│   │   │   └── route.ts          # Flashcard generation endpoint
-│   │   ├── quiz/
-│   │   │   └── route.ts          # Quiz generation endpoint
-│   │   └── study-buddy/
-│   │       └── route.ts          # Study buddy chat endpoint
-│   ├── globals.css               # Global styles
-│   ├── layout.tsx                # Root layout component
-│   └── page.tsx                  # Main interface with all features
-├── package.json                  # Dependencies and scripts
-└── tsconfig.json                 # TypeScript configuration
-```
+5.  **View the Application:**
+    Open your web browser and navigate to `http://localhost:3000` to see the LearnMate AI application in action with its new UI.
 
-## 🎯 How to Use
+## Project Structure (within `LEARNMATE-AI/nextjs-app`)
 
-### Flashcard Maker
-1. Click on the "Flashcard Maker" tab
-2. Paste your study notes in the text area
-3. Click "Generate Flashcards" 
-4. Review and flip through your generated flashcards
+*   `app/`: Contains the main application pages and API routes.
+    *   `api/`: Backend API routes for flashcard, quiz, and study buddy generation.
+    *   `globals.css`: Global Tailwind CSS styles and custom CSS for the techy UI.
+    *   `layout.tsx`: Root layout for the Next.js application.
+    *   `page.tsx`: Main application page containing the tabbed interface for Flashcards, Quiz, and Study Buddy.
+*   `components/`: Reusable React components.
+    *   `header.jsx`: The header component of the application.
 
-### Quiz Maker
-1. Select the "Quiz Maker" tab
-2. Paste the text you want to be quizzed on
-3. Click "Create Quiz"
-4. Answer the multiple choice questions and get instant feedback
+## Contribution
 
-### Study Buddy
-1. Go to the "Study Buddy" tab
-2. Type any question you have about your subject
-3. Get detailed explanations and ask follow-up questions
+This project is part of the India-Accelerator-OpenXAI-2025 internship program. Contributions are made via Pull Requests to the main repository.
 
-## 🤖 AI Model
+---
 
-This template uses Ollama with the `llama3.2:1b` model for all AI operations. Make sure you have Ollama installed and the model downloaded:
-
-```bash
-ollama pull llama3.2:1b
-```
-
-## 🎨 Customization
-
-- Modify the UI in `app/page.tsx`
-- Adjust AI prompts in the API routes
-- Customize styling in `app/globals.css`
-- Add more features by creating new API endpoints
-
-## 🛠 Dependencies
-
-- **Next.js 14**: React framework
-- **TypeScript**: Type safety
-- **Tailwind CSS**: Styling
-- **Ollama**: Local AI model integration
-
-## 📖 Educational Use Cases
-
-- **Students**: Create study materials from lecture notes
-- **Teachers**: Generate quizzes and learning aids
-- **Self-learners**: Get AI tutoring on any topic
-- **Exam Prep**: Practice with generated questions and flashcards 
+**Happy Learning!** 🚀 
