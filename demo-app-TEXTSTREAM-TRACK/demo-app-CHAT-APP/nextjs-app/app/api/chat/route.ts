@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama2',
-        prompt: message,
+        model: 'llama3:latest',
+        prompt: `Summarize the following text:\n${message}`,
         stream: false,
       }),
     })
@@ -21,10 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await response.json()
-    
-    return NextResponse.json({ 
-      message: data.response || 'No response from model' 
-    })
+    return NextResponse.json({ message: data.response })
   } catch (error) {
     console.error('Chat API error:', error)
     return NextResponse.json(
@@ -32,4 +29,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
-} 
+}

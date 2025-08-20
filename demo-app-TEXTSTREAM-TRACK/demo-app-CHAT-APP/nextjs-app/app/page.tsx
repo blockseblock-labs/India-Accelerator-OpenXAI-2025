@@ -27,7 +27,8 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ message: userMessage.content }),
+
       })
 
       if (!response.ok) {
