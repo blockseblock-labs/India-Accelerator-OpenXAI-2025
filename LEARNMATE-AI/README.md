@@ -105,4 +105,7 @@ ollama pull llama3.2:1b
 - **Students**: Create study materials from lecture notes
 - **Teachers**: Generate quizzes and learning aids
 - **Self-learners**: Get AI tutoring on any topic
-- **Exam Prep**: Practice with generated questions and flashcards 
+- **Exam Prep**: Practice with generated questions and flashcards
+
+- This is my submission for the OpenXAI Internship mini task.
+
