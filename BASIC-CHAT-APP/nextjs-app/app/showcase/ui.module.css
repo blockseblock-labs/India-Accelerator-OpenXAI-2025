@@ -1,0 +1,30 @@
+.wrapper {
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 20% 0%, rgba(99,102,241,.20), transparent 60%),
+      radial-gradient(1000px 500px at 80% 10%, rgba(16,185,129,.18), transparent 60%),
+      linear-gradient(180deg, #0b1020, #0f172a);
+    color: #e5e7eb; padding: 40px 20px 80px;
+  }
+  .hero { max-width: 1000px; margin: 0 auto 36px; text-align: center; }
+  .title { font-size: 42px; font-weight: 800; margin: 10px 0 12px; }
+  .accent { background: linear-gradient(90deg, #a78bfa, #34d399); -webkit-background-clip: text; color: transparent; }
+  .subtitle { color: #cbd5e1; max-width: 760px; margin: 0 auto 24px; font-size: 18px; }
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .primaryBtn, .ghostBtn { padding: 12px 18px; border-radius: 12px; font-weight: 600; text-decoration: none;
+    transition: transform .15s, box-shadow .15s, background .2s, color .2s; }
+  .primaryBtn { background: #6366f1; color: #fff; box-shadow: 0 8px 24px rgba(99,102,241,.35); }
+  .primaryBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(99,102,241,.45); }
+  .ghostBtn { color: #e5e7eb; border: 1px solid #e5e7eb33; }
+  .ghostBtn:hover { background: #94a3b81f; transform: translateY(-2px); }
+  .grid { display: grid; gap: 16px; margin: 32px auto 0; max-width: 1100px; grid-template-columns: 1fr; }
+  @media (min-width:640px){ .grid{ grid-template-columns: repeat(2,1fr);} }
+  @media (min-width:1024px){ .grid{ grid-template-columns: repeat(4,1fr);} }
+  .card { background: linear-gradient(180deg, rgba(15,23,42,.8), rgba(2,6,23,.8));
+    border: 1px solid rgba(148,163,184,.15); border-radius: 16px; padding: 18px; min-height: 120px;
+    box-shadow: 0 8px 30px rgba(2,6,23,.35); transition: transform .15s, border-color .2s, box-shadow .2s; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(99,102,241,.45); box-shadow: 0 14px 36px rgba(99,102,241,.25); }
+  .card h3 { margin: 2px 0 6px; font-size: 18px; }
+  .card p { color: #cbd5e1; font-size: 14px; }
+  .footer { text-align: center; margin-top: 36px; color: #94a3b8; }
+  
