@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 20, 20, 20;
+  --background-start-rgb: 186, 230, 253;
+  --background-end-rgb: 219, 234, 254;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 245, 245, 245;
+    --background-start-rgb: 30, 58, 138;
+    --background-end-rgb: 17, 24, 39;
   }
 }
 
@@ -30,4 +30,4 @@ body {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+}

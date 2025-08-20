@@ -7,8 +7,8 @@ export default function Home() {
         <div className="bg-black/20 p-8 rounded-lg backdrop-blur-sm">
           <canvas 
             id="gameCanvas" 
-            width="400" 
-            height="300" 
+            width="800"
+            height="300"
             className="border-2 border-white/30 rounded"
           >
             Your browser does not support the canvas element.
@@ -26,4 +26,4 @@ export default function Home() {
       </div>
     </main>
   )
-} 
+}
