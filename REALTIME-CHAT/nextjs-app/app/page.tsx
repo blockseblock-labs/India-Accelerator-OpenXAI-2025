@@ -1,166 +1,162 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Send, Bot, User } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react';
+import { Send, Bot, User, CheckCheck, MoreVertical, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import TextareaAutosize from 'react-textarea-autosize';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
-  role: 'user' | 'assistant'
-  content: string
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
 }
 
+// Header for the conversation, now specifically for the AI Assistant
+const ConversationHeader = () => (
+  <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-4 shadow-sm">
+    <div className="flex items-center gap-3">
+      <ArrowLeft size={20} className="cursor-pointer text-gray-600 md:hidden" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-color)] text-white">
+        <Bot size={22} />
+      </div>
+      <div className="flex flex-col">
+        <p className="font-semibold text-gray-800">AI Assistant</p>
+        <p className="text-xs text-green-500">online</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-4">
+      <MoreVertical size={20} className="cursor-pointer text-gray-600" />
+    </div>
+  </header>
+);
+
+// --- MAIN CHAT COMPONENT ---
+
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages([
+      { role: 'assistant', content: 'Hello! How can I help you today?', timestamp: getCurrentTime() }
+    ]);
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
+
+  const getCurrentTime = () => new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
   const sendMessage = async () => {
-    if (!input.trim()) return
-
-    const userMessage: Message = { role: 'user', content: input }
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
-    setIsLoading(true)
+    if (!input.trim()) return;
+    const userMessage: Message = { role: 'user', content: input, timestamp: getCurrentTime() };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput('');
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages }),
+      });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response')
-      }
+      if (!response.ok || !response.body) throw new Error('Failed to get response');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantResponse = '';
 
-      const reader = response.body?.getReader()
-      if (!reader) throw new Error('No reader available')
+      setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: getCurrentTime() }]);
 
-      const assistantMessage: Message = { role: 'assistant', content: '' }
-      setMessages(prev => [...prev, assistantMessage])
-
-      const decoder = new TextDecoder()
-      let done = false
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read()
-        done = doneReading
-        
-        if (value) {
-          const chunk = decoder.decode(value, { stream: true })
-          setMessages(prev => {
-            const newMessages = [...prev]
-            const lastMessage = newMessages[newMessages.length - 1]
-            if (lastMessage.role === 'assistant') {
-              lastMessage.content += chunk
-            }
-            return newMessages
-          })
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        for (const line of lines) {
+          const parsed = JSON.parse(line);
+          if (parsed.message && parsed.message.content) {
+            assistantResponse += parsed.message.content;
+            setMessages(prev => {
+              const updatedMessages = [...prev];
+              const lastMsg = updatedMessages[updatedMessages.length - 1];
+              lastMsg.content = assistantResponse;
+              lastMsg.timestamp = getCurrentTime();
+              return updatedMessages;
+            });
+          }
         }
       }
     } catch (error) {
-      console.error('Error sending message:', error)
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Sorry, there was an error processing your message.' 
-      }])
+      console.error('Error:', error);
+      setMessages(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { role: 'assistant', content: 'Sorry, an error occurred.', timestamp: getCurrentTime() };
+        return updated;
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
+  };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600">
-      <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
-        <div className="text-center text-white mb-8">
-          <h1 className="text-6xl font-bold mb-4">💬 TextStream Template</h1>
-          <p className="text-xl opacity-90">Real-time AI chat with streaming responses!</p>
-        </div>
-        
-        <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-            {messages.length === 0 ? (
-              <div className="text-center text-white/60 py-12">
-                <Bot size={48} className="mx-auto mb-4" />
-                <p>Start a conversation! Type a message below.</p>
-              </div>
-            ) : (
-              messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex items-start space-x-3 ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  {message.role === 'assistant' && (
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <Bot size={16} className="text-white" />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-xs lg:max-w-2xl px-4 py-2 rounded-lg ${
-                      message.role === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-700 text-white'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+    // The main container now has h-full to fit within the new layout
+    <div className="mx-auto flex h-full max-w-4xl flex-col border-x bg-white">
+      <ConversationHeader />
+
+      <main className="flex-1 overflow-y-auto bg-[var(--bg-color)] p-4 sm:p-6">
+        <div className="space-y-4">
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", damping: 18, stiffness: 150 }}
+                className={`flex items-end gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`w-fit max-w-lg rounded-xl px-3 py-2 shadow-sm ${message.role === 'user' ? 'rounded-br-none bg-[var(--user-bubble)]' : 'rounded-bl-none bg-[var(--assistant-bubble)]'}`}>
+                  <div className="prose prose-sm max-w-none text-gray-800">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {message.content || '...'}
+                    </ReactMarkdown>
                   </div>
-                  {message.role === 'user' && (
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <User size={16} className="text-white" />
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-            {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <Bot size={16} className="text-white" />
-                </div>
-                <div className="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                  <div className="mt-1 flex items-center justify-end gap-1.5">
+                    <p className="text-xs text-gray-400">{message.timestamp}</p>
+                    {message.role === 'user' && <CheckCheck size={16} className="text-blue-500" />}
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Input */}
-          <div className="flex space-x-4">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message here..."
-              className="flex-1 bg-white/20 text-white placeholder-white/60 px-4 py-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-white/50"
-              rows={1}
-              disabled={isLoading}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={isLoading || !input.trim()}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
-            >
-              <Send size={20} />
-              <span>Send</span>
-            </button>
-          </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <div ref={messagesEndRef} />
         </div>
-      </div>
-    </main>
-  )
-} 
+      </main>
+
+      <footer className="shrink-0 border-t bg-gray-100 p-2 sm:p-4">
+        <div className="flex items-center gap-2">
+          <TextareaAutosize
+            value={input} onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+            placeholder="Message"
+            className="flex-1 resize-none rounded-full border-gray-300 bg-white px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)]"
+            minRows={1} maxRows={5} disabled={isLoading}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={isLoading || !input.trim()}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent-color)] text-white transition-colors hover:bg-blue-600 disabled:bg-gray-400"
+          >
+            <Send size={20} />
+          </button>
+        </div>
+      </footer>
+    </div>
+  );
+}
