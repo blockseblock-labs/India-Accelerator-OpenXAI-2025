@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Root Variables for Light & Dark Mode --- */
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 230, 240; /* Soft pastel pink */
+  --background-end-rgb: 230, 240, 255;   /* Soft pastel lavender/blue */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 40, 40, 60;   /* Dark pastel indigo */
+    --background-end-rgb: 60, 70, 90;     /* Dark pastel blue-gray */
+  }
+}
+
+/* --- Body Styles --- */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+  font-family: 'Inter', sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+/* --- Glass Card Base --- */
+.social-card {
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-card:hover {
+  backdrop-filter: blur(20px);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Tab Gradient Variants --- */
+.caption-card {
+  border-left: 4px solid #f09433; /* Instagram Orange */
+  background: rgba(240, 148, 51, 0.1);
+}
+
+.mood-card {
+  border-left: 4px solid #1DA1F2; /* Twitter Blue */
+  background: rgba(29, 161, 242, 0.1);
+}
+
+.hashtags-card {
+  border-left: 4px solid #667eea; /* Purple Gradient Accent */
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.translator-card {
+  border-left: 4px solid #22c1c3; /* Teal Accent */
+  background: rgba(34, 193, 195, 0.1);
+}
+
+.music-card {
+  border-left: 4px solid #ff7e5f; /* Orange Accent */
+  background: rgba(255, 126, 95, 0.1);
+}
+
+/* --- Mood Indicator --- */
+.mood-indicator {
+  display: inline-block;
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* --- Hashtags --- */
+.hashtag-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  margin: 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.hashtag-tag:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Copy Button --- */
+.copy-button {
+  transition: all 0.3s ease;
+}
+
+.copy-button:hover {
+  transform: scale(1.05);
+}
+
+.copy-button.copied {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  transform: scale(0.95);
+}
+
+/* --- Tab Content Animation --- */
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Inputs, Textareas, Selects --- */
+input, textarea, select {
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  color: inherit;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* --- Tab Buttons --- */
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* --- Smooth Scroll --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .flex-wrap {
+    flex-direction: column;
+  }
+  .space-x-2 > * {
+    margin-left: 0 !important;
+    margin-top: 0.5rem;
+  }
+}
