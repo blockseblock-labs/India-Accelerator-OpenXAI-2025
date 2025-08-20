@@ -1,284 +1,132 @@
-import React, { useState } from "react";
-import jsPDF from "jspdf";
+import React from "react"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 interface Metrics {
-  co2Level: number;
-  toxicityLevel: number;
-  temperature: number;
-  humanPopulation: number;
-  animalPopulation: number;
-  plantPopulation: number;
-  oceanAcidity: number;
-  iceCapMelting: number;
+  co2Level: number
+  toxicityLevel: number
+  temperature: number
+  humanPopulation: number
+  animalPopulation: number
+  plantPopulation: number
+  oceanAcidity: number
+  iceCapMelting: number
 }
 
 interface ComponentItem {
-  type: string;
-  quantity: number;
-  spec?: string;
+  type: string
+  quantity: number
+  spec?: string
 }
 
-const initialMetrics: Metrics = {
-  co2Level: 415,
-  toxicityLevel: 5,
-  temperature: 30,
-  humanPopulation: 9000000000,
-  animalPopulation: 100000000000,
-  plantPopulation: 1000000000000,
-  oceanAcidity: 8.1,
-  iceCapMelting: 10,
-};
+interface Props {
+  metrics: Metrics
+  analysis: string
+  components: ComponentItem[]
+  paybackDays: number | null
+  flowChart: string[]
+  aiThinkingLog?: string[]  // Optional, so default can be supplied
+}
 
-const initialPollutionLevel = 10;
-
-const MetricsPanel: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [components, setComponents] = useState<ComponentItem[]>([]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setSubmitted(false);
-    setAnalysis(null);
-    setMetrics(null);
-    setComponents([]);
-
-    try {
-      const res = await fetch("/api/process-command", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          command: search,
-          currentMetrics: initialMetrics,
-          pollutionLevel: initialPollutionLevel,
-        }),
-      });
-      const data = await res.json();
-      setAnalysis(data.analysis);
-      setMetrics(data.metrics);
-      setComponents(data.components || []);
-      setSubmitted(true);
-    } catch (err) {
-      setAnalysis("Error processing your search. Please try again.");
-      setMetrics(null);
-      setComponents([]);
-      setSubmitted(true);
-    }
-    setLoading(false);
-  };
-
-  const handleSell = (type: string) => {
-    alert(`You have chosen to sell: ${type}.`);
-    // Add more logic here if needed
-  };
-
+const MetricsPanel: React.FC<Props> = ({
+  metrics,
+  analysis,
+  components,
+  paybackDays,
+  flowChart,
+  aiThinkingLog = [],     // Default value here FIXES the crash
+}) => {
   const handleDownloadPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("🌱 Solve for Energy & Pollution", 10, 15);
-    doc.setFontSize(12);
-    doc.text(`Search Query: ${search}`, 10, 25);
-    doc.text("Analysis:", 10, 35);
+    const doc = new jsPDF()
+    doc.setFontSize(16)
+    doc.text("🌱 Solar Analysis & Payback Report", 10, 20)
 
-    if (analysis) {
-      const lines = doc.splitTextToSize(analysis, 180);
-      doc.text(lines, 10, 45);
-    }
+    doc.setFontSize(12)
+    doc.text("Analysis:", 10, 35)
+    doc.text(analysis || "No analysis yet.", 10, 45, { maxWidth: 180 })
 
-    let y = 55 + (analysis ? (jsPDF.prototype.splitTextToSize.call(doc, analysis, 180).length * 7) : 0);
-
-    if (metrics) {
-      doc.text("Metrics:", 10, y);
-      y += 10;
-      doc.text(`CO₂ Level: ${metrics.co2Level} ppm`, 10, y); y += 7;
-      doc.text(`Toxicity Level: ${metrics.toxicityLevel} %`, 10, y); y += 7;
-      doc.text(`Temperature: ${metrics.temperature} °C`, 10, y); y += 7;
-      doc.text(`Human Population: ${metrics.humanPopulation.toLocaleString()}`, 10, y); y += 7;
-      doc.text(`Animal Population: ${metrics.animalPopulation.toLocaleString()}`, 10, y); y += 7;
-      doc.text(`Plant Population: ${metrics.plantPopulation.toLocaleString()}`, 10, y); y += 7;
-      doc.text(`Ocean Acidity: ${metrics.oceanAcidity}`, 10, y); y += 7;
-      doc.text(`Ice Cap Melting: ${metrics.iceCapMelting} %`, 10, y);
-    }
+    doc.text("Metrics:", 10, 70)
+    doc.text(`CO₂ Level: ${metrics.co2Level}`, 10, 80)
+    doc.text(`Toxicity Level: ${metrics.toxicityLevel}`, 10, 87)
+    doc.text(`Temperature: ${metrics.temperature} °C`, 10, 94)
 
     if (components.length > 0) {
-      y += 10;
-      doc.text("Recommended Components:", 10, y);
-      y += 8;
-      components.forEach((comp) => {
-        doc.text(
-          `${comp.type}: ${comp.quantity} ${comp.spec ? `(${comp.spec})` : ""}`,
-          10,
-          y
-        );
-        y += 7;
-      });
+      autoTable(doc, {
+        startY: 110,
+        head: [["Type", "Quantity", "Spec"]],
+        body: components.map(c => [c.type, c.quantity, c.spec || "-"]),
+      })
     }
 
-    doc.save("search-result-analysis.pdf");
-  };
+    if (paybackDays) {
+      doc.text(`Payback: ${paybackDays} days`, 10, doc.lastAutoTable?.finalY + 15 || 140)
+    }
+
+    if (flowChart.length > 0) {
+      let y = doc.lastAutoTable?.finalY + 25 || 160
+      doc.text("Installation Flow Chart:", 10, y)
+      flowChart.forEach((step, i) => {
+        doc.text(`${i + 1}. ${step}`, 12, y + 8 + i * 7)
+      })
+    }
+
+    doc.save("solar-analysis.pdf")
+  }
 
   return (
-    <div
-      style={{
-        borderRadius: "16px",
-        boxShadow: "0 4px 24px rgba(98,137,245,0.15)",
-        border: "1px solid #78a3e9",
-        padding: "32px",
-        maxWidth: "540px",
-        background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)",
-        margin: "32px auto",
-      }}
-      aria-label="Metrics Panel"
-    >
-      <h2 style={{ color: "#2e7d32", marginBottom: "16px" }}>
-        🌱 Solve for Energy & Pollution
-      </h2>
-      <p style={{ color: "#333", fontSize: "1.1em" }}>
-        Search for your energy or pollution solution. Enter your requirement (e.g. "I need 10kWh per day for my house") and get instant recommendations for solar panels, batteries, inverters, and see how much CO₂ you can save!
-      </p>
-      <form onSubmit={handleSubmit} style={{ marginTop: "28px" }}>
-        <label htmlFor="search" style={{ fontWeight: "bold", color: "#1976d2" }}>
-          Search your energy requirement or idea:
-        </label>
-        <input
-          id="search"
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            marginTop: "8px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #90caf9",
-            fontSize: "1em",
-          }}
-          placeholder="E.g. I need 10kWh per day for my house"
-          required
-          aria-required="true"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            marginTop: "12px",
-            background: loading ? "#90caf9" : "#1976d2",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            padding: "10px 24px",
-            fontWeight: "bold",
-            cursor: loading ? "not-allowed" : "pointer",
-            boxShadow: "0 2px 8px rgba(25,118,210,0.08)",
-            transition: "background 0.2s",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-          }}
-          aria-busy={loading}
-        >
-          {loading && (
-            <span
-              style={{
-                width: "18px",
-                height: "18px",
-                border: "2px solid #fff",
-                borderTop: "2px solid #94eb57ff",
-                borderRadius: "50%",
-                display: "inline-block",
-                animation: "spin 1s linear infinite",
-              }}
-            />
-          )}
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </form>
-      {submitted && (
-        <div style={{ marginTop: "24px" }}>
-          <div style={{ color: "#54ec5cff", fontWeight: "bold", marginBottom: "12px" }}>
-            {analysis}
-          </div>
-          {metrics && (
-            <div
-              style={{
-                background: "#f5f5f5",
-                borderRadius: "8px",
-                padding: "16px",
-                boxShadow: "0 2px 8px rgba(98,137,245,0.08)",
-                color: "#47f380ff",
-                fontSize: "1em",
-              }}
-              aria-live="polite"
-            >
-              <div><strong>CO₂ Level:</strong> {metrics.co2Level} ppm</div>
-              <div><strong>Toxicity Level:</strong> {metrics.toxicityLevel} %</div>
-              <div><strong>Temperature:</strong> {metrics.temperature} °C</div>
-              <div><strong>Human Population:</strong> {metrics.humanPopulation.toLocaleString()}</div>
-              <div><strong>Animal Population:</strong> {metrics.animalPopulation.toLocaleString()}</div>
-              <div><strong>Plant Population:</strong> {metrics.plantPopulation.toLocaleString()}</div>
-              <div><strong>Ocean Acidity:</strong> {metrics.oceanAcidity}</div>
-              <div><strong>Ice Cap Melting:</strong> {metrics.iceCapMelting} %</div>
-            </div>
-          )}
-          {components.length > 0 && (
-            <div style={{ marginTop: "18px", background: "#fffde7", borderRadius: "8px", padding: "16px", boxShadow: "0 2px 8px rgba(255,235,59,0.08)" }}>
-              <h3 style={{ color: "#fbc02d", marginBottom: "10px" }}>Recommended Components for Sale</h3>
-              {components.map((comp, idx) => (
-                <div key={idx} style={{ marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span>
-                    <strong>{comp.type}</strong> — {comp.quantity} {comp.spec ? `(${comp.spec})` : ""}
-                  </span>
-                  <button
-                    onClick={() => handleSell(comp.type)}
-                    style={{
-                      background: "#fbc02d",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "6px 16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      marginLeft: "16px"
-                    }}
-                  >
-                    Sell
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          <button
-            onClick={handleDownloadPDF}
-            style={{
-              marginTop: "18px",
-              background: "#43a047",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              padding: "10px 24px",
-              fontWeight: "bold",
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(67,160,71,0.08)",
-              transition: "background 0.2s",
-            }}
-          >
-            Download Result as PDF
-          </button>
+    <div className="bg-white rounded-lg shadow-md p-4 w-full text-gray-900 max-h-[80vh] overflow-y-auto">
+      <h3 className="text-lg font-bold mb-3">AI Solar Recommendation</h3>
+
+      {/* AI Thinking Log */}
+      {aiThinkingLog.length > 0 && (
+        <div className="mb-3 p-2 bg-blue-50 rounded">
+          <p className="font-semibold text-blue-800 text-sm mb-1">AI Thinking...</p>
+          {aiThinkingLog.map((log, i) => (
+            <div key={i} className="text-xs text-gray-600">• {log}</div>
+          ))}
         </div>
       )}
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-          }
-        `}
-      </style>
+
+      {/* Analysis */}
+      {analysis && (
+        <div className="bg-gray-100 p-3 rounded mb-3">
+          <p className="whitespace-pre-line text-sm">{analysis}</p>
+        </div>
+      )}
+
+      {/* Components */}
+      {components.length > 0 && (
+        <div className="bg-yellow-50 p-3 rounded mb-3">
+          <h4 className="font-semibold text-yellow-700 mb-2">Recommended Components</h4>
+          {components.map((c, i) => (
+            <div key={i} className="text-sm mb-1">✅ {c.type} — {c.quantity} {c.spec && `(${c.spec})`}</div>
+          ))}
+        </div>
+      )}
+
+      {/* Payback */}
+      {paybackDays && (
+        <div className="bg-green-50 p-3 rounded mb-3">
+          <h4 className="font-semibold text-green-800">Payback Period</h4>
+          <p className="text-green-700 font-bold">{paybackDays} days</p>
+        </div>
+      )}
+
+      {/* Flow Chart */}
+      {flowChart.length > 0 && (
+        <div className="bg-blue-50 p-3 rounded mb-3">
+          <h4 className="font-semibold text-blue-800 mb-2">Installation Flow</h4>
+          <ol className="list-decimal ml-4 text-sm text-blue-900">
+            {flowChart.map((f, i) => <li key={i} className="mb-1">{f}</li>)}
+          </ol>
+        </div>
+      )}
+
+      <button onClick={handleDownloadPDF} className="w-full py-2 mt-2 bg-green-600 hover:bg-green-700 rounded text-white font-bold">
+        Download as PDF
+      </button>
     </div>
-  );
+  )
 }
-export default MetricsPanel;
+
+export default MetricsPanel
