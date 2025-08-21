@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "next": "^15.3.5",
-    "ollama": "^0.5.16"
+    "ollama": "^0.5.16",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.12",
