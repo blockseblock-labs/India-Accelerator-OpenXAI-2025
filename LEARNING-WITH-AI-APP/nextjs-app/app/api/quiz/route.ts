@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 {
   "quiz": [
     {
-      "question": "Question text here?",
+      "question": "Question  here?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correct": 0,
       "explanation": "Why this answer is correct"

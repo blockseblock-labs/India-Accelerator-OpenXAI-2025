@@ -6,12 +6,12 @@ export async function POST(req: NextRequest) {
 
     if (!question) {
       return NextResponse.json(
-        { error: 'Question is required' },
+        { error: 'Question required' },
         { status: 400 }
       )
     }
 
-    const prompt = `You are a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
+    const prompt = `You  a helpful study buddy AI. Answer the following question in a clear, educational way. Provide explanations, examples, and encourage learning. Be friendly and supportive.
 
 Question: ${question}`
 
