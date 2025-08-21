@@ -1,18 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --foreground-rgb: 33, 33, 33;
+  --background-start-rgb: 230, 235, 240;
   --background-end-rgb: 255, 255, 255;
+  --accent-rgb: 100, 149, 237; /* Cornflower Blue */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 240, 240, 240;
+    --background-start-rgb: 15, 15, 15;
+    --background-end-rgb: 30, 30, 30;
+    --accent-rgb: 173, 216, 230; /* Light Blue */
   }
 }
 
@@ -26,8 +24,15 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Canvas tweaks */
 #gameCanvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-} 
+  border: 2px solid rgba(var(--accent-rgb), 0.6);
+  transition: transform 0.3s ease;
+}
+
+#gameCanvas:hover {
+  transform: scale(1.02);
+}
