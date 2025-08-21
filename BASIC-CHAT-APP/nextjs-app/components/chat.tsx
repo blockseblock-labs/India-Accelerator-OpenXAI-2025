@@ -5,24 +5,36 @@ import { useState } from "react";
 export function Chat() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState("Hi! It's nice to meet you. Is there something I can help you with or would you like to chat?");
   const [error, setError] = useState("");
 
   return (
-    <div>
-      {error && <span style={{ color: "red" }}>{error}</span>}
-      <span>{response}</span>
-      <div>
+    <div className="chat-container">
+      <div className={error ? "response-area error" : "response-area"}>
+        {error || response}
+      </div>
+      
+      <div className="input-area">
         <input
+          className="chat-input"
           disabled={loading}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+               // Optional: Allow sending with Enter key
+               // We'll add the function here if you want
+            }
+          }}
+          placeholder="Type your message here..."
         />
         <button
-          disabled={loading}
+          className="send-button"
+          disabled={loading || !message} // Also disable if input is empty
           onClick={() => {
             setLoading(true);
-            setMessage("");
+            setResponse(""); // Clear previous response
+            setError(""); // Clear previous error
             fetch("/api/chat", {
               method: "POST",
               body: JSON.stringify({
@@ -30,6 +42,7 @@ export function Chat() {
               }),
             })
               .then(async (res) => {
+                setMessage(""); // Clear input on successful send
                 if (res.ok) {
                   await res.json().then((data) => {
                     setError("");
@@ -37,7 +50,7 @@ export function Chat() {
                   });
                 } else {
                   await res.json().then((data) => {
-                    setError(data.error);
+                    setError(data.error || "An unknown error occurred.");
                     setResponse("");
                   });
                 }
