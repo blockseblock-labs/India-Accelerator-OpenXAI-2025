@@ -1,0 +1,12 @@
+{
+  "name": "gameforge",
+  "version": "1.0.0",
+  "description": "A Next.js template for building amazing games! This template provides a canvas-based game interface with modern styling and ready-to-use components.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
