@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
   try {
   const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434'
   const VISION_MODEL = process.env.OLLAMA_VISION_MODEL || 'llava:latest'
+  const VISION_FALLBACK_MODEL = process.env.OLLAMA_VISION_FALLBACK_MODEL || 'moondream:latest'
   const TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS || 180000)
 
     const contentType = req.headers.get('content-type') || ''
@@ -71,14 +72,63 @@ No bullets, no numbering, no headings, no preface. Just a single compact paragra
 
     if (!visionRes.ok) {
       const bodyText = await visionRes.text().catch(() => '')
+      const isMemoryError = /requires more system memory|out of memory/i.test(bodyText)
+      if (isMemoryError && VISION_MODEL !== VISION_FALLBACK_MODEL) {
+        // Try fallback model automatically
+        const controller2 = new AbortController()
+        const to2 = setTimeout(() => controller2.abort(), TIMEOUT_MS)
+        try {
+          const resp2 = await fetch(`${OLLAMA_HOST}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: VISION_FALLBACK_MODEL,
+              prompt,
+              stream: false,
+              images: [base64Image],
+              system: 'Return exactly one concise paragraph (2–4 sentences). No bullets, no numbering, no extra text.',
+            }),
+            signal: controller2.signal,
+          })
+          clearTimeout(to2)
+          if (resp2.ok) {
+            const data2 = await resp2.json()
+            let analysis2 = (data2?.response as string | undefined) || 'No analysis available'
+            const normalize2 = (t: string) => t
+              .replace(/\r\n|\r/g, ' ')
+              .replace(/[\t ]+/g, ' ')
+              .replace(/[•\u2022\u2023\u25E6]+\s*/g, '')
+              .replace(/\s*[-–—]\s+/g, ' ')
+              .replace(/\s*\(?(?:\d+|[ivx]+|[a-dA-D])\)?:?\s+/gi, ' ')
+              .trim()
+            const trimmed2 = normalize2(analysis2)
+            const sentences2 = trimmed2.split(/(?<=[.!?])\s+/).filter(Boolean)
+            const limited2 = sentences2.slice(0, Math.min(4, Math.max(2, sentences2.length)))
+            analysis2 = limited2.join(' ')
+            return NextResponse.json({ analysis: analysis2, confidence: 0.9 })
+          }
+          const body2 = await resp2.text().catch(() => '')
+          return NextResponse.json({
+            analysis: `Primary model was too large for memory. Fallback to \"${VISION_FALLBACK_MODEL}\" also failed (${resp2.status}). Tip: pull and use a smaller vision model (e.g., \"ollama pull ${VISION_FALLBACK_MODEL}\"). Upstream: ${body2.slice(0, 500)}`,
+            confidence: 0.5,
+          })
+        } catch (e2) {
+          clearTimeout(to2)
+          const msg2 = e2 instanceof Error ? e2.message : String(e2)
+          return NextResponse.json({
+            analysis: `Primary model exceeded memory and fallback \"${VISION_FALLBACK_MODEL}\" could not be reached. ${msg2}. Tip: pull the fallback model and increase OLLAMA_TIMEOUT_MS.`,
+            confidence: 0.5,
+          })
+        }
+      }
       return NextResponse.json({
-        analysis: `Received image but the vision model request failed (${visionRes.status}). Tip: ensure a vision-capable model like \"llava:latest\" is available. Upstream: ${bodyText.slice(0, 500)}`,
+        analysis: `Received image but the vision model request failed (${visionRes.status}). Tip: ensure a vision-capable model like \"${VISION_MODEL}\" is available, or set OLLAMA_VISION_FALLBACK_MODEL (e.g., \"${VISION_FALLBACK_MODEL}\"). Upstream: ${bodyText.slice(0, 500)}`,
         confidence: 0.5,
       })
     }
 
     const data = await visionRes.json()
-    let analysis = (data?.response as string | undefined) || 'No analysis available'
+  let analysis = (data?.response as string | undefined) || 'No analysis available'
     // Post-process to ensure a single paragraph, remove bullets/numbering, limit to 2–4 sentences
     const normalize = (t: string) => t
       .replace(/\r\n|\r/g, ' ')
@@ -87,8 +137,59 @@ No bullets, no numbering, no headings, no preface. Just a single compact paragra
       .replace(/\s*[-–—]\s+/g, ' ') // leading dashes
       .replace(/\s*\(?(?:\d+|[ivx]+|[a-dA-D])\)?:?\s+/gi, ' ') // numbering like 1), 2:, a)
       .trim()
-    const trimmed = normalize(analysis)
-    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(Boolean)
+    let trimmed = normalize(analysis)
+    // If model returned no useful text, retry once via /api/chat which some models prefer
+    if (!trimmed || /^no analysis available$/i.test(trimmed) || trimmed.length < 8) {
+      const controllerChat = new AbortController()
+      const toChat = setTimeout(() => controllerChat.abort(), TIMEOUT_MS)
+      try {
+        const chatRes = await fetch(`${OLLAMA_HOST}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: VISION_MODEL,
+            stream: false,
+            messages: [
+              { role: 'system', content: 'Return exactly one concise paragraph (2–4 sentences). No bullets, no numbering.' },
+              { role: 'user', content: 'Describe this image concisely.', images: [base64Image] },
+            ],
+          }),
+          signal: controllerChat.signal,
+        })
+        clearTimeout(toChat)
+        if (chatRes.ok) {
+          const chatData = await chatRes.json()
+          const msg = chatData?.message?.content || chatData?.response || ''
+          trimmed = normalize(String(msg))
+        } else {
+          // Try fallback model via chat if primary chat fails
+          const controllerChat2 = new AbortController()
+          const toChat2 = setTimeout(() => controllerChat2.abort(), TIMEOUT_MS)
+          const chatRes2 = await fetch(`${OLLAMA_HOST}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: VISION_FALLBACK_MODEL,
+              stream: false,
+              messages: [
+                { role: 'system', content: 'Return exactly one concise paragraph (2–4 sentences). No bullets, no numbering.' },
+                { role: 'user', content: 'Describe this image concisely.', images: [base64Image] },
+              ],
+            }),
+            signal: controllerChat2.signal,
+          })
+          clearTimeout(toChat2)
+          if (chatRes2.ok) {
+            const chatData2 = await chatRes2.json()
+            const msg2 = chatData2?.message?.content || chatData2?.response || ''
+            trimmed = normalize(String(msg2))
+          }
+        }
+      } catch {
+        // ignore and use whatever we have
+      }
+    }
+  const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(Boolean)
     const limited = sentences.slice(0, Math.min(4, Math.max(2, sentences.length)))
     analysis = limited.join(' ')
 
