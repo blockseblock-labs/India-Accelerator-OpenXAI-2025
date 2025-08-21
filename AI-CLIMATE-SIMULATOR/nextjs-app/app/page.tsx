@@ -45,6 +45,7 @@ const exampleCommands = [
   "Spray aerosols into the atmosphere",
   "Melt all polar ice caps",
   "Poison all freshwater sources"
+  
 ]
 
 const availableModels = [
@@ -171,9 +172,9 @@ export default function Home() {
       co2Level: 415,
       toxicityLevel: 5,
       temperature: 30,
-      humanPopulation: 9000000000,
+      humanPopulation: 90000000000,
       animalPopulation: 100000000000,
-      plantPopulation: 1000000000000,
+      plantPopulation: 10000000000000,
       oceanAcidity: 8.1,
       iceCapMelting: 10,
     })
@@ -265,7 +266,7 @@ export default function Home() {
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Type your environmental command..."
+                placeholder="Type your environment command..."
                 disabled={isProcessing}
                 className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 disabled:bg-gray-700"
               />
@@ -284,7 +285,7 @@ export default function Home() {
           <div className="mb-4">
             <h3 className="text-sm font-semibold mb-2 text-gray-300">Example Commands:</h3>
             <div className="max-h-32 overflow-y-auto space-y-1">
-              {exampleCommands.slice(0, 5).map((example, index) => (
+              {exampleCommands.slice(0, 4).map((example, index) => (
                 <button
                   key={index}
                   onClick={() => handleExampleClick(example)}
