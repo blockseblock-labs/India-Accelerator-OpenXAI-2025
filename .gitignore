@@ -144,3 +144,5 @@ Thumbs.db
 **/result-*
 result
 result-* 
+
+.venv/
