@@ -17,6 +17,15 @@ interface EarthMetrics {
   plantPopulation: number
   oceanAcidity: number
   iceCapMelting: number
+  visualEffects?: {
+    type: string
+    intensity: number
+    duration: number
+    particles: number
+    color: string
+    position: [number, number, number]
+    scale: number
+  }
 }
 
 interface AICommand {
@@ -64,6 +73,15 @@ export default function Home() {
     plantPopulation: 1000000000000,
     oceanAcidity: 8.1, // pH level
     iceCapMelting: 10, // Percentage melted
+    visualEffects: {
+      type: "none",
+      intensity: 0,
+      duration: 0,
+      particles: 0,
+      color: "#000000",
+      position: [0, 0, 0],
+      scale: 1.0
+    }
   })
 
   const [isSimulationRunning, setIsSimulationRunning] = useState(false)
@@ -176,6 +194,15 @@ export default function Home() {
       plantPopulation: 1000000000000,
       oceanAcidity: 8.1,
       iceCapMelting: 10,
+      visualEffects: {
+        type: "none",
+        intensity: 0,
+        duration: 0,
+        particles: 0,
+        color: "#000000",
+        position: [0, 0, 0],
+        scale: 1.0
+      }
     })
     setPollutionLevel(0)
     setIsSimulationRunning(false)
@@ -219,7 +246,25 @@ export default function Home() {
       {/* 3D Globe */}
       <Globe 
         pollutionLevel={pollutionLevel} 
-        metrics={metrics} 
+        metrics={metrics || {
+          co2Level: 415,
+          toxicityLevel: 5,
+          temperature: 30,
+          humanPopulation: 9000000000,
+          animalPopulation: 100000000000,
+          plantPopulation: 1000000000000,
+          oceanAcidity: 8.1,
+          iceCapMelting: 10,
+          visualEffects: {
+            type: "none",
+            intensity: 0,
+            duration: 0,
+            particles: 0,
+            color: "#000000",
+            position: [0, 0, 0],
+            scale: 1.0
+          }
+        }} 
         specialEvent={specialEvent}
       />
       

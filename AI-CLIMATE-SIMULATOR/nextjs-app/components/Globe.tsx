@@ -16,6 +16,15 @@ interface GlobeProps {
     plantPopulation: number
     oceanAcidity: number
     iceCapMelting: number
+    visualEffects?: {
+      type: string
+      intensity: number
+      duration: number
+      particles: number
+      color: string
+      position: [number, number, number]
+      scale: number
+    }
   }
   specialEvent?: string | null
 }
@@ -459,10 +468,10 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
   const earthTextures = useMemo(() => {
     const textureLoader = new THREE.TextureLoader()
     return {
-      colorMap: textureLoader.load('/global-datacenter-visualization/src/00_earthmap1k.jpg'),
-      bumpMap: textureLoader.load('/global-datacenter-visualization/src/01_earthbump1k.jpg'),
-      specularMap: textureLoader.load('/global-datacenter-visualization/src/02_earthspec1k.jpg'),
-      lightsMap: textureLoader.load('/global-datacenter-visualization/src/03_earthlights1k.jpg')
+      colorMap: textureLoader.load('/api/placeholder-texture'),
+      bumpMap: textureLoader.load('/api/placeholder-texture'),
+      specularMap: textureLoader.load('/api/placeholder-texture'),
+      lightsMap: textureLoader.load('/api/placeholder-texture')
     }
   }, [])
 
@@ -478,8 +487,15 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
 
   // Calculate population dots based on actual metrics - EXACTLY like global-datacenter-visualization
   const getPopulationDots = useMemo(() => {
+    // Default values if metrics is undefined
+    const safeMetrics = metrics || {
+      humanPopulation: 9000000000,
+      animalPopulation: 100000000000,
+      plantPopulation: 1000000000000
+    }
+    
     // Humans: Show dots at major cities, number based on population - NO RANDOM OFFSETS
-    const humanDotCount = Math.min(Math.floor(metrics.humanPopulation / 500000000), MAJOR_CITIES.length) // Max based on available cities
+    const humanDotCount = Math.min(Math.floor(safeMetrics.humanPopulation / 500000000), MAJOR_CITIES.length) // Max based on available cities
     const humanDots = MAJOR_CITIES.slice(0, humanDotCount).map(city => ({
       position: latLonToVector3(city.lat, city.lon, 5.01),
       color: 0xFFC0CB, // Piggy pink for humans
@@ -487,7 +503,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
     }))
 
     // Animals: Show dots at major cities (like datacenters) - NO RANDOM OFFSETS
-    const animalDotCount = Math.min(Math.floor(metrics.animalPopulation / 2000000000), MAJOR_CITIES.length)
+    const animalDotCount = Math.min(Math.floor(safeMetrics.animalPopulation / 2000000000), MAJOR_CITIES.length)
     const animalDots = MAJOR_CITIES.slice(0, animalDotCount).map(city => ({
       position: latLonToVector3(city.lat, city.lon, 5.01),
       color: 0xD2691E, // Caramel color for animals
@@ -495,7 +511,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
     }))
 
     // Plants: Show dots at forest regions - NO RANDOM OFFSETS
-    const plantDotCount = Math.min(Math.floor(metrics.plantPopulation / 20000000000), FOREST_REGIONS.length)
+    const plantDotCount = Math.min(Math.floor(safeMetrics.plantPopulation / 20000000000), FOREST_REGIONS.length)
     const plantDots = FOREST_REGIONS.slice(0, plantDotCount).map(forest => ({
       position: latLonToVector3(forest.lat, forest.lon, 5.01),
       color: 0x228B22, // Green for plants
@@ -503,7 +519,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
     }))
 
     return { humanDots, animalDots, plantDots }
-  }, [metrics.humanPopulation, metrics.animalPopulation, metrics.plantPopulation])
+  }, [metrics?.humanPopulation, metrics?.animalPopulation, metrics?.plantPopulation])
 
   useFrame(() => {
     if (earthRef.current && isAutoRotating) {
@@ -545,7 +561,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
   const getAtmosphereColor = () => {
     const baseColor = new THREE.Color(0x87CEEB)
     const toxicColor = new THREE.Color(0x32CD32)
-    const pollutionFactor = metrics.toxicityLevel / 100
+    const pollutionFactor = (metrics?.toxicityLevel || 5) / 100
     
     const finalColor = new THREE.Color()
     finalColor.lerp(baseColor, 1 - pollutionFactor)
@@ -556,9 +572,9 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
 
   return (
     <>
-      {/* Stars background */}
+      {/* Stars background - PERFORMANCE OPTIMIZED */}
       <group>
-        {Array.from({ length: 2000 }, (_, i) => (
+        {Array.from({ length: 500 }, (_, i) => (
           <mesh key={i} position={[
             (Math.random() - 0.5) * 300,
             (Math.random() - 0.5) * 300,
@@ -610,13 +626,13 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
       </mesh>
 
       {/* Ocean pollution overlay */}
-      {metrics.oceanAcidity < 8.0 && (
+      {metrics && metrics.oceanAcidity < 8.0 && (
         <mesh>
           <sphereGeometry args={[5.02, 64, 64]} />
           <meshStandardMaterial 
             color={0x8B0000}
             transparent
-            opacity={0.3 * (1 - metrics.oceanAcidity / 8.0)}
+            opacity={0.3 * (1 - (metrics.oceanAcidity || 8.1) / 8.0)}
             side={THREE.FrontSide}
           />
         </mesh>
@@ -654,7 +670,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
       )}
       
       {/* Temperature heat waves */}
-      {metrics.temperature > 35 && (
+      {metrics && metrics.temperature > 35 && (
         <group>
           {Array.from({ length: 15 }, (_, i) => (
             <mesh key={i} position={[
@@ -706,7 +722,7 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
       )}
 
       {/* Nuclear explosion - persists when toxicity is high */}
-      {(specialEvent === 'nuclear' || metrics.toxicityLevel > 80) && (
+      {(specialEvent === 'nuclear' || (metrics && metrics.toxicityLevel > 80)) && (
         <group>
           <mesh>
             <sphereGeometry args={[6, 16, 16]} />
@@ -863,6 +879,242 @@ function Earth({ pollutionLevel, metrics, specialEvent, isAutoRotating }: EarthP
           ))}
         </group>
       )}
+
+      {/* Dynamic Visual Effects based on AI analysis - PERFORMANCE OPTIMIZED */}
+      {metrics?.visualEffects && (() => {
+        const visualEffects = metrics.visualEffects
+        if (!visualEffects) return null
+        
+        const maxParticles = Math.min(50, Math.floor(visualEffects.particles * visualEffects.intensity))
+        const safeIntensity = Math.min(1.0, Math.max(0.1, visualEffects.intensity))
+        const safeScale = Math.min(2.0, Math.max(0.5, visualEffects.scale))
+        
+        // Only render if we have reasonable particle counts
+        if (maxParticles > 100) return null
+        
+        return (
+          <group>
+              <>
+                {/* Explosion effects */}
+                {visualEffects.type === 'explosion' && (
+                  <group>
+                    <mesh>
+                      <sphereGeometry args={[safeScale * 2, 8, 8]} />
+                      <meshStandardMaterial 
+                        color={visualEffects.color}
+                        transparent
+                        opacity={0.6 * safeIntensity}
+                      />
+                    </mesh>
+                    {Array.from({ length: maxParticles }, (_, i) => (
+                      <mesh key={i} position={[
+                        (Math.random() - 0.5) * safeScale * 6,
+                        (Math.random() - 0.5) * safeScale * 6,
+                        (Math.random() - 0.5) * safeScale * 6
+                      ]}>
+                        <sphereGeometry args={[0.15 * safeScale, 4, 4]} />
+                        <meshStandardMaterial 
+                          color={visualEffects.color}
+                          transparent
+                          opacity={0.7 * safeIntensity}
+                        />
+                      </mesh>
+                    ))}
+                  </group>
+                )}
+
+                {/* Fire effects */}
+                {visualEffects.type === 'fire' && (
+                  <group>
+                    {Array.from({ length: maxParticles }, (_, i) => (
+                      <mesh key={i} position={[
+                        (Math.random() - 0.5) * safeScale * 4,
+                        Math.random() * safeScale * 3,
+                        (Math.random() - 0.5) * safeScale * 4
+                      ]}>
+                        <sphereGeometry args={[0.1 * safeScale, 4, 4]} />
+                        <meshStandardMaterial 
+                          color={visualEffects.color}
+                          transparent
+                          opacity={0.8 * safeIntensity}
+                          emissive={visualEffects.color}
+                          emissiveIntensity={0.3}
+                        />
+                      </mesh>
+                    ))}
+                  </group>
+                )}
+
+                {/* Smoke effects */}
+                {visualEffects.type === 'smoke' && (
+                  <group>
+                    {Array.from({ length: maxParticles }, (_, i) => (
+                      <mesh key={i} position={[
+                        (Math.random() - 0.5) * safeScale * 8,
+                        Math.random() * safeScale * 6,
+                        (Math.random() - 0.5) * safeScale * 8
+                      ]}>
+                        <sphereGeometry args={[0.2 * safeScale, 4, 4]} />
+                        <meshStandardMaterial 
+                          color={visualEffects.color}
+                          transparent
+                          opacity={0.4 * safeIntensity}
+                        />
+                      </mesh>
+                    ))}
+                  </group>
+                )}
+
+                {/* Lightning effects */}
+                {visualEffects.type === 'lightning' && (
+                  <group>
+                    {Array.from({ length: Math.min(3, Math.floor(safeIntensity * 3)) }, (_, i) => (
+                      <mesh key={i} position={[
+                        (Math.random() - 0.5) * safeScale * 10,
+                        Math.random() * safeScale * 8,
+                        (Math.random() - 0.5) * safeScale * 10
+                      ]}>
+                        <cylinderGeometry args={[0.03 * safeScale, 0.03 * safeScale, safeScale * 6, 4]} />
+                        <meshStandardMaterial 
+                          color={visualEffects.color}
+                          transparent
+                          opacity={0.9 * safeIntensity}
+                          emissive={visualEffects.color}
+                          emissiveIntensity={0.8}
+                        />
+                      </mesh>
+                    ))}
+                  </group>
+                )}
+
+                {/* Storm effects */}
+                {visualEffects.type === 'storm' && (
+                  <group>
+                    {Array.from({ length: maxParticles }, (_, i) => (
+                      <mesh key={i} position={[
+                        (Math.random() - 0.5) * safeScale * 12,
+                        Math.random() * safeScale * 10,
+                        (Math.random() - 0.5) * safeScale * 12
+                      ]}>
+                        <sphereGeometry args={[0.08 * safeScale, 4, 4]} />
+                        <meshStandardMaterial 
+                          color={visualEffects.color}
+                          transparent
+                          opacity={0.6 * safeIntensity}
+                        />
+                      </mesh>
+                    ))}
+                  </group>
+                )}
+
+                                 {/* Methane gas cloud effects */}
+                 {visualEffects.type === 'methane' && (
+                   <group>
+                     {/* Central methane bubble */}
+                     <mesh>
+                       <sphereGeometry args={[safeScale * 1.5, 16, 16]} />
+                       <meshStandardMaterial 
+                         color={visualEffects.color}
+                         transparent
+                         opacity={0.3 * safeIntensity}
+                         emissive={visualEffects.color}
+                         emissiveIntensity={0.2}
+                       />
+                     </mesh>
+                     {/* Rising gas bubbles */}
+                     {Array.from({ length: maxParticles }, (_, i) => (
+                       <mesh key={i} position={[
+                         (Math.random() - 0.5) * safeScale * 8,
+                         Math.random() * safeScale * 6 + 2,
+                         (Math.random() - 0.5) * safeScale * 8
+                       ]}>
+                         <sphereGeometry args={[0.1 * safeScale, 8, 8]} />
+                         <meshStandardMaterial 
+                           color={visualEffects.color}
+                           transparent
+                           opacity={0.7 * safeIntensity}
+                           emissive={visualEffects.color}
+                           emissiveIntensity={0.4}
+                         />
+                       </mesh>
+                     ))}
+                   </group>
+                 )}
+
+                 {/* Gas cloud effects */}
+                 {visualEffects.type === 'gas_cloud' && (
+                   <group>
+                     {/* Large gas cloud */}
+                     <mesh>
+                       <sphereGeometry args={[safeScale * 3, 16, 16]} />
+                       <meshStandardMaterial 
+                         color={visualEffects.color}
+                         transparent
+                         opacity={0.2 * safeIntensity}
+                       />
+                     </mesh>
+                     {/* Gas particles */}
+                     {Array.from({ length: maxParticles }, (_, i) => (
+                       <mesh key={i} position={[
+                         (Math.random() - 0.5) * safeScale * 10,
+                         (Math.random() - 0.5) * safeScale * 8,
+                         (Math.random() - 0.5) * safeScale * 10
+                       ]}>
+                         <sphereGeometry args={[0.08 * safeScale, 6, 6]} />
+                         <meshStandardMaterial 
+                           color={visualEffects.color}
+                           transparent
+                           opacity={0.6 * safeIntensity}
+                         />
+                       </mesh>
+                     ))}
+                   </group>
+                 )}
+
+                 {/* Ice melting effects */}
+                 {visualEffects.type === 'ice_melt' && (
+                   <group>
+                     {/* Melting ice chunks */}
+                     {Array.from({ length: maxParticles }, (_, i) => (
+                       <mesh key={i} position={[
+                         (Math.random() - 0.5) * safeScale * 6,
+                         Math.random() * safeScale * 4,
+                         (Math.random() - 0.5) * safeScale * 6
+                       ]}>
+                         <boxGeometry args={[0.2 * safeScale, 0.2 * safeScale, 0.2 * safeScale]} />
+                         <meshStandardMaterial 
+                           color={0x87CEEB}
+                           transparent
+                           opacity={0.8 * safeIntensity}
+                         />
+                       </mesh>
+                     ))}
+                   </group>
+                 )}
+
+                 {/* Custom effects for other types */}
+                 {!['explosion', 'fire', 'smoke', 'lightning', 'storm', 'methane', 'gas_cloud', 'ice_melt'].includes(visualEffects.type) && (
+                   <group>
+                     {Array.from({ length: maxParticles }, (_, i) => (
+                       <mesh key={i} position={[
+                         (Math.random() - 0.5) * safeScale * 6,
+                         (Math.random() - 0.5) * safeScale * 6,
+                         (Math.random() - 0.5) * safeScale * 6
+                       ]}>
+                         <sphereGeometry args={[0.15 * safeScale, 4, 4]} />
+                         <meshStandardMaterial 
+                           color={visualEffects.color}
+                           transparent
+                           opacity={0.5 * safeIntensity}
+                         />
+                       </mesh>
+                     ))}
+                   </group>
+                 )}
+              </>
+            </group>
+          )
+        })()}
     </>
   )
 }
