@@ -22,6 +22,11 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
 }
 
 /* Canvas tweaks */
@@ -29,10 +34,13 @@ body {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: 2px solid rgba(var(--accent-rgb), 0.6);
-  transition: transform 0.3s ease;
+  border: 4px dashed rgba(var(--accent-rgb), 0.7);
+  box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.3);
+  background-color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 #gameCanvas:hover {
-  transform: scale(1.02);
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(var(--accent-rgb), 0.5);
 }
