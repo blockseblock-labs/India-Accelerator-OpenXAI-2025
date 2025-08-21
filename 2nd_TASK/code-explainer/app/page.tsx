@@ -35,16 +35,28 @@ export default function HomePage() {
   }
 
   return (
-<main className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-  <Header />
-  <div className="flex-1 flex items-center justify-center p-6">
-    <div className="w-full max-w-5xl space-y-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8">
-      <CodeEditor code={code} setCode={setCode} />
-      <ModeSelector mode={mode} setMode={setMode} onAnalyze={handleAnalyze} loading={loading} />
-      <OutputPanel output={output} loading={loading} />
-    </div>
-  </div>
-</main>
+    <main className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <Header />
 
+      {/* Split screen layout */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto w-full">
+        
+        {/* Left: Editor + Buttons */}
+        <div className="lg:w-1/2 flex flex-col gap-4">
+          <CodeEditor code={code} setCode={setCode} />
+          <ModeSelector
+            mode={mode}
+            setMode={setMode}
+            onAnalyze={handleAnalyze}
+            loading={loading}
+          />
+        </div>
+
+        {/* Right: Output */}
+        <div className="lg:w-1/2 flex flex-col">
+          <OutputPanel output={output} loading={loading} />
+        </div>
+      </div>
+    </main>
   );
 }

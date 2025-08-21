@@ -1,4 +1,3 @@
-// components/ModeSelector.tsx
 "use client";
 import { Dispatch, SetStateAction } from "react";
 
