@@ -1,27 +1,26 @@
 :root {
   --foreground-rgb: 33, 33, 33;
-  --background-start-rgb: 230, 235, 240;
-  --background-end-rgb: 255, 255, 255;
-  --accent-rgb: 100, 149, 237; /* Cornflower Blue */
+  --background-start-rgb: 255, 182, 193; /* Light Pink */
+  --background-end-rgb: 135, 206, 250;   /* Light Sky Blue */
+  --accent-rgb: 100, 149, 237;           /* Cornflower Blue */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 240, 240, 240;
-    --background-start-rgb: 15, 15, 15;
-    --background-end-rgb: 30, 30, 30;
-    --accent-rgb: 173, 216, 230; /* Light Blue */
+    --background-start-rgb: 72, 61, 139;  /* Dark Slate Blue */
+    --background-end-rgb: 25, 25, 112;    /* Midnight Blue */
+    --accent-rgb: 173, 216, 230;          /* Light Blue */
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
+      135deg,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    );
   display: flex;
   justify-content: center;
   align-items: center;
