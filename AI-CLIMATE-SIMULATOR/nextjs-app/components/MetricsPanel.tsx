@@ -14,11 +14,24 @@ interface EarthMetrics {
 }
 
 interface MetricsPanelProps {
-  metrics: EarthMetrics
+  metrics?: EarthMetrics   // <-- allow optional
   pollutionLevel: number
 }
 
 export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelProps) {
+  // if metrics not yet loaded
+  if (!metrics) {
+    return (
+      <div className="metrics-panel rounded-lg p-4 max-w-sm">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <AlertTriangle size={20} className="text-yellow-400" />
+          Loading Earth Metrics...
+        </h2>
+        <p className="text-gray-400 text-sm">Please wait, fetching data...</p>
+      </div>
+    )
+  }
+
   const formatNumber = (num: number) => {
     if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B'
     if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M'
@@ -49,8 +62,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <Zap size={16} className="text-yellow-400" />
             <span className="text-sm text-gray-300">CO₂ Level:</span>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.co2Level, 2000, true)}`}>
-            {metrics.co2Level.toFixed(0)} ppm
+          <span className={`text-sm font-semibold ${getHealthColor(metrics.co2Level || 415, 2000, true)}`}>
+            {(metrics.co2Level || 415).toFixed(0)} ppm
           </span>
         </div>
 
@@ -60,8 +73,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <AlertTriangle size={16} className="text-red-400" />
             <span className="text-sm text-gray-300">Air Toxicity:</span>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel, 100)}`}>
-            {metrics.toxicityLevel.toFixed(1)}%
+          <span className={`text-sm font-semibold ${getHealthColor(metrics.toxicityLevel || 5, 100)}`}>
+            {(metrics.toxicityLevel || 5).toFixed(1)}%
           </span>
         </div>
 
@@ -71,8 +84,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <Thermometer size={16} className="text-orange-400" />
             <span className="text-sm text-gray-300">Temperature:</span>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.temperature, 50)}`}>
-            {metrics.temperature.toFixed(1)}°C
+          <span className={`text-sm font-semibold ${getHealthColor(metrics.temperature || 30, 50)}`}>
+            {(metrics.temperature || 30).toFixed(1)}°C
           </span>
         </div>
 
@@ -83,7 +96,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <span className="text-sm text-gray-300">Humans:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.humanPopulation)}
+            {formatNumber(metrics.humanPopulation || 9000000000)}
           </span>
         </div>
 
@@ -94,7 +107,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <span className="text-sm text-gray-300">Animals:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.animalPopulation)}
+            {formatNumber(metrics.animalPopulation || 100000000000)}
           </span>
         </div>
 
@@ -105,7 +118,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <span className="text-sm text-gray-300">Plants:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
-            {formatNumber(metrics.plantPopulation)}
+            {formatNumber(metrics.plantPopulation || 1000000000000)}
           </span>
         </div>
 
@@ -115,8 +128,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <Droplets size={16} className="text-blue-400" />
             <span className="text-sm text-gray-300">Ocean pH:</span>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity, 9.0, true)}`}>
-            {metrics.oceanAcidity.toFixed(2)}
+          <span className={`text-sm font-semibold ${getHealthColor(metrics.oceanAcidity || 8.1, 9.0, true)}`}>
+            {(metrics.oceanAcidity || 8.1).toFixed(2)}
           </span>
         </div>
 
@@ -126,8 +139,8 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
             <Snowflake size={16} className="text-cyan-400" />
             <span className="text-sm text-gray-300">Ice Melting:</span>
           </div>
-          <span className={`text-sm font-semibold ${getHealthColor(metrics.iceCapMelting, 100)}`}>
-            {metrics.iceCapMelting.toFixed(1)}%
+          <span className={`text-sm font-semibold ${getHealthColor(metrics.iceCapMelting || 10, 100)}`}>
+            {(metrics.iceCapMelting || 10).toFixed(1)}%
           </span>
         </div>
 
@@ -144,4 +157,4 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
       </div>
     </div>
   )
-} 
+}
