@@ -1,4 +1,4 @@
-# 📚 LearnAI Template
+# 📚 LEARN-AI-APP
 
 A Next.js template for building educational AI applications! This template provides three powerful learning tools: Flashcard Maker, Quiz Generator, and Ask-Me Study Buddy.
 
@@ -80,10 +80,10 @@ nextjs-app/
 
 ## 🤖 AI Model
 
-This template uses Ollama with the `llama3.2:1b` model for all AI operations. Make sure you have Ollama installed and the model downloaded:
+This template uses Ollama with the `llama3:latest ` model for all AI operations. Make sure you have Ollama installed and the model downloaded:
 
 ```bash
-ollama pull llama3.2:1b
+ollama pull llama3:latest 
 ```
 
 ## 🎨 Customization
