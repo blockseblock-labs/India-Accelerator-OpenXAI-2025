@@ -141,7 +141,7 @@ export default function LearnAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-slate-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -191,7 +191,7 @@ export default function LearnAI() {
                   <button
                     onClick={generateFlashcards}
                     disabled={loading || !notes.trim()}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mt-4 px-6 py-3 bg-cyan-400 hover:bg-blue-400 text-black rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Generating...' : 'Generate Flashcards'}
                   </button>
