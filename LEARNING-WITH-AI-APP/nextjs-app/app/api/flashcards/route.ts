@@ -54,7 +54,7 @@ Notes: ${notes}`
       // If JSON parsing fails, return a structured response
       console.log('Could not parse JSON, returning formatted response')
     }
-
+// this is route.ts
     // Fallback: create a simple structure from the response
     return NextResponse.json({
       flashcards: [

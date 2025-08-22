@@ -55,7 +55,7 @@ Text: ${text}`
     } catch (parseError) {
       console.log('Could not parse JSON, returning formatted response')
     }
-
+// this is route.ts 
     // Fallback: create a simple quiz structure
     return NextResponse.json({
       quiz: [
