@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==============================
-   Theme Variables
-   ============================== */
 :root {
   --foreground-rgb: 30, 30, 30;
   --background-rgb: 235, 245, 255; /* very soft light blue */
@@ -13,7 +10,6 @@
   --card-bg-rgb: 255, 255, 255;    /* white cards */
 }
 
-/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 240, 240, 240;
@@ -24,20 +20,19 @@
   }
 }
 
-/* ==============================
-   Global Styles
-   ============================== */
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--background-rgb), 1) 0%,
+    rgba(var(--primary-rgb), 0.05) 100%
+  );
   font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
+  line-height: 1.7;
   transition: all 0.3s ease-in-out;
 }
 
-/* ==============================
-   Headings
-   ============================== */
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -46,79 +41,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   line-height: 1.2;
 }
 h2 {
-  font-size: 2rem;
+  font-size: 2.25rem;
 }
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
-/* ==============================
-   Buttons
-   ============================== */
+/* Buttons */
 button {
-  background-color: rgb(var(--primary-rgb));
+  background: linear-gradient(
+    135deg,
+    rgb(var(--primary-rgb)) 0%,
+    rgba(var(--primary-rgb), 0.85) 100%
+  );
   color: white;
   font-weight: 600;
   border-radius: 0.75rem;
-  padding: 0.6rem 1.2rem;
-  transition: background 0.3s, transform 0.2s;
-  box-shadow: 0px 4px 10px rgba(var(--primary-rgb), 0.2);
+  padding: 0.7rem 1.4rem;
+  transition: all 0.3s ease;
+  box-shadow: 0px 6px 15px rgba(var(--primary-rgb), 0.25);
 }
 
 button:hover {
-  background-color: rgb(var(--secondary-rgb));
-  transform: translateY(-2px);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--secondary-rgb)) 0%,
+    rgba(var(--secondary-rgb), 0.9) 100%
+  );
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0px 8px 18px rgba(var(--secondary-rgb), 0.3);
 }
 
-/* ==============================
-   Inputs
-   ============================== */
+/* Inputs */
 input, textarea, select {
-  background: rgb(var(--card-bg-rgb));
+  background: rgba(var(--card-bg-rgb), 0.9);
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 0.5rem;
-  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  padding: 0.7rem 1rem;
   font-size: 1rem;
   width: 100%;
-  margin-bottom: 1rem;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1.2rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease, transform 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: rgb(var(--primary-rgb));
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3);
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
+  transform: scale(1.01);
 }
 
-/* ==============================
-   Cards / Containers
-   ============================== */
+/* Card with glass effect */
 .card {
-  background: rgb(var(--card-bg-rgb));
+  background: rgba(var(--card-bg-rgb), 0.85);
+  backdrop-filter: blur(12px);
   border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-  transition: transform 0.2s;
+  box-shadow: 0px 8px 24px rgba(0,0,0,0.1);
+  transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0px 12px 28px rgba(0,0,0,0.15);
 }
 
-/* ==============================
-   Links
-   ============================== */
+/* Links with underline animation */
 a {
   color: rgb(var(--primary-rgb));
   font-weight: 500;
   text-decoration: none;
+  position: relative;
   transition: color 0.2s ease-in-out;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: -3px;
+  background: rgb(var(--secondary-rgb));
+  transition: width 0.3s;
 }
 
 a:hover {
   color: rgb(var(--secondary-rgb));
 }
+
+a:hover::after {
+  width: 100%;
+}
+
