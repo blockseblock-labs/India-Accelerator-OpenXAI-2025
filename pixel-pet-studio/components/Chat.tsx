@@ -1,52 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function Chat() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+interface ChatProps {
+  messages: { from: string; text: string }[];
+  onSend: (message: string) => void;
+}
+
+export default function Chat({ messages, onSend }: ChatProps) {
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (!input.trim()) return;
-
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    onSend(input);
     setInput("");
-
-    const res = await fetch("/api/pet-chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input }),
-    });
-
-    const data = await res.json();
-    setMessages((prev) => [...prev, { role: "pet", content: data.reply }]);
   };
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="flex flex-col h-full border rounded-2xl p-4 bg-white/70 shadow-md">
-      <div className="flex-1 overflow-y-auto space-y-2 mb-2">
+    <div className="flex flex-col h-[500px] border rounded-2xl bg-white/90 shadow-lg p-4">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto space-y-3 mb-3">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`p-2 rounded-lg max-w-[80%] ${
-              msg.role === "user" ? "ml-auto bg-blue-500 text-white" : "bg-gray-200"
+            className={`p-3 rounded-xl max-w-[75%] transition-all ${
+              msg.from === "user"
+                ? "ml-auto bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow"
+                : msg.from === "pet"
+                ? "bg-gradient-to-r from-pink-300 to-pink-400 text-gray-900 shadow"
+                : "mx-auto text-gray-600 italic text-sm"
             }`}
           >
-            {msg.content}
+            {msg.text}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
+
+      {/* Input */}
       <div className="flex gap-2">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Talk to your pet..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <Button onClick={sendMessage}>
+        <Button onClick={sendMessage} className="rounded-xl bg-pink-500 hover:bg-pink-600 text-white shadow">
           <Send size={18} />
         </Button>
       </div>

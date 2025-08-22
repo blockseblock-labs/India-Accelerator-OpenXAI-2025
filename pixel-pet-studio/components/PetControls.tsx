@@ -1,20 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Smile, Utensils, Droplet } from "lucide-react";
 
-export default function PetControls() {
+type Props = {
+  onAction: (action: string) => void;
+};
+
+export default function PetControls({ onAction }: Props) {
   return (
-    <div className="flex gap-4 justify-center mt-4">
-      <Button variant="outline">
-        <Utensils className="mr-2 h-4 w-4" /> Feed
-      </Button>
-      <Button variant="outline">
-        <Droplet className="mr-2 h-4 w-4" /> Drink
-      </Button>
-      <Button variant="outline">
-        <Smile className="mr-2 h-4 w-4" /> Play
-      </Button>
+    <div className="mt-4 flex gap-2 flex-wrap justify-center">
+      <Button onClick={() => onAction("feed")}>🍖 Feed</Button>
+      <Button onClick={() => onAction("drink")}>🥤 Drink</Button>
+      <Button onClick={() => onAction("play")}>🎾 Play</Button>
+      <Button onClick={() => onAction("sleep")}>😴 Sleep</Button>
     </div>
   );
 }

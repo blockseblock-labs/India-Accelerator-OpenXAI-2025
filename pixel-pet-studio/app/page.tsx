@@ -1,61 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/Header";
-import Pet from "@/components/Pet";
-import PetControls from "@/components/PetControls";
 import Chat from "@/components/Chat";
-import { Card, CardContent } from "@/components/ui/card";
+import Pet from "@/components/Pet";
 
 export default function Home() {
-  const [petMood, setPetMood] = useState("happy");
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([]);
+  const [hunger, setHunger] = useState(70);
+  const [happiness, setHappiness] = useState(60);
+  const [energy, setEnergy] = useState(80);
 
-  const handleAction = (action: string) => {
-    if (action === "feed") setPetMood("happy");
-    if (action === "play") setPetMood("excited");
-    if (action === "sleep") setPetMood("sleepy");
-
-    setMessages((prev) => [
-      ...prev,
-      { from: "system", text: `You chose to ${action} your pet!` },
-    ]);
-  };
-
-  const handleSendMessage = (message: string) => {
-    if (!message.trim()) return;
-
+  const sendMessage = async (message: string) => {
     setMessages((prev) => [...prev, { from: "user", text: message }]);
 
-    // Simulated pet response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { from: "pet", text: `*${petMood.toUpperCase()} noises* 🐾` },
-      ]);
-    }, 800);
+    try {
+      const res = await fetch("/api/pet-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await res.json();
+      setMessages((prev) => [...prev, { from: "pet", text: data.reply }]);
+    } catch (err) {
+      console.error("Chat error:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Header />
-      <main className="max-w-4xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Left side: Pet + Controls */}
-        <Card className="flex flex-col items-center justify-center">
-          <CardContent className="flex flex-col items-center">
-            <Pet mood={petMood} />
-            <PetControls onAction={handleAction} />
-          </CardContent>
-        </Card>
+    <main className="relative min-h-screen flex flex-col items-center py-10 px-4 overflow-hidden">
+      {/* 🎨 Animated Background Blobs */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+      <div className="absolute top-40 -right-32 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+      <div className="absolute bottom-0 left-20 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
 
-        {/* Right side: Chat */}
-        <Card className="flex flex-col">
-          <CardContent className="flex-1">
-            <Chat messages={messages} onSend={handleSendMessage} />
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+      {/* 🐾 Title + Info */}
+      <h1 className="text-5xl font-extrabold text-gray-800 drop-shadow-md mb-3 relative z-10">
+        🐶 Pixel Pet Studio
+      </h1>
+      <p className="text-gray-700 text-lg max-w-xl text-center mb-8 relative z-10">
+        Take care of your adorable digital pet! Feed, play, and chat with your buddy.  
+        Keep your pet happy, healthy, and full of energy ✨
+      </p>
+
+      {/* 🐕 Pet & Chat Layout */}
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+        <Pet hunger={hunger} happiness={happiness} energy={energy} />
+        <Chat messages={messages} onSend={sendMessage} />
+      </div>
+    </main>
   );
 }
