@@ -44,3 +44,7 @@ Question: ${question}`
     )
   }
 } 
+
+// study buddy route.ts
+
+//route//

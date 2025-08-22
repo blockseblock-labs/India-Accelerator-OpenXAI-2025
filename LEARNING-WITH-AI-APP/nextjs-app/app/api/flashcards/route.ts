@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
   ]
 }
 
+
 Focus on key concepts, definitions, and important facts. Make questions clear and answers concise.
 
 Notes: ${notes}`
@@ -72,3 +73,4 @@ Notes: ${notes}`
     )
   }
 } 
+// app//
