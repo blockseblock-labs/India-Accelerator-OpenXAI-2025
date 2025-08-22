@@ -1,5 +1,7 @@
 # cd 2nd_TASK
-# code-explainer
+# cd code-explainer
+# cd nextjs-app
+
 
 # npm install
 
