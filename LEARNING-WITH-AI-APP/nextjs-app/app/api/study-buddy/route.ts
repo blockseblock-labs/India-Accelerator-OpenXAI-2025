@@ -39,7 +39,7 @@ Question: ${question}`
   } catch (error) {
     console.error('Study Buddy API error:', error)
     return NextResponse.json(
-      { error: 'Failed to get study buddy response sorry' },
+      { error: 'Failed to get study buddy response sorry give sothing which is write' },
       { status: 500 }
     )
   }

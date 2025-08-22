@@ -67,7 +67,7 @@ Notes: ${notes}`
   } catch (error) {
     console.error('Flashcards API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate flashcards sorry' },
+      { error: 'Failed to generate flashcards sorry give sothing which is write' },
       { status: 500 }
     )
   }

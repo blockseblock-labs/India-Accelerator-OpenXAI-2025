@@ -70,7 +70,7 @@ Text: ${text}`
   } catch (error) {
     console.error('Quiz API error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate quiz sorry' },
+      { error: 'Failed to generate quiz sorry give sothing which is write' },
       { status: 500 }
     )
   }
