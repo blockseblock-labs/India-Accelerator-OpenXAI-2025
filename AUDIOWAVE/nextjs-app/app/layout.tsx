@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SoundWave Template New ',
+  title: 'SoundWave Template Project ',
   description: 'A template for building amazing audio experiences',
 }
 
