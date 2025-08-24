@@ -2,20 +2,20 @@ import VoiceRecorder from '@/components/voice-recorder'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 p-8">
+    <main className="min-h-screen bg-gradient-to-br from-red-600 to-blue-600 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center text-white mb-12">
-          <h1 className="text-6xl font-bold mb-4">🎵 SoundWave Template</h1>
+          <h1 className="text-6xl font-bold mb-4">🎼 SoundWave Template 🎷</h1>
           <p className="text-xl opacity-90">Build amazing audio experiences!</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-10">
             <h2 className="text-2xl font-bold text-white mb-4">Voice Recorder</h2>
             <VoiceRecorder />
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-10">
             <h2 className="text-2xl font-bold text-white mb-4">Audio Features</h2>
             <div className="space-y-4 text-white">
               <div className="flex items-center space-x-3">
