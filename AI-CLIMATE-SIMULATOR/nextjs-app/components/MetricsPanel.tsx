@@ -1,6 +1,6 @@
 'use client'
 
-import { Users, Thermometer, AlertTriangle, Droplets, Snowflake, Leaf, Zap } from 'lucide-react'
+import { Users, Thermometer, AlertTriangle, Droplets, Snowflake, Leaf, Zap, Bug, Wind } from 'lucide-react'
 
 interface EarthMetrics {
   co2Level: number
@@ -39,7 +39,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
     <div className="metrics-panel rounded-lg p-4 max-w-sm">
       <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
         <AlertTriangle size={20} className="text-red-400" />
-        Earth Metrics
+          Earth Metrics
       </h2>
       
       <div className="space-y-3">
@@ -90,7 +90,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Animal Population */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Leaf size={16} className="text-green-400" />
+            <Bug size={16} className="text-yellow-400" />
             <span className="text-sm text-gray-300">Animals:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
@@ -134,7 +134,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         {/* Overall Pollution */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-600">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-red-400" />
+            <Wind size={16}  className="text-sm text-gray-400"/>
             <span className="text-sm text-gray-300">Pollution:</span>
           </div>
           <span className={`text-sm font-semibold ${getHealthColor(pollutionLevel, 100)}`}>
