@@ -179,6 +179,7 @@ export default function Home() {
       oceanAcidity: 8.1,
       iceCapMelting: 10,
     })
+    console.log("Hie")
     setPollutionLevel(0)
     setIsSimulationRunning(false)
     setCommandHistory([])
@@ -238,7 +239,7 @@ export default function Home() {
       {/* Control Panel */}
       <div className="absolute top-4 left-4 z-20">
         <div className="metrics-panel rounded-lg p-4 mb-4 max-w-sm max-h-[80vh] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-2">Ai System</h2>
+          <h2 className="text-xl font-bold mb-2">Ai</h2>
           
           {/* Simulation Controls */}
           <div className="flex gap-2 mb-4">
