@@ -65,26 +65,6 @@ export default function ChatPage() {
   return (
     <div className="h-screen bg-background dark">
       <div className="container mx-auto max-w-4xl h-full flex flex-col">
-        {/* Header */}
-        <div className="border-b border-border px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-foreground text-background">
-                  <Bot className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-background" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold">AI Assistant</h1>
-              <p className="text-sm text-muted-foreground">
-                Mental wellness support
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Chat Container */}
         <div className="flex-1 flex flex-col min-h-0">
           {/* Messages Area */}
@@ -93,8 +73,7 @@ export default function ChatPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center"
-              >
+                className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center">
                 <div className="mb-6">
                   <div className="h-16 w-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                     <Sparkles className="h-8 w-8 text-muted-foreground" />
@@ -117,8 +96,7 @@ export default function ChatPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => handleSuggestedPrompt(prompt)}
-                      className="p-3 text-left text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors"
-                    >
+                      className="p-3 text-left text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors">
                       <div className="flex items-start gap-2">
                         <MessageCircle className="h-3 w-3 mt-0.5 text-muted-foreground shrink-0" />
                         <span className="text-foreground">{prompt}</span>
@@ -138,8 +116,7 @@ export default function ChatPage() {
                   transition={{ duration: 0.3 }}
                   className={`flex gap-3 mb-6 ${
                     message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
+                  }`}>
                   {message.role === "assistant" && (
                     <Avatar className="h-8 w-8 mt-1">
                       <AvatarFallback className="bg-muted">
@@ -151,15 +128,13 @@ export default function ChatPage() {
                   <div
                     className={`flex flex-col max-w-[80%] ${
                       message.role === "user" ? "items-end" : "items-start"
-                    }`}
-                  >
+                    }`}>
                     <div
                       className={`rounded-lg px-4 py-3 ${
                         message.role === "user"
                           ? "bg-foreground text-background"
                           : "bg-muted"
-                      }`}
-                    >
+                      }`}>
                       <p className="text-sm whitespace-pre-wrap leading-relaxed">
                         {message.content}
                       </p>
@@ -191,8 +166,7 @@ export default function ChatPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex gap-3 mb-6"
-              >
+                className="flex gap-3 mb-6">
                 <Avatar className="h-8 w-8 mt-1">
                   <AvatarFallback className="bg-muted">
                     <Bot className="h-4 w-4" />
@@ -238,8 +212,7 @@ export default function ChatPage() {
                 type="submit"
                 disabled={isLoading || !input.trim()}
                 size="icon"
-                className="h-11 w-11 shrink-0"
-              >
+                className="h-11 w-11 shrink-0">
                 <Send className="h-4 w-4" />
               </Button>
             </form>

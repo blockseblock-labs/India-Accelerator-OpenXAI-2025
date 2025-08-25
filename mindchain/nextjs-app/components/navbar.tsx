@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -15,13 +15,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
@@ -31,6 +25,16 @@ export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const routes = [
     { href: "/", icon: <Home className="w-4" />, label: "Home" },
@@ -47,12 +51,17 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className={`sticky top-0 z-50 w-full ${
+        scrolled
+          ? "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          : ""
+      }`}>
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center">
             <Image src="/logo.png" alt="logo" width={40} height={40} />
-            <span className="text-xl font-bold ml-3">MindChain</span>
+            <span className="text-lg font-bold ml-1">MindChain</span>
           </Link>
         </div>
 
@@ -75,9 +84,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           <SignedOut>
-            <Button variant={"outline"} asChild>
-              <SignInButton />
-            </Button>
+            <SignInButton />
           </SignedOut>
           <SignedIn>
             <UserButton />

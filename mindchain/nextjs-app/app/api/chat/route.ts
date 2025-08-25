@@ -7,9 +7,10 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: google("gemini-2.0-flash-exp"),
-    system:
-      "You are an expert mental health therapist. Help user with mental health issues. Repsond in text not markdown.",
+    model: google("gemini-2.0-flash"),
+    system: `You are an expert mental health therapist. Help user with mental health issues. Repsond in text not markdown.
+      ## No formatting
+      ## Short answers`,
     messages,
   });
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
-import confetti from "canvas-confetti";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { RotateCw, Sparkles } from "lucide-react";
+import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
 
 interface Question {
   id: number;
@@ -85,12 +85,8 @@ export default function CheckPage() {
   const [showResults, setShowResults] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [aiData, setAiData] = useState<{
-    summary: string;
-    moodScore: number;
-    riskLevel: "low" | "moderate" | "high";
-    suggestions: string[];
-  } | null>(null);
+  const [aiData, setAiData] = useState<string | null>(null);
+  const confettiRef = useRef<ConfettiRef>(null);
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers, answer];
@@ -112,49 +108,56 @@ export default function CheckPage() {
   };
 
   const calculateResult = () => {
-    let score = 0;
-    answers.forEach((answer, index) => {
-      const options = questions[index].options;
-      // Calculate score based on answer position (reverse for negative questions)
-      if (index === 2) {
-        // For stress/anxiety question, reverse scoring
-        score += 4 - options.indexOf(answer);
-      } else {
-        score += options.indexOf(answer);
-      }
+    // Map answers to a severity score 0..3 (0 best, 3 worst)
+    // Reverse scoring for negatively phrased questions (currently index 2: stress/anxiety)
+    const reverseIndexes = new Set([2]);
+
+    const severities = answers.map((answer, index) => {
+      const options = questions[index]?.options ?? [];
+      const pos = Math.max(0, options.indexOf(answer));
+      const base = Math.min(Math.max(pos, 0), 3); // clamp 0..3
+      return reverseIndexes.has(index) ? 3 - base : base;
     });
 
-    // Maximum possible score is 16 (4 questions × 4 points)
-    if (score <= 4) {
+    const count = severities.length || 1;
+    const avg = severities.reduce((a, b) => a + b, 0) / count; // 0..3
+
+    if (avg <= 0.75) {
       return {
         status: "Excellent",
         message:
           "Your responses suggest you're doing well! Keep maintaining your healthy habits and positive mindset.",
         color: "text-green-600",
-      };
-    } else if (score <= 8) {
+      } as const;
+    } else if (avg <= 1.5) {
       return {
         status: "Good",
         message:
           "You're doing okay, but there might be some areas where you could use some self-care and attention.",
         color: "text-blue-600",
-      };
-    } else if (score <= 12) {
+      } as const;
+    } else if (avg <= 2.25) {
       return {
         status: "Fair",
         message:
           "Your responses indicate you might be experiencing some challenges. Consider talking to friends, family, or a counselor about how you're feeling.",
         color: "text-yellow-600",
-      };
+      } as const;
     } else {
       return {
         status: "Concerning",
         message:
           "Your responses suggest you might be going through a difficult time. We strongly recommend reaching out to a mental health professional for support.",
         color: "text-red-600",
-      };
+      } as const;
     }
   };
+
+  // Compute result memoized for render
+  const result = useMemo(
+    () => (showResults ? calculateResult() : null),
+    [showResults, answers]
+  );
 
   // Trigger AI insights when results are shown the first time
   useEffect(() => {
@@ -173,10 +176,12 @@ export default function CheckPage() {
         });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const json = await res.json();
-        const data = json.object ?? json; // ai SDK returns {object}
-        setAiData(data);
-        // celebratory confetti
-        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        // Ensure we store a string to display
+        const text =
+          typeof json === "string"
+            ? json
+            : json?.insights ?? JSON.stringify(json);
+        setAiData(text);
       } catch (err: any) {
         setAiError(err?.message ?? "Something went wrong");
       } finally {
@@ -184,32 +189,74 @@ export default function CheckPage() {
       }
     };
     run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showResults]);
 
-  const riskColor = useMemo(() => {
-    switch (aiData?.riskLevel) {
-      case "high":
-        return "from-red-500/20 via-red-500/10 to-transparent border-red-500/30";
-      case "moderate":
-        return "from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/30";
-      default:
-        return "from-emerald-500/20 via-emerald-500/10 to-transparent border-emerald-500/30";
-    }
-  }, [aiData?.riskLevel]);
+  // Fire confetti exactly when results are shown to the user
+  useEffect(() => {
+    if (!showResults) return;
+    // Defer to ensure ref is attached after the results view mounts
+    const id = requestAnimationFrame(() => {
+      confettiRef.current?.fire?.({});
+    });
+    return () => cancelAnimationFrame(id);
+  }, [showResults]);
+
+  const riskColor =
+    "from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/30";
 
   if (showResults) {
-    const result = calculateResult();
     return (
-      <div className="max-w-3xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-4">
+      <div className="max-w-4xl mx-auto p-6">
+        <Confetti
+          ref={confettiRef}
+          className="absolute left-0 top-0 z-0 size-full"
+        />
+
+        <h2 className="text-3xl font-bold mb-4">
           Mental Health Check-in Results
         </h2>
+
+        <Button onClick={resetQuiz} variant={"outline"}>
+          <RotateCw />
+          Take Again
+        </Button>
+
+        <div
+          className={`relative rounded-2xl border mt-6 mb-6 overflow-hidden bg-gradient-to-b ${riskColor}`}>
+          <div className="p-6 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <h3
+                className="text-xl font-semibold text-transparent bg-clip-text
+               bg-gradient-to-r from-white to-white/40
+               [background-size:200%_200%] animate-[wave_3s_linear_infinite]">
+                AI Insights
+              </h3>
+            </div>
+
+            {loadingAI && (
+              <p className="text-sm text-muted-foreground">
+                Generating personalized insights…
+              </p>
+            )}
+            {aiError && <p className="text-sm text-red-500">{aiError}</p>}
+            {aiData && (
+              <div className="space-y-4">
+                <p className="leading-relaxed text-foreground/90">{aiData}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="mb-6 p-4 border rounded-lg">
-          <h3 className={`text-xl font-semibold mb-2 ${result.color}`}>
-            Status: {result.status}
-          </h3>
-          <p className="mb-4">{result.message}</p>
+          {result && (
+            <>
+              <h3 className={`text-xl font-semibold mb-2 ${result.color}`}>
+                Status: {result.status}
+              </h3>
+              <p className="mb-4">{result.message}</p>
+            </>
+          )}
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Your responses:</h4>
             {questions.map((question, index) => (
@@ -221,75 +268,14 @@ export default function CheckPage() {
               </div>
             ))}
           </div>
-          <div className="bg-primary-foreground p-4 rounded-lg mt-4">
-            <p className="text-sm text-primary">
-              <strong>Important Note:</strong> This assessment is not a
-              diagnostic tool. If you're experiencing persistent mental health
-              concerns, please reach out to:
-            </p>
-            <ul className="list-disc ml-6 mt-2 text-sm text-muted-foreground">
-              <li>Your local mental health professional</li>
-              <li>National Crisis Hotline: 988</li>
-              <li>Your primary care physician</li>
-            </ul>
-          </div>
         </div>
-
-        {/* AI Insights Card */}
-        <div
-          className={`relative rounded-2xl border mb-6 overflow-hidden bg-gradient-to-b ${riskColor}`}>
-          <div className="p-6 backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <h3 className="text-xl font-semibold">AI Insights</h3>
-            </div>
-            {loadingAI && (
-              <p className="text-sm text-muted-foreground">
-                Generating personalized insights…
-              </p>
-            )}
-            {aiError && <p className="text-sm text-red-500">{aiError}</p>}
-            {aiData && (
-              <div className="space-y-4">
-                <p className="leading-relaxed text-foreground/90">
-                  {aiData.summary}
-                </p>
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="text-sm">
-                    <span className="font-medium">Mood score:</span>{" "}
-                    <span>{Math.round(aiData.moodScore)} / 100</span>
-                  </div>
-                  <div className="text-sm">
-                    <span className="font-medium">Risk:</span>{" "}
-                    <span className="capitalize">{aiData.riskLevel}</span>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">Try this week:</h4>
-                  <ul className="list-disc ml-5 space-y-1">
-                    {aiData.suggestions.map((s, i) => (
-                      <li key={i} className="text-sm text-foreground/90">
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-          {/* Confetti hint gradient overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/0 to-white/5 dark:to-white/10" />
-        </div>
-        <Button onClick={resetQuiz} variant={"outline"}>
-          Take Again
-        </Button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Mental Health Check-in</h1>
+    <div className="max-w-3xl mx-auto p-6 py-6">
+      <h1 className="text-3xl font-bold mb-6">Mental Health Check-in</h1>
       <div className="mb-8">
         <h2 className="text-xl mb-4">{questions[currentQuestion].text}</h2>
         <div className="space-y-2">

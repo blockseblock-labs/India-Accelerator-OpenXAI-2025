@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, TrendingUp, Award, Clock } from "lucide-react";
+import { Calendar, TrendingUp, Award, Clock, Coins } from "lucide-react";
 import { format, subDays } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
+import SummaryPieChart from "@/components/summary-pie-chart";
 
 export default function DashboardPage() {
   const [streak] = useState(7);
@@ -38,25 +39,19 @@ export default function DashboardPage() {
               Track your progress and mental health journey
             </p>
           </div>
-          <Button asChild>
-            <a href="https://cal.com/tanav-poswal-lvtupv">
-              <Calendar className="mr-2 h-4 w-4" />
-              Schedule Session (cal.com)
-            </a>
-          </Button>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">
-                Current Streak
+                Journal Streak
               </CardTitle>
               <Award className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{streak} days</div>
-              <p className="text-xs text-muted-foreground">+2 from last week</p>
+              <p className="text-xs text-muted-foreground">5 max streak</p>
               <div className="mt-3">
                 <Progress value={70} className="h-2" />
               </div>
@@ -66,15 +61,18 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">
-                Sessions Completed
+                Expert Sessions
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{completedSessions}</div>
-              <p className="text-xs text-muted-foreground">
-                +3 from last month
-              </p>
+              <Button asChild variant={"ghost"} className="my-5" size={"sm"}>
+                <a href="https://cal.com/tanav-poswal-lvtupv">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Schedule Session
+                </a>
+              </Button>
+              <p className="text-xs text-muted-foreground">1 last month</p>
               <div className="mt-3">
                 <Progress value={60} className="h-2" />
               </div>
@@ -84,15 +82,13 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Minutes
+                Check Result
               </CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalMinutes}</div>
-              <p className="text-xs text-muted-foreground">
-                +90 from last month
-              </p>
+              <p className="text-xs text-muted-foreground">Good status</p>
               <div className="mt-3">
                 <Progress value={54} className="h-2" />
               </div>
@@ -101,25 +97,16 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Next Session
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Coins</CardTitle>
+              <Coins className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {format(nextSession, "MMM d")}
+              <div className="flex items-center gap-3">
+                <Image src="/coin.png" alt="coins" width={50} height={50} />
+                <p className="text-xl font-bold">54.6</p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {format(nextSession, "EEEE, h:mm a")}
-              </p>
-              <div className="mt-3 flex gap-2">
-                <Badge variant="outline" className="bg-primary/10">
-                  Dr. Thompson
-                </Badge>
-                <Badge variant="outline" className="bg-primary/10">
-                  45 min
-                </Badge>
+              <div className="mt-3">
+                <Progress value={54} className="h-2" />
               </div>
             </CardContent>
           </Card>
@@ -128,35 +115,11 @@ export default function DashboardPage() {
         <div className="flex gap-4">
           <Card className="flex-1">
             <CardHeader>
-              <CardTitle>Coins</CardTitle>
+              <CardTitle>Progress Last Week</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center gap-3">
-              <Image src="/coin.png" alt="coins" width={100} height={100} />
-              <p className="text-lg font-bold">0.065</p>
+            <CardContent className="h-72">
+              <SummaryPieChart />
             </CardContent>
-            <CardFooter>
-              <Button variant="outline">Send</Button>
-            </CardFooter>
-          </Card>
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle>NFT</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-wrap items-center gap-3">
-              <img
-                src="https://placehold.co/400x600/png"
-                width={100}
-                height={100}
-              />
-              <img
-                src="https://placehold.co/400x600/png"
-                width={100}
-                height={100}
-              />
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline">Send</Button>
-            </CardFooter>
           </Card>
         </div>
       </motion.div>

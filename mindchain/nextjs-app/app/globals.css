@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "@clerk/themes/shadcn.css";
 
 @layer base {
   * {
@@ -62,6 +63,11 @@
     --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
     --tracking-normal: 0.025em;
     --spacing: 0.25rem;
+    --color-1: oklch(66.2% 0.225 25.9);
+    --color-2: oklch(60.4% 0.26 302);
+    --color-3: oklch(69.6% 0.165 251);
+    --color-4: oklch(80.2% 0.134 225);
+    --color-5: oklch(90.7% 0.231 133);
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -113,6 +119,11 @@
     --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.17),
       0px 8px 10px -1px hsl(0 0% 0% / 0.17);
     --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
+    --color-1: oklch(66.2% 0.225 25.9);
+    --color-2: oklch(60.4% 0.26 302);
+    --color-3: oklch(69.6% 0.165 251);
+    --color-4: oklch(80.2% 0.134 225);
+    --color-5: oklch(90.7% 0.231 133);
   }
   .theme {
     --font-sans: Outfit, sans-serif;
@@ -124,6 +135,8 @@
     --tracking-wide: calc(var(--tracking-normal) + 0.025em);
     --tracking-wider: calc(var(--tracking-normal) + 0.05em);
     --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+    --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+    --animate-gradient: gradient 8s linear infinite;
   }
 }
 
@@ -212,6 +225,19 @@
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  @keyframes rainbow {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+  @keyframes gradient {
+    to {
+      background-position: var(--bg-size, 300%) 0;
+    }
+  }
 }
 
 /* Minimal Chat UI Styles */
@@ -233,6 +259,15 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
   }
 }
 

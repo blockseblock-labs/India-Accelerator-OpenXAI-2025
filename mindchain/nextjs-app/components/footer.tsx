@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Github, Twitter } from "lucide-react";
+import { ModeToggle } from "./theme-mode";
 
 export function Footer() {
   return (
@@ -13,7 +14,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} MindChain. All rights reserved.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center justify-center">
           <Link
             href="https://twitter.com"
             target="_blank"
@@ -30,6 +31,7 @@ export function Footer() {
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
+          <ModeToggle />
         </div>
       </div>
     </footer>

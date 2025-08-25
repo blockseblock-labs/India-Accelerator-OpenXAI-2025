@@ -2,7 +2,8 @@ import { withUt } from "uploadthing/tw";
 import type { Config } from "tailwindcss";
 
 const config: Config = withUt({
-  darkMode: ["class", "class"],
+  // Use class-based dark mode so next-themes can toggle it on <html>
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",

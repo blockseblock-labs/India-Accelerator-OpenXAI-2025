@@ -1,14 +1,17 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { dark } from "@clerk/themes";
+import "./globals.css";
+import Image from "next/image";
 
-const inter = Inter({
+const inter = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
@@ -26,20 +29,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        //@ts-ignore
+        baseTheme: [dark],
+      }}>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${inter.variable} font-sans antialiased`}>
+        <body
+          className={`${inter.variable} font-sans antialiased min-h-screen`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange>
             <AuthProvider>
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </div>
+              <Navbar />
+              <main className="min-h-[70vh]">{children}</main>
               <Toaster />
             </AuthProvider>
           </ThemeProvider>
@@ -48,5 +53,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-
-import "./globals.css";
