@@ -179,7 +179,7 @@ export default function Home() {
       oceanAcidity: 8.1,
       iceCapMelting: 10,
     })
-    console.log("Hie")
+    console.log("",metrics);
     setPollutionLevel(0)
     setIsSimulationRunning(false)
     setCommandHistory([])
