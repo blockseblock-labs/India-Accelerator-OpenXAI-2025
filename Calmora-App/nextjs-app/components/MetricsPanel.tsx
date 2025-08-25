@@ -91,7 +91,7 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Leaf size={16} className="text-green-400" />
-            <span className="text-sm text-yellow-300">Animals:</span>
+            <span className="text-sm text-blue-300">Animals:</span>
           </div>
           <span className="text-sm font-semibold text-gray-300">
             {formatNumber(metrics.animalPopulation)}
@@ -144,4 +144,4 @@ export default function MetricsPanel({ metrics, pollutionLevel }: MetricsPanelPr
       </div>
     </div>
   )
-} 
+}
