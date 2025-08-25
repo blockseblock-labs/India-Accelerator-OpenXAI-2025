@@ -12,6 +12,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  console.log("test")
 
   const sendMessage = async () => {
     if (!input.trim()) return
