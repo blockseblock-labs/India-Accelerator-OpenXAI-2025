@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { dark } from "@clerk/themes";
 import "./globals.css";
 import Image from "next/image";
+import Link from "next/link";
 
 const inter = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -44,7 +45,21 @@ export default function RootLayout({
             disableTransitionOnChange>
             <AuthProvider>
               <Navbar />
-              <main className="min-h-[70vh]">{children}</main>
+              <main className="min-h-[70vh]">
+                {children}
+                <div className="fixed bottom-0 right-0 w-36 h-36 p-6 flex items-end justify-end">
+                  <Link href="/relaxo">
+                    <div className="bg-background border rounded-2xl hover:bg-muted">
+                      <Image
+                        src="/relaxo.png"
+                        alt="Description"
+                        width={70}
+                        height={70}
+                      />
+                    </div>
+                  </Link>
+                </div>
+              </main>
               <Toaster />
             </AuthProvider>
           </ThemeProvider>
