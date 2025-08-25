@@ -326,7 +326,7 @@ export default function Home() {
           {/* Current Analysis */}
           {currentAnalysis && (
             <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2 text-gray-300">Impact Analysis:</h3>
+              <h3 className="text-sm font-semibold mb-2 text-gray-300">Impact :</h3>
               <div className="max-h-32 overflow-y-auto bg-gray-800 p-3 rounded">
                 <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-line">
                   {currentAnalysis}
