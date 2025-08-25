@@ -145,8 +145,8 @@ export default function LearnAI() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">📚 LearnAI</h1>
-          <p className="text-white/80 text-lg">AI-Powered Educational Tools</p>
+          <h1 className="text-4xl font-bold text-white mb-4">👨🏻‍💻 LearnAI</h1>
+          <p className="text-white/80 text-lg">AI-Powered Learning Tools</p>
         </div>
 
         {/* Tabs */}
@@ -178,14 +178,14 @@ export default function LearnAI() {
           {/* Flashcards Tab */}
           {activeTab === 'flashcards' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">🃏 Flashcard Maker</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">💻 Flashcard Creater</h2>
               
               {flashcards.length === 0 ? (
                 <div>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Paste your study notes here and I'll create flashcards for you..."
+                    placeholder="write your study material here,I"ll make flashcard for you..."
                     className="w-full h-40 p-4 rounded-lg border-0 bg-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30"
                   />
                   <button
@@ -246,7 +246,7 @@ export default function LearnAI() {
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Maker</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">📝 Quiz Creater</h2>
               
               {quiz.length === 0 && !showResults ? (
                 <div>
@@ -266,7 +266,7 @@ export default function LearnAI() {
                 </div>
               ) : showResults ? (
                 <div className="text-center">
-                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Complete!</h3>
+                  <h3 className="text-3xl font-bold text-white mb-4">Quiz Finished!</h3>
                   <p className="text-xl text-white mb-6">
                     You scored {score} out of {quiz.length} ({Math.round((score / quiz.length) * 100)}%)
                   </p>
@@ -278,7 +278,7 @@ export default function LearnAI() {
                     }}
                     className="px-6 py-3 bg-blue-500 text-white rounded-lg"
                   >
-                    Take Another Quiz
+                    go to Another Quiz
                   </button>
                 </div>
               ) : (
