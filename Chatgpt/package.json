@@ -1,0 +1,20 @@
+{
+  "name": "chatgpt",
+  "version": "1.0.0",
+  "description": "Template to make a Nextjs + Ollama app that runs on OpenxAI (and any other NixOS infrastructure).",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
