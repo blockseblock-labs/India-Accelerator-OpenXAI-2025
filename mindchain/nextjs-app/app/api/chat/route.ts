@@ -1,35 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { google } from "@ai-sdk/google";
+import { streamText } from "ai";
 
-export async function POST(req: NextRequest) {
-  try {
-    const { message } = await req.json()
+export const maxDuration = 30;
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama2',
-        prompt: message,
-        stream: false,
-      }),
-    })
+export async function POST(req: Request) {
+  const { messages } = await req.json();
 
-    if (!response.ok) {
-      throw new Error('Failed to get response from Ollama')
-    }
+  const result = streamText({
+    model: google("gemini-2.0-flash-exp"),
+    system:
+      "You are an expert mental health therapist. Help user with mental health issues. Repsond in text not markdown.",
+    messages,
+  });
 
-    const data = await response.json()
-    
-    return NextResponse.json({ 
-      message: data.response || 'No response from model' 
-    })
-  } catch (error) {
-    console.error('Chat API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to process chat message' },
-      { status: 500 }
-    )
-  }
-} 
+  return result.toDataStreamResponse();
+}
