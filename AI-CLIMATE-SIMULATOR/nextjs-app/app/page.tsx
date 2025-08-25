@@ -290,7 +290,7 @@ export default function Home() {
 
           {/* Example Commands */}
           <div className="mb-4">
-            <h3 className="text-sm font-semibold mb-2 text-gray-300">Commands:</h3>
+            <h3 className="text-sm font-semibold mb-2 text-gray-300">:</h3>
             <div className="max-h-32 overflow-y-auto space-y-1">
               {exampleCommands.slice(0, 5).map((example, index) => (
                 <button
